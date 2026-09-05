@@ -23,7 +23,7 @@ npm run dev
 ```
 
 - API + DuckDB: http://localhost:3001 · Console: http://localhost:5173
-- Requisito: **Node.js 18+**. Testes: `npm test` (Vitest, ~170 testes dos módulos puros).
+- Requisito: **Node.js 18+**. Testes: `npm test` (Vitest, 163 testes dos módulos puros).
 
 Primeiro contato: abra o **Rascunho** (projeto scratch — explore à vontade e depois
 **Promova** para um projeto nomeado), suba um CSV em **Dados › Fontes** e clique em
@@ -349,3 +349,14 @@ do repositório — útil para editar um projeto Evidence existente sem movê-lo
 **Analista**: consome fontes/modelos, monta relatórios no wizard, vê staleness.
 A console é single-user — os papéis são convenção de UI; segredos, esses sim, são
 tecnicamente inacessíveis pelo browser. RBAC real chega com o modo servidor.
+
+## Licença e créditos
+
+Distribuído sob a **Licença Apache 2.0** — veja [LICENSE](LICENSE).
+Copyright 2026 Próxima TI.
+
+O Studio Console é desenvolvido pela Próxima TI em parceria com o
+[Claude Code](https://claude.com/claude-code) (Anthropic), usado como par de
+programação ao longo do projeto — arquitetura, implementação, testes e
+documentação. As contribuições aparecem no histórico do Git com o trailer
+`Co-Authored-By`.
