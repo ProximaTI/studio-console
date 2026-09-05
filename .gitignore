@@ -1,0 +1,81 @@
+# =============================================================================
+# ESTE REPOSITÓRIO É PÚBLICO — A REGRA É NEGAR POR PADRÃO.
+#
+# O diretório de trabalho contém projetos com dados reais de clientes, segredos
+# e artefatos publicados. Por isso TUDO é ignorado e só o que a release precisa
+# é liberado explicitamente abaixo.
+#
+# Ao criar um arquivo que deva ser publicado, LIBERE-O AQUI.
+# Nunca remova a negação da raiz (`/*`) para "facilitar".
+# =============================================================================
+
+# 1) Nega tudo na raiz.
+/*
+
+# 2) Libera o código do app e a documentação.
+!/.gitignore
+!/.gitattributes
+!/LICENSE
+!/README.md
+!/GUIA_ARQUITETO.md
+!/GUIA_RELATORIOS.md
+!/GUIA_RELATORIOS_5_MINUTOS.md
+!/package.json
+!/package-lock.json
+!/vitest.config.ts
+!/server/
+!/web/
+!/shared/
+!/tests/
+!/docs/
+!/projects/
+
+# 3) Dentro de projects/, SÓ o projeto de exemplo.
+#    Os demais projetos da instalação ficam de fora.
+/projects/*
+!/projects/exemplo/
+
+# 4) Exclusões dentro do que foi liberado acima.
+node_modules/
+dist/
+build/
+.DS_Store
+*.log
+
+# 5) Segredos e estado local — jamais versionados.
+#    (redundante com a negação da raiz, mas explícito: se alguém um dia liberar
+#    o diretório pai, estas regras continuam valendo)
+.secrets.json
+*.secrets.json
+/settings.json
+/connections.yaml
+/server/external-projects.json
+
+# 6) Dados, bancos e artefatos publicados.
+/data/
+/models/
+/published/
+/scripts/
+*.duckdb
+*.parquet
+*.zip
+*.docx
+
+# 7) O projeto de exemplo é a EXCEÇÃO: suas fontes sintéticas entram no repo,
+#    senão o exemplo não roda depois do clone.
+!/projects/exemplo/sources/*.csv
+
+# 8) Testes que leem um projeto interno do disco como fixture.
+#    Ficam fora do repositório porque falhariam num clone — o projeto que eles
+#    usam como fixture não é publicado. Portá-los para o catálogo do `exemplo`
+#    é o caminho para trazê-los de volta.
+/tests/drill.test.js
+/tests/nested.test.js
+/tests/policies.test.js
+/tests/reportAgent.test.js
+/tests/reportApply.test.js
+/tests/reportCompiler.test.js
+/tests/reportPlan.test.js
+/tests/reports.test.js
+/tests/semantic.test.js
+/tests/semanticCompile.test.js

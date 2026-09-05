@@ -1,0 +1,63 @@
+model: comissoes
+label: "Rede de salões — atendimentos e comissões"
+description: "Atendimentos da rede; 1 linha por atendimento (atendimento_id)."
+fact: comissoes                  # sources/comissoes.csv, registrado pelo projeto
+grain: [atendimento_id]
+
+dimensions:
+  unidade:      { column: unidade, label: "Unidade", synonyms: [salão, loja, filial] }
+  uf:           { column: uf, geo: brazil-states, label: "UF" }
+  regiao:       { column: regiao, label: "Região" }
+  profissional: { column: profissional, label: "Profissional",
+                  synonyms: [cabeleireiro, atendente] }
+  servico:      { column: servico, label: "Serviço" }
+  forma_pagamento: { column: forma_pagamento, label: "Forma de pagamento" }
+
+  # Construtor `map`: agrupa valores da coluna em rótulos — sem CASE à mão.
+  prazo_pagamento:
+    map:
+      column: forma_pagamento
+      values: { Pix: "À vista", Dinheiro: "À vista", Débito: "À vista", Crédito: "A prazo" }
+      else: "Outros"
+    label: "Prazo do pagamento"
+    description: "Crédito é a prazo; o resto entra no caixa no mesmo dia."
+
+  tempo:        { column: data, hierarchy: [ano, trimestre, mes], label: "Tempo" }
+
+  # Construtor `bins`: um rótulo por borda (o último = acima da última borda).
+  faixa_ticket:
+    bins: { column: valor, edges: [0, 60, 120, 250],
+            labels: ["até R$ 60", "R$ 60–120", "R$ 120–250", "R$ 250+"] }
+    label: "Faixa de ticket"
+    description: "Faixas do valor do atendimento"
+
+  cliente:      { column: cliente, label: "Cliente", pii: true }
+
+metrics:
+  atendimentos:  { agg: count_distinct, column: atendimento_id, label: "Atendimentos", fmt: num0 }
+  faturamento:   { agg: sum, column: valor, label: "Faturamento", fmt: brl,
+                   description: "Soma do valor dos atendimentos no recorte",
+                   synonyms: [receita, vendas, faturamento bruto] }
+  comissoes:     { agg: sum, column: comissao, label: "Comissões", fmt: brl,
+                   synonyms: [repasse, pagamento à equipe] }
+  ticket_medio:  { agg: avg, column: valor, label: "Ticket médio", fmt: brl }
+  qtd_clientes:  { agg: count_distinct, column: cliente, label: "Clientes atendidos", fmt: num0 }
+
+  # Filtro embutido na métrica (referencia DIMENSÃO, nunca coluna crua).
+  faturamento_2025: { agg: sum, column: valor, label: "Faturamento 2025", fmt: brl,
+                      filters: [{ dim: tempo, level: ano, values: [2025] }] }
+
+  # Derivadas: aritmética entre métricas + vocabulário temporal fechado.
+  margem_comissao:   { derived: "comissoes / faturamento", label: "% de comissão", fmt: pct1,
+                       description: "Quanto do faturamento vira repasse para a equipe" }
+  faturamento_yoy:   { derived: "faturamento / lag(faturamento, 1, ano) - 1",
+                       label: "Faturamento YoY", fmt: pct1 }
+  faturamento_acum:  { derived: "acum(faturamento, ano)", label: "Faturamento acumulado", fmt: brl }
+  faturamento_movel: { derived: "movel(faturamento, 3)", label: "Faturamento (média 3M)", fmt: brl }
+  pct_faturamento:   { derived: "faturamento / total(faturamento)", label: "% do total", fmt: pct1 }
+
+hierarchies:                       # grosso → fino (habilita o drill ⤵/⤴)
+  geografia: [regiao, uf, unidade]
+
+policies:
+  cliente: { expose: internal }    # nome de cliente não sai em publish público

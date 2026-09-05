@@ -1,0 +1,9 @@
+# Normaliza as quebras de linha: o repositório guarda LF; cada sistema faz o
+# checkout como preferir. Evita diffs de linha inteira entre Windows e Linux.
+* text=auto eol=lf
+
+# Binários — nunca normalizar.
+*.png binary
+*.parquet binary
+*.duckdb binary
+*.zip binary

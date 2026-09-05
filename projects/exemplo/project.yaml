@@ -1,0 +1,18 @@
+# Projeto de exemplo — só fontes locais (sources/*.csv e *.parquet são
+# registradas automaticamente pelo nome do arquivo).
+#
+# Este arquivo é VERSIONÁVEL: conexões externas entram aqui apenas por
+# referência (credentials_ref); o segredo vive em .secrets.json, gravado
+# pela API e nunca servido ao browser. Exemplo de view materializada de um
+# banco externo (banco nunca é lido em runtime de página):
+#
+# connections:
+#   dw:
+#     type: postgres
+#     credentials_ref: dw_producao
+# materialized:
+#   pagamentos_espelho:
+#     connection: dw
+#     query: select * from financeiro.pagamentos
+#     stale_after: 1d
+{}

@@ -1,0 +1,1339 @@
+atendimento_id,data,unidade,uf,regiao,profissional,servico,valor,comissao_pct,comissao,forma_pagamento,cliente
+A00001,2024-01-01,Asa Sul,DF,Centro-Oeste,Paulo Krause,Hidratação,152.91,0.35,53.52,Crédito,Camila Horta
+A00002,2024-01-02,Copacabana,RJ,Sudeste,Carla Menezes,Corte,123.24,0.40,49.30,Pix,Natália Cavalcanti
+A00003,2024-01-02,Savassi,MG,Sudeste,Fábio Nunes,Corte,88.41,0.40,35.37,Pix,Patrícia Almeida
+A00004,2024-01-02,Batel,PR,Sul,João Vitor Reis,Coloração,232.90,0.35,81.52,Débito,Vanessa Ibrahim
+A00005,2024-01-03,Vila Madalena,SP,Sudeste,Ana Prado,Corte,127.80,0.40,51.12,Pix,Natália Farias
+A00006,2024-01-03,Umarizal,PA,Norte,Renata Pinho,Escova,99.75,0.40,39.90,Pix,Patrícia Gomes
+A00007,2024-01-04,Moinhos de Vento,RS,Sul,Gabriela Lima,Corte,77.42,0.40,30.97,Débito,Thiago Cavalcanti
+A00008,2024-01-05,Moinhos de Vento,RS,Sul,Gabriela Lima,Manicure,61.06,0.50,30.53,Crédito,Mariana Cavalcanti
+A00009,2024-01-07,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,74.04,0.40,29.62,Pix,Fernanda Teixeira
+A00010,2024-01-07,Umarizal,PA,Norte,Sérgio Maia,Hidratação,219.11,0.35,76.69,Crédito,Sofia Barbosa
+A00011,2024-01-09,Vila Madalena,SP,Sudeste,Ana Prado,Manicure,59.09,0.50,29.54,Pix,Sofia Almeida
+A00012,2024-01-11,Copacabana,RJ,Sudeste,Diego Moura,Hidratação,171.12,0.35,59.89,Dinheiro,Fernanda Almeida
+A00013,2024-01-11,Boa Viagem,PE,Nordeste,Lucas Bandeira,Corte,75.64,0.40,30.25,Crédito,Alice Ramos
+A00014,2024-01-11,Meireles,CE,Nordeste,Nelson Braga,Corte,125.42,0.40,50.17,Pix,Eduardo Siqueira
+A00015,2024-01-15,Copacabana,RJ,Sudeste,Diego Moura,Manicure,46.12,0.50,23.06,Pix,Daniel Barbosa
+A00016,2024-01-16,Vila Madalena,SP,Sudeste,Ana Prado,Corte,100.92,0.40,40.37,Crédito,Juliana Queiroz
+A00017,2024-01-16,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,93.84,0.40,37.54,Crédito,Mariana Nogueira
+A00018,2024-01-16,Asa Sul,DF,Centro-Oeste,Olívia Serra,Manicure,49.80,0.50,24.90,Pix,Vanessa Siqueira
+A00019,2024-01-17,Vila Madalena,SP,Sudeste,Bruno Tavares,Coloração,253.52,0.35,88.73,Crédito,Daniel Ramos
+A00020,2024-01-17,Copacabana,RJ,Sudeste,Carla Menezes,Coloração,300.51,0.35,105.18,Débito,Daniel Queiroz
+A00021,2024-01-20,Batel,PR,Sul,João Vitor Reis,Corte,108.88,0.40,43.55,Crédito,Otávio Barbosa
+A00022,2024-01-21,Savassi,MG,Sudeste,Fábio Nunes,Hidratação,145.01,0.35,50.75,Crédito,Alice Nogueira
+A00023,2024-01-22,Moinhos de Vento,RS,Sul,Henrique Alves,Manicure,54.85,0.50,27.42,Crédito,Beatriz Jardim
+A00024,2024-01-22,Boa Viagem,PE,Nordeste,Lucas Bandeira,Barba,69.42,0.45,31.24,Dinheiro,Camila Cavalcanti
+A00025,2024-01-22,Meireles,CE,Nordeste,Marina Fontes,Hidratação,120.71,0.35,42.25,Pix,Daniel Nogueira
+A00026,2024-01-22,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,118.75,0.40,47.50,Débito,Leandro Jardim
+A00027,2024-01-22,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,128.72,0.40,51.49,Pix,Daniel Nogueira
+A00028,2024-01-24,Batel,PR,Sul,João Vitor Reis,Coloração,195.55,0.35,68.44,Crédito,Mariana Farias
+A00029,2024-01-24,Boa Viagem,PE,Nordeste,Karina Melo,Corte,114.57,0.40,45.83,Débito,Otávio Esteves
+A00030,2024-01-24,Meireles,CE,Nordeste,Marina Fontes,Corte,102.58,0.40,41.03,Pix,Sofia Siqueira
+A00031,2024-01-25,Moinhos de Vento,RS,Sul,Henrique Alves,Escova,100.54,0.40,40.22,Dinheiro,Igor Oliveira
+A00032,2024-01-26,Boa Viagem,PE,Nordeste,Karina Melo,Coloração,269.90,0.35,94.46,Crédito,Patrícia Nogueira
+A00033,2024-01-26,Umarizal,PA,Norte,Sérgio Maia,Escova,100.62,0.40,40.25,Crédito,Alice Nogueira
+A00034,2024-01-27,Copacabana,RJ,Sudeste,Diego Moura,Coloração,286.21,0.35,100.17,Crédito,Sofia Klein
+A00035,2024-01-28,Vila Madalena,SP,Sudeste,Bruno Tavares,Manicure,51.38,0.50,25.69,Crédito,Natália Queiroz
+A00036,2024-01-29,Savassi,MG,Sudeste,Fábio Nunes,Manicure,69.74,0.50,34.87,Pix,Patrícia Machado
+A00037,2024-01-29,Meireles,CE,Nordeste,Marina Fontes,Coloração,297.71,0.35,104.20,Pix,Mariana Esteves
+A00038,2024-01-31,Savassi,MG,Sudeste,Fábio Nunes,Manicure,68.34,0.50,34.17,Crédito,Alice Ibrahim
+A00039,2024-01-31,Batel,PR,Sul,Isabel Cardoso,Corte,72.57,0.40,29.03,Crédito,Gustavo Esteves
+A00040,2024-02-01,Copacabana,RJ,Sudeste,Diego Moura,Coloração,238.87,0.35,83.60,Débito,Eduardo Queiroz
+A00041,2024-02-01,Moinhos de Vento,RS,Sul,Gabriela Lima,Barba,65.13,0.45,29.31,Crédito,Juliana Horta
+A00042,2024-02-01,Boa Viagem,PE,Nordeste,Karina Melo,Corte,79.52,0.40,31.81,Débito,Beatriz Horta
+A00043,2024-02-01,Boa Viagem,PE,Nordeste,Karina Melo,Escova,62.65,0.40,25.06,Débito,Thiago Gomes
+A00044,2024-02-01,Umarizal,PA,Norte,Sérgio Maia,Corte,125.69,0.40,50.27,Pix,Vanessa Almeida
+A00045,2024-02-02,Vila Madalena,SP,Sudeste,Ana Prado,Barba,68.19,0.45,30.69,Crédito,Gustavo Siqueira
+A00046,2024-02-03,Vila Madalena,SP,Sudeste,Ana Prado,Manicure,51.50,0.50,25.75,Pix,Leandro Nogueira
+A00047,2024-02-04,Vila Madalena,SP,Sudeste,Ana Prado,Coloração,306.83,0.35,107.39,Pix,Eduardo Ramos
+A00048,2024-02-04,Vila Madalena,SP,Sudeste,Bruno Tavares,Coloração,192.92,0.35,67.52,Dinheiro,Vanessa Peixoto
+A00049,2024-02-04,Copacabana,RJ,Sudeste,Carla Menezes,Corte,98.76,0.40,39.50,Pix,Igor Esteves
+A00050,2024-02-04,Savassi,MG,Sudeste,Fábio Nunes,Coloração,231.83,0.35,81.14,Crédito,Natália Nogueira
+A00051,2024-02-05,Moinhos de Vento,RS,Sul,Henrique Alves,Escova,64.04,0.40,25.61,Crédito,Patrícia Ibrahim
+A00052,2024-02-05,Meireles,CE,Nordeste,Marina Fontes,Manicure,83.77,0.50,41.88,Pix,Vanessa Klein
+A00053,2024-02-06,Copacabana,RJ,Sudeste,Diego Moura,Coloração,234.54,0.35,82.09,Pix,Igor Cavalcanti
+A00054,2024-02-06,Savassi,MG,Sudeste,Elisa Rocha,Manicure,70.62,0.50,35.31,Débito,Juliana Jardim
+A00055,2024-02-06,Meireles,CE,Nordeste,Marina Fontes,Hidratação,120.61,0.35,42.21,Débito,Mariana Nogueira
+A00056,2024-02-06,Asa Sul,DF,Centro-Oeste,Paulo Krause,Manicure,56.93,0.50,28.46,Pix,Eduardo Jardim
+A00057,2024-02-07,Batel,PR,Sul,Isabel Cardoso,Barba,58.65,0.45,26.39,Crédito,Thiago Esteves
+A00058,2024-02-09,Vila Madalena,SP,Sudeste,Ana Prado,Coloração,195.70,0.35,68.50,Crédito,Eduardo Jardim
+A00059,2024-02-09,Asa Sul,DF,Centro-Oeste,Olívia Serra,Barba,50.54,0.45,22.74,Crédito,Beatriz Almeida
+A00060,2024-02-11,Moinhos de Vento,RS,Sul,Henrique Alves,Corte,85.37,0.40,34.15,Débito,Camila Oliveira
+A00061,2024-02-13,Savassi,MG,Sudeste,Fábio Nunes,Escova,103.72,0.40,41.49,Crédito,Helena Esteves
+A00062,2024-02-14,Vila Madalena,SP,Sudeste,Ana Prado,Barba,70.53,0.45,31.74,Crédito,Camila Cavalcanti
+A00063,2024-02-14,Savassi,MG,Sudeste,Fábio Nunes,Escova,70.36,0.40,28.14,Pix,Natália Gomes
+A00064,2024-02-14,Batel,PR,Sul,Isabel Cardoso,Corte,123.66,0.40,49.46,Dinheiro,Leandro Siqueira
+A00065,2024-02-15,Umarizal,PA,Norte,Sérgio Maia,Hidratação,169.43,0.35,59.30,Pix,Natália Farias
+A00066,2024-02-17,Batel,PR,Sul,João Vitor Reis,Escova,81.11,0.40,32.45,Crédito,Vanessa Barbosa
+A00067,2024-02-18,Vila Madalena,SP,Sudeste,Ana Prado,Escova,101.47,0.40,40.59,Dinheiro,Eduardo Gomes
+A00068,2024-02-19,Asa Sul,DF,Centro-Oeste,Paulo Krause,Escova,67.85,0.40,27.14,Pix,Mariana Horta
+A00069,2024-02-21,Boa Viagem,PE,Nordeste,Karina Melo,Escova,70.56,0.40,28.23,Pix,Eduardo Oliveira
+A00070,2024-02-23,Copacabana,RJ,Sudeste,Carla Menezes,Hidratação,137.36,0.35,48.08,Débito,Fernanda Ibrahim
+A00071,2024-02-24,Copacabana,RJ,Sudeste,Carla Menezes,Escova,94.70,0.40,37.88,Pix,Helena Peixoto
+A00072,2024-02-24,Batel,PR,Sul,Isabel Cardoso,Manicure,56.44,0.50,28.22,Crédito,Vanessa Queiroz
+A00073,2024-02-24,Asa Sul,DF,Centro-Oeste,Olívia Serra,Hidratação,154.64,0.35,54.12,Débito,Patrícia Klein
+A00074,2024-02-24,Umarizal,PA,Norte,Renata Pinho,Corte,118.45,0.40,47.38,Pix,Leandro Duarte
+A00075,2024-02-25,Meireles,CE,Nordeste,Marina Fontes,Barba,52.09,0.45,23.44,Dinheiro,Thiago Machado
+A00076,2024-02-26,Savassi,MG,Sudeste,Fábio Nunes,Coloração,329.16,0.35,115.21,Pix,Kelly Horta
+A00077,2024-02-27,Moinhos de Vento,RS,Sul,Gabriela Lima,Coloração,302.23,0.35,105.78,Pix,Thiago Gomes
+A00078,2024-02-29,Boa Viagem,PE,Nordeste,Karina Melo,Manicure,67.08,0.50,33.54,Dinheiro,Gustavo Farias
+A00079,2024-03-01,Copacabana,RJ,Sudeste,Diego Moura,Escova,68.03,0.40,27.21,Crédito,Fernanda Loureiro
+A00080,2024-03-01,Umarizal,PA,Norte,Renata Pinho,Hidratação,170.12,0.35,59.54,Pix,Mariana Jardim
+A00081,2024-03-02,Batel,PR,Sul,Isabel Cardoso,Hidratação,160.05,0.35,56.02,Pix,Leandro Ibrahim
+A00082,2024-03-03,Vila Madalena,SP,Sudeste,Ana Prado,Coloração,275.32,0.35,96.36,Crédito,Camila Nogueira
+A00083,2024-03-03,Boa Viagem,PE,Nordeste,Lucas Bandeira,Manicure,63.24,0.50,31.62,Débito,Helena Peixoto
+A00084,2024-03-03,Asa Sul,DF,Centro-Oeste,Paulo Krause,Manicure,62.91,0.50,31.45,Dinheiro,Gustavo Queiroz
+A00085,2024-03-04,Asa Sul,DF,Centro-Oeste,Olívia Serra,Coloração,191.33,0.35,66.96,Crédito,Beatriz Gomes
+A00086,2024-03-05,Vila Madalena,SP,Sudeste,Ana Prado,Hidratação,174.46,0.35,61.06,Débito,Eduardo Jardim
+A00087,2024-03-06,Moinhos de Vento,RS,Sul,Gabriela Lima,Escova,65.66,0.40,26.26,Crédito,Mariana Queiroz
+A00088,2024-03-06,Batel,PR,Sul,João Vitor Reis,Escova,103.52,0.40,41.41,Débito,Vanessa Loureiro
+A00089,2024-03-07,Savassi,MG,Sudeste,Fábio Nunes,Manicure,74.59,0.50,37.29,Crédito,Juliana Siqueira
+A00090,2024-03-08,Copacabana,RJ,Sudeste,Diego Moura,Corte,84.43,0.40,33.77,Pix,Camila Esteves
+A00091,2024-03-08,Savassi,MG,Sudeste,Elisa Rocha,Corte,110.98,0.40,44.39,Crédito,Fernanda Jardim
+A00092,2024-03-08,Boa Viagem,PE,Nordeste,Karina Melo,Coloração,195.84,0.35,68.54,Crédito,Camila Loureiro
+A00093,2024-03-08,Asa Sul,DF,Centro-Oeste,Olívia Serra,Escova,100.01,0.40,40.00,Dinheiro,Alice Jardim
+A00094,2024-03-08,Asa Sul,DF,Centro-Oeste,Paulo Krause,Coloração,315.24,0.35,110.33,Débito,Helena Almeida
+A00095,2024-03-10,Meireles,CE,Nordeste,Nelson Braga,Coloração,327.39,0.35,114.59,Pix,Mariana Almeida
+A00096,2024-03-11,Copacabana,RJ,Sudeste,Diego Moura,Coloração,333.25,0.35,116.64,Dinheiro,Alice Barbosa
+A00097,2024-03-11,Meireles,CE,Nordeste,Marina Fontes,Escova,101.78,0.40,40.71,Crédito,Daniel Farias
+A00098,2024-03-12,Copacabana,RJ,Sudeste,Carla Menezes,Manicure,63.57,0.50,31.79,Crédito,Helena Nogueira
+A00099,2024-03-13,Copacabana,RJ,Sudeste,Diego Moura,Corte,87.54,0.40,35.02,Crédito,Thiago Nogueira
+A00100,2024-03-14,Moinhos de Vento,RS,Sul,Henrique Alves,Escova,108.07,0.40,43.23,Débito,Juliana Almeida
+A00101,2024-03-14,Umarizal,PA,Norte,Renata Pinho,Escova,87.56,0.40,35.02,Pix,Natália Ramos
+A00102,2024-03-15,Umarizal,PA,Norte,Sérgio Maia,Manicure,65.08,0.50,32.54,Pix,Alice Klein
+A00103,2024-03-16,Vila Madalena,SP,Sudeste,Bruno Tavares,Corte,116.92,0.40,46.77,Débito,Helena Jardim
+A00104,2024-03-16,Savassi,MG,Sudeste,Elisa Rocha,Hidratação,178.49,0.35,62.47,Crédito,Leandro Duarte
+A00105,2024-03-17,Vila Madalena,SP,Sudeste,Ana Prado,Manicure,51.63,0.50,25.82,Crédito,Beatriz Barbosa
+A00106,2024-03-18,Umarizal,PA,Norte,Sérgio Maia,Corte,75.32,0.40,30.13,Pix,Alice Farias
+A00107,2024-03-19,Copacabana,RJ,Sudeste,Diego Moura,Manicure,81.73,0.50,40.87,Pix,Vanessa Ramos
+A00108,2024-03-20,Savassi,MG,Sudeste,Fábio Nunes,Barba,54.50,0.45,24.53,Crédito,Daniel Barbosa
+A00109,2024-03-20,Moinhos de Vento,RS,Sul,Gabriela Lima,Corte,79.33,0.40,31.73,Pix,Alice Esteves
+A00110,2024-03-20,Moinhos de Vento,RS,Sul,Gabriela Lima,Barba,65.24,0.45,29.36,Pix,Otávio Esteves
+A00111,2024-03-21,Vila Madalena,SP,Sudeste,Bruno Tavares,Coloração,236.18,0.35,82.66,Crédito,Juliana Horta
+A00112,2024-03-21,Savassi,MG,Sudeste,Fábio Nunes,Corte,104.87,0.40,41.95,Pix,Sofia Klein
+A00113,2024-03-23,Boa Viagem,PE,Nordeste,Lucas Bandeira,Corte,98.22,0.40,39.29,Débito,Helena Ibrahim
+A00114,2024-03-25,Meireles,CE,Nordeste,Nelson Braga,Escova,75.99,0.40,30.39,Crédito,Beatriz Horta
+A00115,2024-03-25,Meireles,CE,Nordeste,Marina Fontes,Escova,62.22,0.40,24.89,Crédito,Patrícia Machado
+A00116,2024-03-26,Meireles,CE,Nordeste,Nelson Braga,Corte,79.34,0.40,31.74,Crédito,Igor Barbosa
+A00117,2024-03-27,Vila Madalena,SP,Sudeste,Ana Prado,Coloração,327.11,0.35,114.49,Crédito,Daniel Ramos
+A00118,2024-03-27,Vila Madalena,SP,Sudeste,Ana Prado,Escova,70.79,0.40,28.31,Pix,Helena Duarte
+A00119,2024-03-31,Batel,PR,Sul,João Vitor Reis,Barba,41.82,0.45,18.82,Pix,Rafael Barbosa
+A00120,2024-03-31,Batel,PR,Sul,João Vitor Reis,Corte,112.04,0.40,44.82,Pix,Mariana Machado
+A00121,2024-03-31,Boa Viagem,PE,Nordeste,Karina Melo,Coloração,303.05,0.35,106.07,Crédito,Leandro Duarte
+A00122,2024-04-01,Vila Madalena,SP,Sudeste,Ana Prado,Manicure,47.14,0.50,23.57,Pix,Mariana Barbosa
+A00123,2024-04-01,Batel,PR,Sul,João Vitor Reis,Corte,95.35,0.40,38.14,Pix,Daniel Esteves
+A00124,2024-04-02,Copacabana,RJ,Sudeste,Diego Moura,Coloração,299.75,0.35,104.91,Crédito,Juliana Siqueira
+A00125,2024-04-02,Moinhos de Vento,RS,Sul,Henrique Alves,Manicure,53.68,0.50,26.84,Pix,Otávio Duarte
+A00126,2024-04-02,Boa Viagem,PE,Nordeste,Karina Melo,Manicure,80.49,0.50,40.25,Dinheiro,Thiago Barbosa
+A00127,2024-04-03,Batel,PR,Sul,Isabel Cardoso,Escova,63.35,0.40,25.34,Débito,Igor Nogueira
+A00128,2024-04-04,Moinhos de Vento,RS,Sul,Gabriela Lima,Manicure,56.49,0.50,28.25,Pix,Thiago Jardim
+A00129,2024-04-05,Vila Madalena,SP,Sudeste,Bruno Tavares,Corte,80.74,0.40,32.30,Dinheiro,Igor Machado
+A00130,2024-04-05,Savassi,MG,Sudeste,Fábio Nunes,Corte,86.74,0.40,34.70,Pix,Fernanda Teixeira
+A00131,2024-04-05,Boa Viagem,PE,Nordeste,Karina Melo,Barba,48.83,0.45,21.98,Dinheiro,Gustavo Siqueira
+A00132,2024-04-05,Asa Sul,DF,Centro-Oeste,Paulo Krause,Hidratação,126.47,0.35,44.27,Crédito,Mariana Siqueira
+A00133,2024-04-06,Savassi,MG,Sudeste,Elisa Rocha,Manicure,75.10,0.50,37.55,Débito,Gustavo Ramos
+A00134,2024-04-06,Savassi,MG,Sudeste,Elisa Rocha,Coloração,262.86,0.35,92.00,Crédito,Camila Jardim
+A00135,2024-04-07,Savassi,MG,Sudeste,Elisa Rocha,Barba,44.33,0.45,19.95,Crédito,Mariana Loureiro
+A00136,2024-04-07,Moinhos de Vento,RS,Sul,Henrique Alves,Barba,65.69,0.45,29.56,Débito,Juliana Peixoto
+A00137,2024-04-08,Umarizal,PA,Norte,Sérgio Maia,Corte,86.08,0.40,34.43,Crédito,Sofia Teixeira
+A00138,2024-04-09,Copacabana,RJ,Sudeste,Diego Moura,Hidratação,141.41,0.35,49.49,Crédito,Kelly Esteves
+A00139,2024-04-09,Boa Viagem,PE,Nordeste,Lucas Bandeira,Coloração,259.93,0.35,90.98,Crédito,Rafael Ibrahim
+A00140,2024-04-10,Copacabana,RJ,Sudeste,Diego Moura,Corte,128.64,0.40,51.45,Dinheiro,Fernanda Duarte
+A00141,2024-04-10,Moinhos de Vento,RS,Sul,Gabriela Lima,Coloração,236.18,0.35,82.66,Pix,Eduardo Siqueira
+A00142,2024-04-10,Asa Sul,DF,Centro-Oeste,Olívia Serra,Manicure,47.53,0.50,23.76,Pix,Beatriz Siqueira
+A00143,2024-04-12,Moinhos de Vento,RS,Sul,Henrique Alves,Corte,87.17,0.40,34.87,Pix,Beatriz Teixeira
+A00144,2024-04-12,Batel,PR,Sul,João Vitor Reis,Corte,73.78,0.40,29.51,Pix,Igor Klein
+A00145,2024-04-13,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,85.37,0.40,34.15,Crédito,Camila Ibrahim
+A00146,2024-04-14,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,72.49,0.40,29.00,Crédito,Daniel Gomes
+A00147,2024-04-14,Asa Sul,DF,Centro-Oeste,Paulo Krause,Corte,129.63,0.40,51.85,Crédito,Leandro Barbosa
+A00148,2024-04-16,Meireles,CE,Nordeste,Marina Fontes,Escova,90.63,0.40,36.25,Débito,Gustavo Farias
+A00149,2024-04-16,Asa Sul,DF,Centro-Oeste,Olívia Serra,Barba,69.50,0.45,31.27,Débito,Mariana Barbosa
+A00150,2024-04-17,Vila Madalena,SP,Sudeste,Ana Prado,Coloração,330.83,0.35,115.79,Pix,Juliana Nogueira
+A00151,2024-04-18,Copacabana,RJ,Sudeste,Diego Moura,Hidratação,150.42,0.35,52.65,Pix,Kelly Machado
+A00152,2024-04-19,Batel,PR,Sul,Isabel Cardoso,Barba,41.61,0.45,18.72,Crédito,Patrícia Peixoto
+A00153,2024-04-21,Vila Madalena,SP,Sudeste,Ana Prado,Corte,103.26,0.40,41.30,Pix,Patrícia Teixeira
+A00154,2024-04-21,Meireles,CE,Nordeste,Marina Fontes,Manicure,49.78,0.50,24.89,Crédito,Alice Jardim
+A00155,2024-04-22,Batel,PR,Sul,Isabel Cardoso,Barba,74.55,0.45,33.55,Crédito,Otávio Horta
+A00156,2024-04-23,Vila Madalena,SP,Sudeste,Ana Prado,Hidratação,122.03,0.35,42.71,Dinheiro,Fernanda Peixoto
+A00157,2024-04-23,Vila Madalena,SP,Sudeste,Ana Prado,Escova,96.49,0.40,38.60,Crédito,Leandro Peixoto
+A00158,2024-04-23,Copacabana,RJ,Sudeste,Carla Menezes,Hidratação,135.13,0.35,47.30,Pix,Beatriz Ramos
+A00159,2024-04-23,Boa Viagem,PE,Nordeste,Karina Melo,Escova,65.56,0.40,26.22,Pix,Rafael Klein
+A00160,2024-04-25,Umarizal,PA,Norte,Sérgio Maia,Coloração,318.49,0.35,111.47,Pix,Alice Teixeira
+A00161,2024-04-25,Umarizal,PA,Norte,Renata Pinho,Manicure,71.55,0.50,35.77,Crédito,Helena Gomes
+A00162,2024-04-28,Boa Viagem,PE,Nordeste,Lucas Bandeira,Escova,81.66,0.40,32.66,Pix,Igor Ramos
+A00163,2024-04-29,Meireles,CE,Nordeste,Nelson Braga,Manicure,59.13,0.50,29.57,Crédito,Daniel Klein
+A00164,2024-04-29,Meireles,CE,Nordeste,Marina Fontes,Escova,79.44,0.40,31.78,Pix,Rafael Klein
+A00165,2024-04-30,Savassi,MG,Sudeste,Fábio Nunes,Escova,103.90,0.40,41.56,Crédito,Daniel Duarte
+A00166,2024-05-01,Batel,PR,Sul,Isabel Cardoso,Coloração,257.89,0.35,90.26,Dinheiro,Patrícia Farias
+A00167,2024-05-02,Copacabana,RJ,Sudeste,Diego Moura,Barba,67.22,0.45,30.25,Crédito,Beatriz Jardim
+A00168,2024-05-03,Meireles,CE,Nordeste,Nelson Braga,Corte,107.26,0.40,42.90,Pix,Gustavo Almeida
+A00169,2024-05-04,Boa Viagem,PE,Nordeste,Karina Melo,Manicure,60.28,0.50,30.14,Crédito,Kelly Machado
+A00170,2024-05-05,Vila Madalena,SP,Sudeste,Bruno Tavares,Manicure,59.71,0.50,29.85,Dinheiro,Gustavo Horta
+A00171,2024-05-06,Copacabana,RJ,Sudeste,Diego Moura,Coloração,276.40,0.35,96.74,Pix,Helena Esteves
+A00172,2024-05-06,Batel,PR,Sul,Isabel Cardoso,Coloração,303.21,0.35,106.12,Pix,Eduardo Peixoto
+A00173,2024-05-07,Meireles,CE,Nordeste,Nelson Braga,Manicure,51.95,0.50,25.98,Débito,Camila Machado
+A00174,2024-05-07,Meireles,CE,Nordeste,Marina Fontes,Hidratação,206.63,0.35,72.32,Crédito,Natália Nogueira
+A00175,2024-05-08,Batel,PR,Sul,Isabel Cardoso,Hidratação,187.77,0.35,65.72,Débito,Patrícia Nogueira
+A00176,2024-05-09,Savassi,MG,Sudeste,Fábio Nunes,Manicure,80.02,0.50,40.01,Crédito,Fernanda Nogueira
+A00177,2024-05-10,Moinhos de Vento,RS,Sul,Henrique Alves,Escova,62.04,0.40,24.82,Pix,Alice Loureiro
+A00178,2024-05-12,Moinhos de Vento,RS,Sul,Gabriela Lima,Hidratação,136.82,0.35,47.89,Pix,Patrícia Ibrahim
+A00179,2024-05-12,Asa Sul,DF,Centro-Oeste,Paulo Krause,Manicure,60.05,0.50,30.02,Dinheiro,Alice Oliveira
+A00180,2024-05-13,Copacabana,RJ,Sudeste,Carla Menezes,Coloração,204.00,0.35,71.40,Débito,Juliana Peixoto
+A00181,2024-05-13,Savassi,MG,Sudeste,Elisa Rocha,Corte,79.42,0.40,31.77,Pix,Beatriz Siqueira
+A00182,2024-05-14,Copacabana,RJ,Sudeste,Carla Menezes,Barba,43.63,0.45,19.64,Crédito,Vanessa Loureiro
+A00183,2024-05-14,Moinhos de Vento,RS,Sul,Gabriela Lima,Corte,109.59,0.40,43.83,Débito,Rafael Ramos
+A00184,2024-05-14,Umarizal,PA,Norte,Renata Pinho,Manicure,49.10,0.50,24.55,Pix,Thiago Klein
+A00185,2024-05-15,Moinhos de Vento,RS,Sul,Gabriela Lima,Escova,91.03,0.40,36.41,Crédito,Alice Peixoto
+A00186,2024-05-16,Vila Madalena,SP,Sudeste,Ana Prado,Manicure,82.63,0.50,41.31,Crédito,Natália Siqueira
+A00187,2024-05-16,Savassi,MG,Sudeste,Elisa Rocha,Coloração,206.73,0.35,72.35,Pix,Juliana Almeida
+A00188,2024-05-16,Asa Sul,DF,Centro-Oeste,Paulo Krause,Hidratação,122.52,0.35,42.88,Crédito,Beatriz Horta
+A00189,2024-05-17,Vila Madalena,SP,Sudeste,Ana Prado,Hidratação,127.43,0.35,44.60,Crédito,Daniel Barbosa
+A00190,2024-05-17,Batel,PR,Sul,João Vitor Reis,Corte,95.46,0.40,38.18,Débito,Otávio Nogueira
+A00191,2024-05-18,Copacabana,RJ,Sudeste,Carla Menezes,Barba,61.73,0.45,27.78,Pix,Patrícia Oliveira
+A00192,2024-05-18,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,70.34,0.40,28.14,Crédito,Eduardo Ibrahim
+A00193,2024-05-19,Savassi,MG,Sudeste,Fábio Nunes,Manicure,65.27,0.50,32.64,Crédito,Thiago Nogueira
+A00194,2024-05-19,Meireles,CE,Nordeste,Nelson Braga,Barba,58.57,0.45,26.36,Crédito,Mariana Ibrahim
+A00195,2024-05-19,Umarizal,PA,Norte,Renata Pinho,Corte,108.72,0.40,43.49,Pix,Otávio Peixoto
+A00196,2024-05-20,Batel,PR,Sul,João Vitor Reis,Manicure,57.11,0.50,28.55,Pix,Beatriz Barbosa
+A00197,2024-05-21,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,95.37,0.40,38.15,Crédito,Helena Ramos
+A00198,2024-05-21,Boa Viagem,PE,Nordeste,Karina Melo,Escova,85.91,0.40,34.36,Crédito,Otávio Cavalcanti
+A00199,2024-05-22,Vila Madalena,SP,Sudeste,Ana Prado,Manicure,56.35,0.50,28.18,Pix,Alice Klein
+A00200,2024-05-22,Asa Sul,DF,Centro-Oeste,Olívia Serra,Coloração,264.73,0.35,92.66,Pix,Sofia Peixoto
+A00201,2024-05-22,Umarizal,PA,Norte,Sérgio Maia,Escova,65.54,0.40,26.22,Crédito,Alice Jardim
+A00202,2024-05-23,Vila Madalena,SP,Sudeste,Bruno Tavares,Manicure,55.93,0.50,27.97,Pix,Natália Queiroz
+A00203,2024-05-24,Moinhos de Vento,RS,Sul,Gabriela Lima,Escova,93.14,0.40,37.26,Crédito,Thiago Siqueira
+A00204,2024-05-26,Vila Madalena,SP,Sudeste,Bruno Tavares,Barba,74.49,0.45,33.52,Crédito,Vanessa Teixeira
+A00205,2024-05-26,Savassi,MG,Sudeste,Elisa Rocha,Hidratação,179.52,0.35,62.83,Crédito,Thiago Almeida
+A00206,2024-05-26,Moinhos de Vento,RS,Sul,Henrique Alves,Coloração,235.70,0.35,82.50,Pix,Alice Farias
+A00207,2024-05-27,Copacabana,RJ,Sudeste,Diego Moura,Manicure,54.54,0.50,27.27,Pix,Igor Ramos
+A00208,2024-05-28,Boa Viagem,PE,Nordeste,Karina Melo,Escova,105.55,0.40,42.22,Pix,Leandro Loureiro
+A00209,2024-05-29,Boa Viagem,PE,Nordeste,Karina Melo,Barba,54.11,0.45,24.35,Crédito,Sofia Nogueira
+A00210,2024-05-29,Asa Sul,DF,Centro-Oeste,Olívia Serra,Coloração,284.35,0.35,99.52,Pix,Vanessa Cavalcanti
+A00211,2024-05-30,Vila Madalena,SP,Sudeste,Bruno Tavares,Coloração,218.24,0.35,76.38,Crédito,Natália Queiroz
+A00212,2024-05-31,Copacabana,RJ,Sudeste,Carla Menezes,Corte,83.06,0.40,33.22,Crédito,Vanessa Horta
+A00213,2024-05-31,Asa Sul,DF,Centro-Oeste,Paulo Krause,Hidratação,213.36,0.35,74.68,Dinheiro,Leandro Horta
+A00214,2024-05-31,Umarizal,PA,Norte,Sérgio Maia,Coloração,323.15,0.35,113.10,Crédito,Juliana Siqueira
+A00215,2024-06-01,Savassi,MG,Sudeste,Fábio Nunes,Escova,103.67,0.40,41.47,Pix,Kelly Cavalcanti
+A00216,2024-06-03,Moinhos de Vento,RS,Sul,Henrique Alves,Corte,91.51,0.40,36.60,Crédito,Gustavo Ibrahim
+A00217,2024-06-03,Asa Sul,DF,Centro-Oeste,Olívia Serra,Manicure,45.49,0.50,22.74,Pix,Camila Peixoto
+A00218,2024-06-04,Vila Madalena,SP,Sudeste,Bruno Tavares,Manicure,74.56,0.50,37.28,Pix,Mariana Oliveira
+A00219,2024-06-04,Boa Viagem,PE,Nordeste,Karina Melo,Corte,129.59,0.40,51.84,Crédito,Helena Farias
+A00220,2024-06-04,Meireles,CE,Nordeste,Marina Fontes,Manicure,58.97,0.50,29.49,Débito,Natália Nogueira
+A00221,2024-06-05,Savassi,MG,Sudeste,Fábio Nunes,Coloração,263.76,0.35,92.32,Pix,Otávio Teixeira
+A00222,2024-06-05,Batel,PR,Sul,Isabel Cardoso,Corte,96.94,0.40,38.78,Pix,Camila Queiroz
+A00223,2024-06-05,Umarizal,PA,Norte,Sérgio Maia,Coloração,312.56,0.35,109.40,Débito,Otávio Loureiro
+A00224,2024-06-06,Savassi,MG,Sudeste,Fábio Nunes,Barba,73.56,0.45,33.10,Crédito,Otávio Siqueira
+A00225,2024-06-06,Umarizal,PA,Norte,Sérgio Maia,Corte,110.36,0.40,44.14,Pix,Camila Barbosa
+A00226,2024-06-07,Meireles,CE,Nordeste,Marina Fontes,Coloração,265.87,0.35,93.06,Pix,Vanessa Almeida
+A00227,2024-06-07,Meireles,CE,Nordeste,Nelson Braga,Manicure,71.80,0.50,35.90,Débito,Leandro Barbosa
+A00228,2024-06-08,Copacabana,RJ,Sudeste,Diego Moura,Barba,51.50,0.45,23.17,Crédito,Eduardo Peixoto
+A00229,2024-06-09,Copacabana,RJ,Sudeste,Carla Menezes,Manicure,60.07,0.50,30.03,Dinheiro,Camila Nogueira
+A00230,2024-06-09,Meireles,CE,Nordeste,Nelson Braga,Manicure,66.37,0.50,33.19,Crédito,Mariana Loureiro
+A00231,2024-06-09,Asa Sul,DF,Centro-Oeste,Paulo Krause,Hidratação,128.12,0.35,44.84,Dinheiro,Sofia Teixeira
+A00232,2024-06-10,Vila Madalena,SP,Sudeste,Bruno Tavares,Corte,101.63,0.40,40.65,Crédito,Patrícia Duarte
+A00233,2024-06-10,Moinhos de Vento,RS,Sul,Henrique Alves,Corte,120.54,0.40,48.22,Crédito,Otávio Barbosa
+A00234,2024-06-10,Batel,PR,Sul,Isabel Cardoso,Corte,121.79,0.40,48.72,Crédito,Gustavo Almeida
+A00235,2024-06-12,Vila Madalena,SP,Sudeste,Ana Prado,Corte,122.76,0.40,49.10,Pix,Daniel Esteves
+A00236,2024-06-13,Copacabana,RJ,Sudeste,Carla Menezes,Manicure,83.21,0.50,41.60,Débito,Beatriz Esteves
+A00237,2024-06-14,Vila Madalena,SP,Sudeste,Bruno Tavares,Hidratação,148.96,0.35,52.14,Crédito,Igor Teixeira
+A00238,2024-06-14,Meireles,CE,Nordeste,Nelson Braga,Corte,125.51,0.40,50.20,Crédito,Kelly Queiroz
+A00239,2024-06-15,Vila Madalena,SP,Sudeste,Bruno Tavares,Corte,124.69,0.40,49.88,Pix,Eduardo Barbosa
+A00240,2024-06-15,Copacabana,RJ,Sudeste,Carla Menezes,Corte,74.87,0.40,29.95,Pix,Rafael Farias
+A00241,2024-06-16,Savassi,MG,Sudeste,Elisa Rocha,Coloração,294.67,0.35,103.14,Dinheiro,Fernanda Peixoto
+A00242,2024-06-17,Batel,PR,Sul,Isabel Cardoso,Manicure,57.08,0.50,28.54,Crédito,Rafael Cavalcanti
+A00243,2024-06-18,Moinhos de Vento,RS,Sul,Henrique Alves,Manicure,48.11,0.50,24.06,Pix,Otávio Jardim
+A00244,2024-06-18,Asa Sul,DF,Centro-Oeste,Olívia Serra,Coloração,307.28,0.35,107.55,Débito,Rafael Peixoto
+A00245,2024-06-18,Umarizal,PA,Norte,Renata Pinho,Manicure,75.21,0.50,37.60,Pix,Kelly Jardim
+A00246,2024-06-19,Vila Madalena,SP,Sudeste,Ana Prado,Hidratação,158.64,0.35,55.52,Pix,Alice Barbosa
+A00247,2024-06-19,Moinhos de Vento,RS,Sul,Gabriela Lima,Corte,80.65,0.40,32.26,Crédito,Igor Barbosa
+A00248,2024-06-21,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,84.13,0.40,33.65,Pix,Juliana Oliveira
+A00249,2024-06-23,Boa Viagem,PE,Nordeste,Lucas Bandeira,Escova,67.54,0.40,27.02,Crédito,Juliana Esteves
+A00250,2024-06-24,Vila Madalena,SP,Sudeste,Bruno Tavares,Corte,129.05,0.40,51.62,Débito,Juliana Ibrahim
+A00251,2024-06-25,Asa Sul,DF,Centro-Oeste,Paulo Krause,Escova,64.45,0.40,25.78,Crédito,Beatriz Klein
+A00252,2024-06-26,Savassi,MG,Sudeste,Fábio Nunes,Corte,90.77,0.40,36.31,Crédito,Mariana Siqueira
+A00253,2024-06-26,Batel,PR,Sul,João Vitor Reis,Manicure,77.45,0.50,38.72,Crédito,Vanessa Loureiro
+A00254,2024-06-27,Moinhos de Vento,RS,Sul,Gabriela Lima,Corte,80.65,0.40,32.26,Dinheiro,Natália Cavalcanti
+A00255,2024-06-28,Boa Viagem,PE,Nordeste,Lucas Bandeira,Corte,94.58,0.40,37.83,Dinheiro,Daniel Almeida
+A00256,2024-06-29,Copacabana,RJ,Sudeste,Diego Moura,Corte,88.06,0.40,35.22,Pix,Otávio Siqueira
+A00257,2024-06-29,Boa Viagem,PE,Nordeste,Lucas Bandeira,Barba,61.87,0.45,27.84,Crédito,Rafael Horta
+A00258,2024-06-30,Batel,PR,Sul,Isabel Cardoso,Barba,53.29,0.45,23.98,Pix,Eduardo Oliveira
+A00259,2024-06-30,Asa Sul,DF,Centro-Oeste,Paulo Krause,Barba,56.75,0.45,25.54,Dinheiro,Alice Esteves
+A00260,2024-07-01,Asa Sul,DF,Centro-Oeste,Paulo Krause,Hidratação,149.99,0.35,52.50,Crédito,Natália Loureiro
+A00261,2024-07-02,Copacabana,RJ,Sudeste,Carla Menezes,Coloração,241.84,0.35,84.65,Crédito,Daniel Duarte
+A00262,2024-07-03,Vila Madalena,SP,Sudeste,Bruno Tavares,Hidratação,129.00,0.35,45.15,Crédito,Gustavo Ramos
+A00263,2024-07-03,Vila Madalena,SP,Sudeste,Ana Prado,Coloração,234.60,0.35,82.11,Débito,Otávio Oliveira
+A00264,2024-07-07,Copacabana,RJ,Sudeste,Diego Moura,Escova,85.01,0.40,34.00,Dinheiro,Daniel Jardim
+A00265,2024-07-07,Boa Viagem,PE,Nordeste,Lucas Bandeira,Manicure,60.94,0.50,30.47,Pix,Fernanda Almeida
+A00266,2024-07-07,Meireles,CE,Nordeste,Marina Fontes,Escova,72.56,0.40,29.02,Pix,Alice Siqueira
+A00267,2024-07-08,Vila Madalena,SP,Sudeste,Ana Prado,Corte,76.20,0.40,30.48,Crédito,Rafael Siqueira
+A00268,2024-07-08,Batel,PR,Sul,João Vitor Reis,Escova,69.41,0.40,27.76,Crédito,Patrícia Ibrahim
+A00269,2024-07-09,Savassi,MG,Sudeste,Fábio Nunes,Barba,62.93,0.45,28.32,Crédito,Vanessa Peixoto
+A00270,2024-07-10,Boa Viagem,PE,Nordeste,Karina Melo,Escova,90.19,0.40,36.08,Pix,Juliana Jardim
+A00271,2024-07-11,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,63.83,0.40,25.53,Débito,Eduardo Jardim
+A00272,2024-07-11,Umarizal,PA,Norte,Sérgio Maia,Escova,92.75,0.40,37.10,Crédito,Thiago Peixoto
+A00273,2024-07-12,Copacabana,RJ,Sudeste,Diego Moura,Barba,73.00,0.45,32.85,Crédito,Kelly Barbosa
+A00274,2024-07-13,Umarizal,PA,Norte,Renata Pinho,Barba,60.51,0.45,27.23,Pix,Leandro Teixeira
+A00275,2024-07-14,Savassi,MG,Sudeste,Elisa Rocha,Corte,103.82,0.40,41.53,Crédito,Helena Barbosa
+A00276,2024-07-15,Moinhos de Vento,RS,Sul,Henrique Alves,Barba,59.93,0.45,26.97,Débito,Gustavo Jardim
+A00277,2024-07-16,Savassi,MG,Sudeste,Fábio Nunes,Escova,83.38,0.40,33.35,Crédito,Natália Horta
+A00278,2024-07-16,Boa Viagem,PE,Nordeste,Lucas Bandeira,Escova,69.25,0.40,27.70,Débito,Helena Loureiro
+A00279,2024-07-17,Vila Madalena,SP,Sudeste,Bruno Tavares,Corte,85.24,0.40,34.10,Débito,Juliana Barbosa
+A00280,2024-07-18,Copacabana,RJ,Sudeste,Diego Moura,Manicure,58.80,0.50,29.40,Crédito,Helena Horta
+A00281,2024-07-18,Savassi,MG,Sudeste,Fábio Nunes,Manicure,64.88,0.50,32.44,Crédito,Mariana Queiroz
+A00282,2024-07-18,Moinhos de Vento,RS,Sul,Gabriela Lima,Hidratação,218.96,0.35,76.64,Débito,Patrícia Ibrahim
+A00283,2024-07-19,Vila Madalena,SP,Sudeste,Bruno Tavares,Barba,65.81,0.45,29.62,Pix,Helena Nogueira
+A00284,2024-07-19,Batel,PR,Sul,Isabel Cardoso,Manicure,68.05,0.50,34.02,Pix,Fernanda Oliveira
+A00285,2024-07-20,Meireles,CE,Nordeste,Nelson Braga,Coloração,279.11,0.35,97.69,Dinheiro,Rafael Nogueira
+A00286,2024-07-21,Moinhos de Vento,RS,Sul,Henrique Alves,Corte,111.60,0.40,44.64,Pix,Camila Teixeira
+A00287,2024-07-21,Batel,PR,Sul,Isabel Cardoso,Escova,89.56,0.40,35.83,Débito,Helena Esteves
+A00288,2024-07-22,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,83.83,0.40,33.53,Débito,Helena Duarte
+A00289,2024-07-22,Savassi,MG,Sudeste,Elisa Rocha,Corte,94.07,0.40,37.63,Pix,Igor Siqueira
+A00290,2024-07-22,Savassi,MG,Sudeste,Fábio Nunes,Corte,70.46,0.40,28.18,Crédito,Alice Jardim
+A00291,2024-07-22,Asa Sul,DF,Centro-Oeste,Paulo Krause,Coloração,204.97,0.35,71.74,Dinheiro,Vanessa Ibrahim
+A00292,2024-07-22,Asa Sul,DF,Centro-Oeste,Paulo Krause,Manicure,65.62,0.50,32.81,Crédito,Beatriz Ramos
+A00293,2024-07-23,Umarizal,PA,Norte,Sérgio Maia,Coloração,285.39,0.35,99.89,Débito,Daniel Loureiro
+A00294,2024-07-25,Asa Sul,DF,Centro-Oeste,Paulo Krause,Manicure,75.34,0.50,37.67,Crédito,Helena Oliveira
+A00295,2024-07-26,Copacabana,RJ,Sudeste,Diego Moura,Corte,74.72,0.40,29.89,Crédito,Alice Horta
+A00296,2024-07-26,Moinhos de Vento,RS,Sul,Henrique Alves,Corte,73.60,0.40,29.44,Pix,Otávio Ibrahim
+A00297,2024-07-26,Meireles,CE,Nordeste,Nelson Braga,Coloração,277.91,0.35,97.27,Débito,Igor Duarte
+A00298,2024-07-27,Copacabana,RJ,Sudeste,Carla Menezes,Coloração,322.87,0.35,113.00,Pix,Thiago Nogueira
+A00299,2024-07-27,Batel,PR,Sul,Isabel Cardoso,Escova,73.56,0.40,29.43,Pix,Igor Almeida
+A00300,2024-07-28,Copacabana,RJ,Sudeste,Diego Moura,Corte,87.71,0.40,35.08,Pix,Thiago Cavalcanti
+A00301,2024-07-28,Batel,PR,Sul,João Vitor Reis,Escova,69.25,0.40,27.70,Pix,Igor Jardim
+A00302,2024-07-29,Umarizal,PA,Norte,Sérgio Maia,Coloração,336.10,0.35,117.64,Pix,Mariana Siqueira
+A00303,2024-07-30,Meireles,CE,Nordeste,Nelson Braga,Corte,96.90,0.40,38.76,Débito,Rafael Nogueira
+A00304,2024-07-30,Asa Sul,DF,Centro-Oeste,Paulo Krause,Escova,107.73,0.40,43.09,Débito,Kelly Loureiro
+A00305,2024-07-31,Boa Viagem,PE,Nordeste,Lucas Bandeira,Barba,71.49,0.45,32.17,Pix,Juliana Jardim
+A00306,2024-08-01,Vila Madalena,SP,Sudeste,Ana Prado,Corte,83.75,0.40,33.50,Débito,Beatriz Teixeira
+A00307,2024-08-03,Copacabana,RJ,Sudeste,Diego Moura,Coloração,275.67,0.35,96.48,Débito,Natália Siqueira
+A00308,2024-08-03,Asa Sul,DF,Centro-Oeste,Paulo Krause,Coloração,281.87,0.35,98.65,Pix,Igor Barbosa
+A00309,2024-08-04,Umarizal,PA,Norte,Sérgio Maia,Coloração,331.40,0.35,115.99,Crédito,Kelly Gomes
+A00310,2024-08-05,Vila Madalena,SP,Sudeste,Bruno Tavares,Coloração,325.32,0.35,113.86,Crédito,Vanessa Ramos
+A00311,2024-08-06,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,108.04,0.40,43.22,Pix,Natália Loureiro
+A00312,2024-08-06,Copacabana,RJ,Sudeste,Diego Moura,Corte,84.30,0.40,33.72,Pix,Sofia Cavalcanti
+A00313,2024-08-06,Copacabana,RJ,Sudeste,Carla Menezes,Escova,98.84,0.40,39.54,Pix,Kelly Horta
+A00314,2024-08-09,Savassi,MG,Sudeste,Elisa Rocha,Manicure,66.58,0.50,33.29,Pix,Camila Klein
+A00315,2024-08-10,Batel,PR,Sul,Isabel Cardoso,Manicure,69.82,0.50,34.91,Dinheiro,Daniel Queiroz
+A00316,2024-08-10,Meireles,CE,Nordeste,Marina Fontes,Escova,105.34,0.40,42.14,Pix,Natália Ramos
+A00317,2024-08-11,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,83.72,0.40,33.49,Crédito,Thiago Klein
+A00318,2024-08-12,Batel,PR,Sul,Isabel Cardoso,Manicure,67.37,0.50,33.68,Crédito,Juliana Queiroz
+A00319,2024-08-12,Boa Viagem,PE,Nordeste,Lucas Bandeira,Escova,70.31,0.40,28.13,Pix,Patrícia Esteves
+A00320,2024-08-13,Savassi,MG,Sudeste,Elisa Rocha,Corte,129.64,0.40,51.86,Pix,Kelly Farias
+A00321,2024-08-13,Moinhos de Vento,RS,Sul,Gabriela Lima,Barba,64.65,0.45,29.09,Débito,Patrícia Queiroz
+A00322,2024-08-14,Moinhos de Vento,RS,Sul,Gabriela Lima,Hidratação,148.41,0.35,51.94,Crédito,Igor Almeida
+A00323,2024-08-15,Batel,PR,Sul,João Vitor Reis,Escova,99.79,0.40,39.91,Pix,Mariana Peixoto
+A00324,2024-08-17,Vila Madalena,SP,Sudeste,Ana Prado,Manicure,61.76,0.50,30.88,Pix,Fernanda Farias
+A00325,2024-08-17,Copacabana,RJ,Sudeste,Carla Menezes,Corte,80.75,0.40,32.30,Débito,Thiago Farias
+A00326,2024-08-17,Boa Viagem,PE,Nordeste,Karina Melo,Escova,89.74,0.40,35.89,Dinheiro,Thiago Jardim
+A00327,2024-08-17,Meireles,CE,Nordeste,Nelson Braga,Corte,124.90,0.40,49.96,Pix,Sofia Teixeira
+A00328,2024-08-19,Savassi,MG,Sudeste,Elisa Rocha,Hidratação,151.71,0.35,53.10,Pix,Kelly Oliveira
+A00329,2024-08-20,Copacabana,RJ,Sudeste,Diego Moura,Barba,69.42,0.45,31.24,Pix,Helena Queiroz
+A00330,2024-08-21,Savassi,MG,Sudeste,Fábio Nunes,Corte,89.16,0.40,35.66,Débito,Camila Queiroz
+A00331,2024-08-22,Boa Viagem,PE,Nordeste,Lucas Bandeira,Escova,79.54,0.40,31.82,Pix,Alice Ibrahim
+A00332,2024-08-23,Vila Madalena,SP,Sudeste,Ana Prado,Escova,101.76,0.40,40.70,Dinheiro,Thiago Klein
+A00333,2024-08-23,Vila Madalena,SP,Sudeste,Ana Prado,Escova,106.72,0.40,42.69,Pix,Eduardo Oliveira
+A00334,2024-08-24,Savassi,MG,Sudeste,Elisa Rocha,Escova,78.44,0.40,31.38,Débito,Beatriz Ramos
+A00335,2024-08-24,Moinhos de Vento,RS,Sul,Henrique Alves,Manicure,51.82,0.50,25.91,Crédito,Natália Cavalcanti
+A00336,2024-08-24,Moinhos de Vento,RS,Sul,Gabriela Lima,Escova,62.17,0.40,24.87,Crédito,Sofia Queiroz
+A00337,2024-08-25,Batel,PR,Sul,Isabel Cardoso,Barba,40.79,0.45,18.35,Débito,Beatriz Almeida
+A00338,2024-08-25,Asa Sul,DF,Centro-Oeste,Olívia Serra,Hidratação,179.69,0.35,62.89,Pix,Leandro Almeida
+A00339,2024-08-25,Umarizal,PA,Norte,Sérgio Maia,Corte,100.75,0.40,40.30,Crédito,Rafael Gomes
+A00340,2024-08-26,Vila Madalena,SP,Sudeste,Bruno Tavares,Coloração,299.24,0.35,104.73,Pix,Rafael Gomes
+A00341,2024-08-26,Meireles,CE,Nordeste,Nelson Braga,Escova,98.42,0.40,39.37,Crédito,Gustavo Ramos
+A00342,2024-08-27,Meireles,CE,Nordeste,Marina Fontes,Escova,90.57,0.40,36.23,Crédito,Helena Peixoto
+A00343,2024-08-27,Asa Sul,DF,Centro-Oeste,Olívia Serra,Escova,96.10,0.40,38.44,Crédito,Gustavo Duarte
+A00344,2024-08-29,Copacabana,RJ,Sudeste,Carla Menezes,Coloração,252.18,0.35,88.26,Dinheiro,Leandro Horta
+A00345,2024-08-29,Umarizal,PA,Norte,Renata Pinho,Coloração,192.22,0.35,67.28,Débito,Fernanda Machado
+A00346,2024-08-30,Savassi,MG,Sudeste,Elisa Rocha,Corte,97.84,0.40,39.14,Pix,Rafael Cavalcanti
+A00347,2024-08-30,Boa Viagem,PE,Nordeste,Lucas Bandeira,Manicure,46.54,0.50,23.27,Crédito,Vanessa Barbosa
+A00348,2024-08-30,Asa Sul,DF,Centro-Oeste,Paulo Krause,Corte,120.45,0.40,48.18,Dinheiro,Daniel Duarte
+A00349,2024-08-30,Umarizal,PA,Norte,Renata Pinho,Corte,125.95,0.40,50.38,Pix,Daniel Teixeira
+A00350,2024-09-01,Vila Madalena,SP,Sudeste,Ana Prado,Coloração,206.25,0.35,72.19,Débito,Sofia Oliveira
+A00351,2024-09-01,Copacabana,RJ,Sudeste,Diego Moura,Corte,93.79,0.40,37.52,Pix,Alice Loureiro
+A00352,2024-09-01,Umarizal,PA,Norte,Sérgio Maia,Manicure,82.83,0.50,41.41,Débito,Patrícia Nogueira
+A00353,2024-09-02,Savassi,MG,Sudeste,Fábio Nunes,Manicure,46.74,0.50,23.37,Dinheiro,Otávio Horta
+A00354,2024-09-03,Meireles,CE,Nordeste,Marina Fontes,Barba,41.48,0.45,18.66,Crédito,Juliana Nogueira
+A00355,2024-09-04,Vila Madalena,SP,Sudeste,Ana Prado,Escova,101.80,0.40,40.72,Crédito,Fernanda Horta
+A00356,2024-09-04,Moinhos de Vento,RS,Sul,Henrique Alves,Hidratação,130.38,0.35,45.63,Pix,Daniel Queiroz
+A00357,2024-09-04,Moinhos de Vento,RS,Sul,Gabriela Lima,Escova,76.87,0.40,30.75,Débito,Mariana Duarte
+A00358,2024-09-05,Savassi,MG,Sudeste,Elisa Rocha,Manicure,82.24,0.50,41.12,Dinheiro,Beatriz Loureiro
+A00359,2024-09-05,Savassi,MG,Sudeste,Fábio Nunes,Barba,57.95,0.45,26.08,Débito,Beatriz Teixeira
+A00360,2024-09-05,Batel,PR,Sul,Isabel Cardoso,Corte,114.83,0.40,45.93,Pix,Kelly Peixoto
+A00361,2024-09-05,Boa Viagem,PE,Nordeste,Karina Melo,Barba,61.86,0.45,27.83,Débito,Vanessa Queiroz
+A00362,2024-09-06,Copacabana,RJ,Sudeste,Carla Menezes,Manicure,75.08,0.50,37.54,Pix,Fernanda Siqueira
+A00363,2024-09-06,Boa Viagem,PE,Nordeste,Karina Melo,Coloração,304.67,0.35,106.64,Crédito,Camila Teixeira
+A00364,2024-09-07,Savassi,MG,Sudeste,Fábio Nunes,Escova,63.15,0.40,25.26,Pix,Thiago Almeida
+A00365,2024-09-08,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,113.47,0.40,45.39,Crédito,Helena Ramos
+A00366,2024-09-10,Vila Madalena,SP,Sudeste,Ana Prado,Coloração,327.41,0.35,114.59,Pix,Camila Machado
+A00367,2024-09-10,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,126.40,0.40,50.56,Débito,Thiago Machado
+A00368,2024-09-10,Umarizal,PA,Norte,Renata Pinho,Manicure,47.14,0.50,23.57,Débito,Gustavo Machado
+A00369,2024-09-11,Vila Madalena,SP,Sudeste,Ana Prado,Escova,100.71,0.40,40.28,Pix,Otávio Oliveira
+A00370,2024-09-11,Copacabana,RJ,Sudeste,Diego Moura,Corte,116.62,0.40,46.65,Crédito,Otávio Duarte
+A00371,2024-09-12,Copacabana,RJ,Sudeste,Carla Menezes,Corte,90.26,0.40,36.10,Crédito,Alice Klein
+A00372,2024-09-12,Meireles,CE,Nordeste,Nelson Braga,Hidratação,125.48,0.35,43.92,Crédito,Fernanda Teixeira
+A00373,2024-09-13,Batel,PR,Sul,João Vitor Reis,Escova,81.74,0.40,32.70,Débito,Igor Loureiro
+A00374,2024-09-13,Meireles,CE,Nordeste,Nelson Braga,Manicure,77.66,0.50,38.83,Crédito,Vanessa Queiroz
+A00375,2024-09-13,Asa Sul,DF,Centro-Oeste,Olívia Serra,Coloração,245.01,0.35,85.75,Crédito,Rafael Gomes
+A00376,2024-09-14,Vila Madalena,SP,Sudeste,Bruno Tavares,Corte,103.10,0.40,41.24,Dinheiro,Leandro Oliveira
+A00377,2024-09-14,Vila Madalena,SP,Sudeste,Bruno Tavares,Barba,67.65,0.45,30.44,Crédito,Alice Gomes
+A00378,2024-09-14,Batel,PR,Sul,João Vitor Reis,Barba,52.73,0.45,23.73,Crédito,Vanessa Siqueira
+A00379,2024-09-16,Moinhos de Vento,RS,Sul,Henrique Alves,Barba,65.94,0.45,29.67,Débito,Beatriz Esteves
+A00380,2024-09-17,Meireles,CE,Nordeste,Nelson Braga,Coloração,199.53,0.35,69.84,Pix,Juliana Siqueira
+A00381,2024-09-18,Vila Madalena,SP,Sudeste,Ana Prado,Coloração,289.65,0.35,101.38,Débito,Sofia Peixoto
+A00382,2024-09-18,Copacabana,RJ,Sudeste,Diego Moura,Escova,109.23,0.40,43.69,Crédito,Rafael Gomes
+A00383,2024-09-18,Boa Viagem,PE,Nordeste,Karina Melo,Barba,65.25,0.45,29.36,Pix,Camila Loureiro
+A00384,2024-09-19,Moinhos de Vento,RS,Sul,Henrique Alves,Escova,97.31,0.40,38.92,Pix,Beatriz Barbosa
+A00385,2024-09-19,Asa Sul,DF,Centro-Oeste,Paulo Krause,Barba,58.64,0.45,26.39,Crédito,Patrícia Ibrahim
+A00386,2024-09-19,Umarizal,PA,Norte,Renata Pinho,Manicure,57.95,0.50,28.98,Crédito,Thiago Ramos
+A00387,2024-09-20,Vila Madalena,SP,Sudeste,Ana Prado,Manicure,48.46,0.50,24.23,Pix,Natália Queiroz
+A00388,2024-09-22,Copacabana,RJ,Sudeste,Carla Menezes,Manicure,59.80,0.50,29.90,Dinheiro,Juliana Cavalcanti
+A00389,2024-09-24,Boa Viagem,PE,Nordeste,Lucas Bandeira,Coloração,209.52,0.35,73.33,Crédito,Vanessa Siqueira
+A00390,2024-09-25,Savassi,MG,Sudeste,Elisa Rocha,Escova,62.44,0.40,24.98,Pix,Otávio Almeida
+A00391,2024-09-26,Moinhos de Vento,RS,Sul,Gabriela Lima,Corte,92.26,0.40,36.91,Pix,Camila Nogueira
+A00392,2024-09-27,Savassi,MG,Sudeste,Fábio Nunes,Corte,114.45,0.40,45.78,Débito,Patrícia Oliveira
+A00393,2024-09-29,Batel,PR,Sul,Isabel Cardoso,Corte,85.08,0.40,34.03,Pix,Daniel Klein
+A00394,2024-09-29,Boa Viagem,PE,Nordeste,Karina Melo,Corte,117.85,0.40,47.14,Pix,Daniel Loureiro
+A00395,2024-09-30,Copacabana,RJ,Sudeste,Carla Menezes,Corte,115.25,0.40,46.10,Crédito,Daniel Siqueira
+A00396,2024-09-30,Asa Sul,DF,Centro-Oeste,Paulo Krause,Manicure,51.15,0.50,25.58,Pix,Camila Barbosa
+A00397,2024-10-01,Vila Madalena,SP,Sudeste,Ana Prado,Corte,124.64,0.40,49.86,Débito,Daniel Ramos
+A00398,2024-10-01,Vila Madalena,SP,Sudeste,Ana Prado,Coloração,291.86,0.35,102.15,Débito,Thiago Gomes
+A00399,2024-10-01,Batel,PR,Sul,Isabel Cardoso,Escova,69.53,0.40,27.81,Pix,Alice Peixoto
+A00400,2024-10-02,Moinhos de Vento,RS,Sul,Henrique Alves,Barba,65.46,0.45,29.46,Pix,Kelly Cavalcanti
+A00401,2024-10-04,Moinhos de Vento,RS,Sul,Henrique Alves,Escova,94.66,0.40,37.86,Dinheiro,Igor Gomes
+A00402,2024-10-05,Meireles,CE,Nordeste,Marina Fontes,Escova,84.90,0.40,33.96,Pix,Mariana Nogueira
+A00403,2024-10-05,Meireles,CE,Nordeste,Marina Fontes,Corte,129.66,0.40,51.86,Pix,Juliana Klein
+A00404,2024-10-06,Vila Madalena,SP,Sudeste,Ana Prado,Hidratação,202.28,0.35,70.80,Pix,Sofia Klein
+A00405,2024-10-06,Batel,PR,Sul,João Vitor Reis,Manicure,52.14,0.50,26.07,Débito,Leandro Barbosa
+A00406,2024-10-06,Asa Sul,DF,Centro-Oeste,Paulo Krause,Barba,71.39,0.45,32.13,Pix,Helena Jardim
+A00407,2024-10-08,Moinhos de Vento,RS,Sul,Gabriela Lima,Hidratação,159.99,0.35,56.00,Dinheiro,Patrícia Peixoto
+A00408,2024-10-10,Vila Madalena,SP,Sudeste,Ana Prado,Corte,114.16,0.40,45.67,Crédito,Natália Almeida
+A00409,2024-10-10,Savassi,MG,Sudeste,Elisa Rocha,Coloração,283.80,0.35,99.33,Pix,Fernanda Duarte
+A00410,2024-10-12,Moinhos de Vento,RS,Sul,Henrique Alves,Coloração,274.28,0.35,96.00,Pix,Leandro Teixeira
+A00411,2024-10-12,Meireles,CE,Nordeste,Nelson Braga,Coloração,294.73,0.35,103.16,Pix,Otávio Cavalcanti
+A00412,2024-10-14,Moinhos de Vento,RS,Sul,Gabriela Lima,Corte,72.29,0.40,28.92,Pix,Mariana Loureiro
+A00413,2024-10-14,Batel,PR,Sul,Isabel Cardoso,Escova,67.30,0.40,26.92,Crédito,Alice Gomes
+A00414,2024-10-16,Boa Viagem,PE,Nordeste,Lucas Bandeira,Coloração,278.24,0.35,97.38,Pix,Natália Horta
+A00415,2024-10-16,Boa Viagem,PE,Nordeste,Lucas Bandeira,Corte,82.46,0.40,32.98,Pix,Camila Machado
+A00416,2024-10-17,Copacabana,RJ,Sudeste,Carla Menezes,Coloração,242.94,0.35,85.03,Crédito,Gustavo Oliveira
+A00417,2024-10-18,Vila Madalena,SP,Sudeste,Ana Prado,Coloração,207.92,0.35,72.77,Crédito,Gustavo Siqueira
+A00418,2024-10-18,Copacabana,RJ,Sudeste,Carla Menezes,Corte,73.69,0.40,29.48,Pix,Daniel Peixoto
+A00419,2024-10-18,Savassi,MG,Sudeste,Elisa Rocha,Corte,106.52,0.40,42.61,Dinheiro,Mariana Jardim
+A00420,2024-10-18,Batel,PR,Sul,João Vitor Reis,Hidratação,164.34,0.35,57.52,Pix,Eduardo Oliveira
+A00421,2024-10-18,Umarizal,PA,Norte,Sérgio Maia,Escova,64.64,0.40,25.85,Débito,Fernanda Peixoto
+A00422,2024-10-20,Copacabana,RJ,Sudeste,Carla Menezes,Escova,75.66,0.40,30.26,Crédito,Igor Peixoto
+A00423,2024-10-20,Asa Sul,DF,Centro-Oeste,Olívia Serra,Manicure,58.08,0.50,29.04,Pix,Helena Duarte
+A00424,2024-10-21,Asa Sul,DF,Centro-Oeste,Olívia Serra,Coloração,316.45,0.35,110.76,Pix,Juliana Loureiro
+A00425,2024-10-22,Boa Viagem,PE,Nordeste,Karina Melo,Escova,81.88,0.40,32.75,Crédito,Mariana Oliveira
+A00426,2024-10-22,Meireles,CE,Nordeste,Marina Fontes,Manicure,80.45,0.50,40.22,Débito,Camila Farias
+A00427,2024-10-23,Copacabana,RJ,Sudeste,Carla Menezes,Coloração,337.14,0.35,118.00,Crédito,Patrícia Duarte
+A00428,2024-10-25,Moinhos de Vento,RS,Sul,Henrique Alves,Corte,81.97,0.40,32.79,Dinheiro,Eduardo Machado
+A00429,2024-10-25,Boa Viagem,PE,Nordeste,Lucas Bandeira,Hidratação,205.00,0.35,71.75,Pix,Igor Jardim
+A00430,2024-10-25,Asa Sul,DF,Centro-Oeste,Paulo Krause,Manicure,48.51,0.50,24.26,Crédito,Alice Horta
+A00431,2024-10-25,Umarizal,PA,Norte,Renata Pinho,Corte,97.61,0.40,39.04,Débito,Gustavo Jardim
+A00432,2024-10-26,Savassi,MG,Sudeste,Fábio Nunes,Escova,61.33,0.40,24.53,Crédito,Camila Queiroz
+A00433,2024-10-26,Asa Sul,DF,Centro-Oeste,Paulo Krause,Hidratação,179.73,0.35,62.91,Dinheiro,Otávio Esteves
+A00434,2024-10-27,Savassi,MG,Sudeste,Fábio Nunes,Coloração,219.08,0.35,76.68,Pix,Daniel Machado
+A00435,2024-10-27,Asa Sul,DF,Centro-Oeste,Olívia Serra,Barba,72.73,0.45,32.73,Pix,Beatriz Almeida
+A00436,2024-10-27,Umarizal,PA,Norte,Sérgio Maia,Hidratação,159.44,0.35,55.80,Pix,Rafael Peixoto
+A00437,2024-10-28,Vila Madalena,SP,Sudeste,Bruno Tavares,Manicure,56.13,0.50,28.07,Dinheiro,Vanessa Gomes
+A00438,2024-10-28,Copacabana,RJ,Sudeste,Carla Menezes,Barba,65.99,0.45,29.70,Pix,Helena Gomes
+A00439,2024-10-29,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,98.48,0.40,39.39,Crédito,Igor Siqueira
+A00440,2024-10-29,Copacabana,RJ,Sudeste,Carla Menezes,Hidratação,205.55,0.35,71.94,Débito,Fernanda Ramos
+A00441,2024-10-30,Vila Madalena,SP,Sudeste,Bruno Tavares,Hidratação,155.95,0.35,54.58,Pix,Patrícia Farias
+A00442,2024-10-31,Savassi,MG,Sudeste,Fábio Nunes,Corte,126.46,0.40,50.58,Pix,Helena Esteves
+A00443,2024-11-02,Copacabana,RJ,Sudeste,Carla Menezes,Hidratação,182.84,0.35,64.00,Dinheiro,Thiago Barbosa
+A00444,2024-11-02,Batel,PR,Sul,João Vitor Reis,Corte,113.90,0.40,45.56,Crédito,Alice Machado
+A00445,2024-11-03,Vila Madalena,SP,Sudeste,Ana Prado,Corte,103.75,0.40,41.50,Crédito,Otávio Esteves
+A00446,2024-11-03,Savassi,MG,Sudeste,Elisa Rocha,Escova,93.10,0.40,37.24,Crédito,Sofia Queiroz
+A00447,2024-11-03,Meireles,CE,Nordeste,Marina Fontes,Coloração,300.45,0.35,105.16,Crédito,Kelly Farias
+A00448,2024-11-03,Asa Sul,DF,Centro-Oeste,Olívia Serra,Barba,68.94,0.45,31.02,Pix,Thiago Cavalcanti
+A00449,2024-11-05,Vila Madalena,SP,Sudeste,Ana Prado,Barba,64.07,0.45,28.83,Crédito,Vanessa Teixeira
+A00450,2024-11-05,Savassi,MG,Sudeste,Elisa Rocha,Barba,66.76,0.45,30.04,Pix,Fernanda Ramos
+A00451,2024-11-06,Boa Viagem,PE,Nordeste,Karina Melo,Escova,60.01,0.40,24.00,Débito,Igor Ramos
+A00452,2024-11-06,Umarizal,PA,Norte,Sérgio Maia,Corte,71.42,0.40,28.57,Pix,Camila Oliveira
+A00453,2024-11-07,Vila Madalena,SP,Sudeste,Bruno Tavares,Hidratação,123.21,0.35,43.12,Dinheiro,Beatriz Cavalcanti
+A00454,2024-11-07,Asa Sul,DF,Centro-Oeste,Paulo Krause,Coloração,333.85,0.35,116.85,Crédito,Leandro Barbosa
+A00455,2024-11-07,Asa Sul,DF,Centro-Oeste,Olívia Serra,Barba,72.34,0.45,32.56,Pix,Camila Nogueira
+A00456,2024-11-07,Umarizal,PA,Norte,Sérgio Maia,Manicure,57.16,0.50,28.58,Pix,Leandro Horta
+A00457,2024-11-10,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,105.30,0.40,42.12,Crédito,Alice Loureiro
+A00458,2024-11-10,Savassi,MG,Sudeste,Elisa Rocha,Manicure,54.06,0.50,27.03,Débito,Helena Oliveira
+A00459,2024-11-10,Asa Sul,DF,Centro-Oeste,Paulo Krause,Escova,63.48,0.40,25.39,Crédito,Mariana Esteves
+A00460,2024-11-10,Umarizal,PA,Norte,Sérgio Maia,Barba,49.75,0.45,22.39,Débito,Alice Horta
+A00461,2024-11-10,Umarizal,PA,Norte,Renata Pinho,Coloração,317.67,0.35,111.18,Pix,Beatriz Cavalcanti
+A00462,2024-11-11,Copacabana,RJ,Sudeste,Carla Menezes,Manicure,80.06,0.50,40.03,Débito,Igor Ramos
+A00463,2024-11-12,Moinhos de Vento,RS,Sul,Gabriela Lima,Coloração,207.53,0.35,72.64,Pix,Otávio Teixeira
+A00464,2024-11-15,Moinhos de Vento,RS,Sul,Henrique Alves,Corte,86.77,0.40,34.71,Crédito,Thiago Klein
+A00465,2024-11-16,Vila Madalena,SP,Sudeste,Bruno Tavares,Barba,50.87,0.45,22.89,Crédito,Eduardo Horta
+A00466,2024-11-16,Vila Madalena,SP,Sudeste,Bruno Tavares,Hidratação,185.57,0.35,64.95,Crédito,Patrícia Ramos
+A00467,2024-11-16,Meireles,CE,Nordeste,Marina Fontes,Escova,84.61,0.40,33.84,Dinheiro,Daniel Klein
+A00468,2024-11-17,Moinhos de Vento,RS,Sul,Henrique Alves,Escova,65.67,0.40,26.27,Pix,Camila Queiroz
+A00469,2024-11-17,Moinhos de Vento,RS,Sul,Henrique Alves,Corte,127.05,0.40,50.82,Débito,Sofia Teixeira
+A00470,2024-11-17,Meireles,CE,Nordeste,Marina Fontes,Manicure,57.82,0.50,28.91,Pix,Juliana Siqueira
+A00471,2024-11-18,Batel,PR,Sul,João Vitor Reis,Corte,127.14,0.40,50.86,Crédito,Juliana Oliveira
+A00472,2024-11-19,Savassi,MG,Sudeste,Fábio Nunes,Manicure,58.53,0.50,29.27,Dinheiro,Eduardo Duarte
+A00473,2024-11-19,Savassi,MG,Sudeste,Fábio Nunes,Manicure,55.80,0.50,27.90,Débito,Sofia Ramos
+A00474,2024-11-19,Asa Sul,DF,Centro-Oeste,Olívia Serra,Coloração,265.59,0.35,92.96,Crédito,Otávio Teixeira
+A00475,2024-11-20,Vila Madalena,SP,Sudeste,Ana Prado,Corte,125.75,0.40,50.30,Pix,Alice Klein
+A00476,2024-11-20,Meireles,CE,Nordeste,Marina Fontes,Manicure,64.36,0.50,32.18,Dinheiro,Juliana Nogueira
+A00477,2024-11-21,Vila Madalena,SP,Sudeste,Ana Prado,Coloração,230.49,0.35,80.67,Pix,Rafael Horta
+A00478,2024-11-21,Savassi,MG,Sudeste,Fábio Nunes,Corte,98.97,0.40,39.59,Pix,Igor Jardim
+A00479,2024-11-22,Copacabana,RJ,Sudeste,Diego Moura,Corte,85.22,0.40,34.09,Crédito,Gustavo Gomes
+A00480,2024-11-22,Boa Viagem,PE,Nordeste,Karina Melo,Manicure,82.84,0.50,41.42,Pix,Vanessa Siqueira
+A00481,2024-11-22,Boa Viagem,PE,Nordeste,Lucas Bandeira,Coloração,290.51,0.35,101.68,Crédito,Leandro Oliveira
+A00482,2024-11-23,Vila Madalena,SP,Sudeste,Bruno Tavares,Manicure,79.61,0.50,39.80,Pix,Beatriz Loureiro
+A00483,2024-11-23,Copacabana,RJ,Sudeste,Diego Moura,Manicure,58.59,0.50,29.30,Crédito,Sofia Almeida
+A00484,2024-11-25,Batel,PR,Sul,João Vitor Reis,Corte,82.47,0.40,32.99,Crédito,Kelly Almeida
+A00485,2024-11-26,Copacabana,RJ,Sudeste,Diego Moura,Coloração,227.11,0.35,79.49,Pix,Patrícia Machado
+A00486,2024-11-26,Moinhos de Vento,RS,Sul,Henrique Alves,Escova,66.85,0.40,26.74,Pix,Mariana Esteves
+A00487,2024-11-27,Copacabana,RJ,Sudeste,Carla Menezes,Manicure,55.30,0.50,27.65,Crédito,Otávio Duarte
+A00488,2024-11-27,Moinhos de Vento,RS,Sul,Henrique Alves,Hidratação,169.48,0.35,59.32,Pix,Alice Ramos
+A00489,2024-11-27,Batel,PR,Sul,Isabel Cardoso,Manicure,50.98,0.50,25.49,Pix,Juliana Queiroz
+A00490,2024-11-27,Boa Viagem,PE,Nordeste,Lucas Bandeira,Corte,90.21,0.40,36.08,Crédito,Fernanda Esteves
+A00491,2024-11-28,Meireles,CE,Nordeste,Nelson Braga,Corte,80.46,0.40,32.19,Pix,Otávio Duarte
+A00492,2024-11-29,Boa Viagem,PE,Nordeste,Karina Melo,Barba,66.23,0.45,29.80,Pix,Mariana Esteves
+A00493,2024-11-30,Batel,PR,Sul,João Vitor Reis,Hidratação,176.74,0.35,61.86,Pix,Camila Esteves
+A00494,2024-12-01,Boa Viagem,PE,Nordeste,Karina Melo,Corte,81.69,0.40,32.68,Dinheiro,Leandro Duarte
+A00495,2024-12-01,Meireles,CE,Nordeste,Marina Fontes,Coloração,309.18,0.35,108.21,Dinheiro,Mariana Siqueira
+A00496,2024-12-02,Moinhos de Vento,RS,Sul,Henrique Alves,Hidratação,205.82,0.35,72.04,Pix,Mariana Horta
+A00497,2024-12-02,Batel,PR,Sul,Isabel Cardoso,Escova,94.45,0.40,37.78,Crédito,Daniel Machado
+A00498,2024-12-03,Copacabana,RJ,Sudeste,Diego Moura,Corte,127.81,0.40,51.12,Crédito,Natália Nogueira
+A00499,2024-12-03,Savassi,MG,Sudeste,Fábio Nunes,Manicure,53.06,0.50,26.53,Crédito,Natália Siqueira
+A00500,2024-12-03,Asa Sul,DF,Centro-Oeste,Olívia Serra,Coloração,195.51,0.35,68.43,Débito,Alice Barbosa
+A00501,2024-12-04,Vila Madalena,SP,Sudeste,Bruno Tavares,Coloração,213.18,0.35,74.61,Pix,Natália Barbosa
+A00502,2024-12-04,Boa Viagem,PE,Nordeste,Lucas Bandeira,Barba,42.86,0.45,19.29,Crédito,Daniel Esteves
+A00503,2024-12-05,Vila Madalena,SP,Sudeste,Bruno Tavares,Corte,122.87,0.40,49.15,Débito,Camila Oliveira
+A00504,2024-12-05,Asa Sul,DF,Centro-Oeste,Olívia Serra,Hidratação,159.81,0.35,55.94,Dinheiro,Kelly Jardim
+A00505,2024-12-06,Vila Madalena,SP,Sudeste,Ana Prado,Escova,83.39,0.40,33.36,Pix,Gustavo Machado
+A00506,2024-12-06,Copacabana,RJ,Sudeste,Diego Moura,Escova,108.86,0.40,43.54,Pix,Daniel Ibrahim
+A00507,2024-12-07,Umarizal,PA,Norte,Renata Pinho,Corte,104.33,0.40,41.73,Dinheiro,Alice Ramos
+A00508,2024-12-08,Batel,PR,Sul,João Vitor Reis,Coloração,241.83,0.35,84.64,Dinheiro,Vanessa Klein
+A00509,2024-12-08,Umarizal,PA,Norte,Sérgio Maia,Coloração,325.09,0.35,113.78,Pix,Daniel Loureiro
+A00510,2024-12-09,Batel,PR,Sul,Isabel Cardoso,Escova,77.66,0.40,31.06,Pix,Alice Peixoto
+A00511,2024-12-09,Asa Sul,DF,Centro-Oeste,Olívia Serra,Escova,77.70,0.40,31.08,Pix,Gustavo Teixeira
+A00512,2024-12-10,Copacabana,RJ,Sudeste,Carla Menezes,Manicure,56.27,0.50,28.14,Crédito,Eduardo Teixeira
+A00513,2024-12-10,Moinhos de Vento,RS,Sul,Henrique Alves,Hidratação,211.35,0.35,73.97,Pix,Eduardo Teixeira
+A00514,2024-12-10,Umarizal,PA,Norte,Renata Pinho,Corte,97.81,0.40,39.12,Débito,Beatriz Machado
+A00515,2024-12-11,Savassi,MG,Sudeste,Elisa Rocha,Escova,87.98,0.40,35.19,Crédito,Rafael Cavalcanti
+A00516,2024-12-11,Meireles,CE,Nordeste,Nelson Braga,Corte,122.46,0.40,48.98,Pix,Fernanda Queiroz
+A00517,2024-12-12,Vila Madalena,SP,Sudeste,Ana Prado,Manicure,61.58,0.50,30.79,Crédito,Camila Duarte
+A00518,2024-12-12,Moinhos de Vento,RS,Sul,Henrique Alves,Hidratação,205.92,0.35,72.07,Pix,Juliana Cavalcanti
+A00519,2024-12-12,Batel,PR,Sul,João Vitor Reis,Coloração,336.45,0.35,117.76,Dinheiro,Igor Jardim
+A00520,2024-12-13,Vila Madalena,SP,Sudeste,Bruno Tavares,Corte,72.37,0.40,28.95,Pix,Igor Horta
+A00521,2024-12-13,Umarizal,PA,Norte,Sérgio Maia,Corte,86.70,0.40,34.68,Pix,Beatriz Gomes
+A00522,2024-12-14,Batel,PR,Sul,Isabel Cardoso,Escova,62.65,0.40,25.06,Crédito,Igor Machado
+A00523,2024-12-14,Asa Sul,DF,Centro-Oeste,Olívia Serra,Barba,42.09,0.45,18.94,Crédito,Juliana Barbosa
+A00524,2024-12-15,Vila Madalena,SP,Sudeste,Bruno Tavares,Coloração,210.08,0.35,73.53,Dinheiro,Juliana Peixoto
+A00525,2024-12-15,Batel,PR,Sul,Isabel Cardoso,Barba,45.31,0.45,20.39,Crédito,Rafael Horta
+A00526,2024-12-15,Meireles,CE,Nordeste,Nelson Braga,Escova,67.88,0.40,27.15,Dinheiro,Alice Gomes
+A00527,2024-12-15,Asa Sul,DF,Centro-Oeste,Paulo Krause,Corte,123.07,0.40,49.23,Crédito,Thiago Jardim
+A00528,2024-12-16,Copacabana,RJ,Sudeste,Diego Moura,Hidratação,130.86,0.35,45.80,Dinheiro,Vanessa Peixoto
+A00529,2024-12-17,Copacabana,RJ,Sudeste,Carla Menezes,Manicure,80.77,0.50,40.39,Crédito,Kelly Almeida
+A00530,2024-12-18,Vila Madalena,SP,Sudeste,Bruno Tavares,Manicure,82.20,0.50,41.10,Crédito,Mariana Loureiro
+A00531,2024-12-18,Copacabana,RJ,Sudeste,Diego Moura,Escova,96.35,0.40,38.54,Pix,Sofia Duarte
+A00532,2024-12-18,Moinhos de Vento,RS,Sul,Gabriela Lima,Escova,109.88,0.40,43.95,Pix,Alice Peixoto
+A00533,2024-12-19,Vila Madalena,SP,Sudeste,Ana Prado,Corte,107.07,0.40,42.83,Crédito,Otávio Ibrahim
+A00534,2024-12-19,Moinhos de Vento,RS,Sul,Henrique Alves,Coloração,287.06,0.35,100.47,Pix,Eduardo Farias
+A00535,2024-12-20,Savassi,MG,Sudeste,Fábio Nunes,Corte,86.49,0.40,34.59,Débito,Vanessa Loureiro
+A00536,2024-12-20,Moinhos de Vento,RS,Sul,Henrique Alves,Corte,129.74,0.40,51.90,Pix,Patrícia Jardim
+A00537,2024-12-20,Boa Viagem,PE,Nordeste,Lucas Bandeira,Hidratação,153.01,0.35,53.55,Pix,Kelly Machado
+A00538,2024-12-21,Moinhos de Vento,RS,Sul,Gabriela Lima,Coloração,329.60,0.35,115.36,Pix,Vanessa Jardim
+A00539,2024-12-22,Copacabana,RJ,Sudeste,Carla Menezes,Corte,99.19,0.40,39.68,Pix,Thiago Peixoto
+A00540,2024-12-22,Savassi,MG,Sudeste,Elisa Rocha,Manicure,61.33,0.50,30.67,Crédito,Vanessa Ramos
+A00541,2024-12-23,Boa Viagem,PE,Nordeste,Karina Melo,Escova,81.75,0.40,32.70,Pix,Sofia Machado
+A00542,2024-12-24,Meireles,CE,Nordeste,Nelson Braga,Escova,68.26,0.40,27.31,Pix,Kelly Cavalcanti
+A00543,2024-12-25,Vila Madalena,SP,Sudeste,Ana Prado,Escova,73.06,0.40,29.22,Dinheiro,Patrícia Ramos
+A00544,2024-12-25,Batel,PR,Sul,João Vitor Reis,Coloração,276.24,0.35,96.68,Crédito,Fernanda Nogueira
+A00545,2024-12-26,Copacabana,RJ,Sudeste,Diego Moura,Coloração,275.92,0.35,96.57,Dinheiro,Patrícia Klein
+A00546,2024-12-26,Savassi,MG,Sudeste,Fábio Nunes,Corte,80.01,0.40,32.00,Débito,Alice Duarte
+A00547,2024-12-26,Savassi,MG,Sudeste,Fábio Nunes,Manicure,64.65,0.50,32.33,Débito,Kelly Duarte
+A00548,2024-12-27,Boa Viagem,PE,Nordeste,Lucas Bandeira,Barba,67.97,0.45,30.58,Débito,Sofia Jardim
+A00549,2024-12-29,Asa Sul,DF,Centro-Oeste,Paulo Krause,Escova,78.85,0.40,31.54,Pix,Patrícia Esteves
+A00550,2024-12-30,Copacabana,RJ,Sudeste,Carla Menezes,Coloração,312.46,0.35,109.36,Pix,Helena Duarte
+A00551,2024-12-30,Meireles,CE,Nordeste,Marina Fontes,Escova,66.94,0.40,26.77,Pix,Fernanda Gomes
+A00552,2024-12-31,Boa Viagem,PE,Nordeste,Lucas Bandeira,Escova,73.25,0.40,29.30,Dinheiro,Camila Queiroz
+A00553,2024-12-31,Umarizal,PA,Norte,Renata Pinho,Corte,71.36,0.40,28.54,Dinheiro,Gustavo Duarte
+A00554,2025-01-01,Copacabana,RJ,Sudeste,Diego Moura,Corte,125.10,0.40,50.04,Pix,Eduardo Oliveira
+A00555,2025-01-02,Copacabana,RJ,Sudeste,Diego Moura,Corte,135.03,0.40,54.01,Crédito,Juliana Nogueira
+A00556,2025-01-02,Asa Sul,DF,Centro-Oeste,Paulo Krause,Escova,95.52,0.40,38.21,Crédito,Patrícia Queiroz
+A00557,2025-01-02,Asa Sul,DF,Centro-Oeste,Olívia Serra,Coloração,220.40,0.35,77.14,Pix,Daniel Horta
+A00558,2025-01-03,Moinhos de Vento,RS,Sul,Gabriela Lima,Manicure,53.47,0.50,26.74,Pix,Igor Klein
+A00559,2025-01-03,Boa Viagem,PE,Nordeste,Karina Melo,Corte,116.28,0.40,46.51,Crédito,Gustavo Ramos
+A00560,2025-01-03,Meireles,CE,Nordeste,Nelson Braga,Coloração,301.34,0.35,105.47,Crédito,Helena Nogueira
+A00561,2025-01-03,Meireles,CE,Nordeste,Marina Fontes,Coloração,269.71,0.35,94.40,Pix,Natália Klein
+A00562,2025-01-03,Meireles,CE,Nordeste,Marina Fontes,Escova,108.08,0.40,43.23,Dinheiro,Juliana Teixeira
+A00563,2025-01-05,Copacabana,RJ,Sudeste,Carla Menezes,Manicure,75.72,0.50,37.86,Pix,Thiago Peixoto
+A00564,2025-01-05,Savassi,MG,Sudeste,Fábio Nunes,Barba,54.08,0.45,24.34,Débito,Alice Loureiro
+A00565,2025-01-06,Vila Madalena,SP,Sudeste,Bruno Tavares,Corte,119.28,0.40,47.71,Pix,Juliana Almeida
+A00566,2025-01-06,Umarizal,PA,Norte,Sérgio Maia,Corte,116.25,0.40,46.50,Débito,Leandro Peixoto
+A00567,2025-01-07,Umarizal,PA,Norte,Renata Pinho,Corte,117.52,0.40,47.01,Crédito,Patrícia Barbosa
+A00568,2025-01-08,Vila Madalena,SP,Sudeste,Ana Prado,Manicure,62.93,0.50,31.46,Débito,Sofia Siqueira
+A00569,2025-01-08,Savassi,MG,Sudeste,Elisa Rocha,Escova,116.11,0.40,46.44,Débito,Vanessa Siqueira
+A00570,2025-01-09,Vila Madalena,SP,Sudeste,Bruno Tavares,Barba,54.91,0.45,24.71,Crédito,Daniel Ibrahim
+A00571,2025-01-09,Copacabana,RJ,Sudeste,Diego Moura,Hidratação,179.07,0.35,62.67,Crédito,Camila Esteves
+A00572,2025-01-10,Moinhos de Vento,RS,Sul,Gabriela Lima,Corte,124.27,0.40,49.71,Pix,Thiago Jardim
+A00573,2025-01-11,Copacabana,RJ,Sudeste,Carla Menezes,Manicure,72.22,0.50,36.11,Pix,Daniel Nogueira
+A00574,2025-01-11,Savassi,MG,Sudeste,Fábio Nunes,Corte,121.17,0.40,48.47,Crédito,Sofia Ramos
+A00575,2025-01-11,Boa Viagem,PE,Nordeste,Karina Melo,Escova,112.18,0.40,44.87,Débito,Fernanda Oliveira
+A00576,2025-01-11,Asa Sul,DF,Centro-Oeste,Paulo Krause,Manicure,87.19,0.50,43.60,Crédito,Daniel Ramos
+A00577,2025-01-13,Batel,PR,Sul,João Vitor Reis,Manicure,77.30,0.50,38.65,Débito,Vanessa Duarte
+A00578,2025-01-14,Copacabana,RJ,Sudeste,Carla Menezes,Escova,80.58,0.40,32.23,Dinheiro,Kelly Ibrahim
+A00579,2025-01-14,Savassi,MG,Sudeste,Elisa Rocha,Corte,95.70,0.40,38.28,Crédito,Sofia Oliveira
+A00580,2025-01-14,Batel,PR,Sul,Isabel Cardoso,Corte,92.20,0.40,36.88,Crédito,Thiago Machado
+A00581,2025-01-14,Boa Viagem,PE,Nordeste,Lucas Bandeira,Barba,49.18,0.45,22.13,Crédito,Patrícia Almeida
+A00582,2025-01-15,Batel,PR,Sul,Isabel Cardoso,Corte,91.09,0.40,36.44,Crédito,Vanessa Peixoto
+A00583,2025-01-15,Meireles,CE,Nordeste,Nelson Braga,Hidratação,184.45,0.35,64.56,Crédito,Leandro Klein
+A00584,2025-01-16,Asa Sul,DF,Centro-Oeste,Paulo Krause,Coloração,230.37,0.35,80.63,Pix,Thiago Siqueira
+A00585,2025-01-17,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,123.10,0.40,49.24,Pix,Otávio Machado
+A00586,2025-01-19,Batel,PR,Sul,João Vitor Reis,Barba,56.56,0.45,25.45,Débito,Thiago Duarte
+A00587,2025-01-19,Boa Viagem,PE,Nordeste,Karina Melo,Corte,134.63,0.40,53.85,Débito,Daniel Gomes
+A00588,2025-01-21,Savassi,MG,Sudeste,Fábio Nunes,Corte,125.43,0.40,50.17,Pix,Eduardo Nogueira
+A00589,2025-01-22,Umarizal,PA,Norte,Sérgio Maia,Coloração,240.08,0.35,84.03,Crédito,Beatriz Gomes
+A00590,2025-01-25,Vila Madalena,SP,Sudeste,Bruno Tavares,Hidratação,162.78,0.35,56.97,Crédito,Beatriz Almeida
+A00591,2025-01-25,Vila Madalena,SP,Sudeste,Ana Prado,Corte,122.24,0.40,48.90,Débito,Gustavo Nogueira
+A00592,2025-01-25,Moinhos de Vento,RS,Sul,Henrique Alves,Barba,77.75,0.45,34.99,Crédito,Juliana Loureiro
+A00593,2025-01-25,Batel,PR,Sul,João Vitor Reis,Hidratação,222.10,0.35,77.74,Pix,Vanessa Queiroz
+A00594,2025-01-26,Moinhos de Vento,RS,Sul,Henrique Alves,Corte,97.39,0.40,38.95,Pix,Alice Machado
+A00595,2025-01-27,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,101.96,0.40,40.78,Débito,Daniel Horta
+A00596,2025-01-27,Vila Madalena,SP,Sudeste,Bruno Tavares,Corte,91.97,0.40,36.79,Dinheiro,Mariana Peixoto
+A00597,2025-01-27,Umarizal,PA,Norte,Sérgio Maia,Escova,113.72,0.40,45.49,Débito,Patrícia Machado
+A00598,2025-01-30,Copacabana,RJ,Sudeste,Diego Moura,Corte,117.81,0.40,47.12,Débito,Fernanda Teixeira
+A00599,2025-01-31,Vila Madalena,SP,Sudeste,Bruno Tavares,Corte,110.49,0.40,44.20,Pix,Daniel Peixoto
+A00600,2025-02-01,Moinhos de Vento,RS,Sul,Henrique Alves,Manicure,90.07,0.50,45.04,Débito,Kelly Almeida
+A00601,2025-02-02,Vila Madalena,SP,Sudeste,Ana Prado,Escova,71.81,0.40,28.72,Crédito,Vanessa Duarte
+A00602,2025-02-04,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,98.30,0.40,39.32,Pix,Camila Cavalcanti
+A00603,2025-02-04,Savassi,MG,Sudeste,Fábio Nunes,Escova,85.64,0.40,34.25,Débito,Patrícia Machado
+A00604,2025-02-04,Moinhos de Vento,RS,Sul,Henrique Alves,Coloração,262.05,0.35,91.72,Crédito,Natália Jardim
+A00605,2025-02-04,Batel,PR,Sul,João Vitor Reis,Corte,94.84,0.40,37.93,Pix,Rafael Jardim
+A00606,2025-02-04,Batel,PR,Sul,Isabel Cardoso,Manicure,72.98,0.50,36.49,Débito,Kelly Barbosa
+A00607,2025-02-04,Boa Viagem,PE,Nordeste,Lucas Bandeira,Corte,74.92,0.40,29.97,Dinheiro,Rafael Duarte
+A00608,2025-02-04,Meireles,CE,Nordeste,Marina Fontes,Corte,83.32,0.40,33.33,Pix,Natália Peixoto
+A00609,2025-02-05,Copacabana,RJ,Sudeste,Diego Moura,Manicure,82.97,0.50,41.48,Pix,Vanessa Teixeira
+A00610,2025-02-05,Batel,PR,Sul,Isabel Cardoso,Corte,124.33,0.40,49.73,Crédito,Helena Oliveira
+A00611,2025-02-05,Boa Viagem,PE,Nordeste,Karina Melo,Manicure,67.49,0.50,33.75,Crédito,Rafael Teixeira
+A00612,2025-02-05,Umarizal,PA,Norte,Renata Pinho,Coloração,275.67,0.35,96.48,Pix,Natália Teixeira
+A00613,2025-02-06,Vila Madalena,SP,Sudeste,Ana Prado,Hidratação,144.60,0.35,50.61,Débito,Leandro Queiroz
+A00614,2025-02-07,Copacabana,RJ,Sudeste,Carla Menezes,Manicure,60.85,0.50,30.42,Crédito,Daniel Teixeira
+A00615,2025-02-07,Savassi,MG,Sudeste,Elisa Rocha,Coloração,289.23,0.35,101.23,Dinheiro,Mariana Ibrahim
+A00616,2025-02-07,Batel,PR,Sul,João Vitor Reis,Corte,124.85,0.40,49.94,Crédito,Rafael Horta
+A00617,2025-02-07,Meireles,CE,Nordeste,Nelson Braga,Barba,56.71,0.45,25.52,Débito,Igor Machado
+A00618,2025-02-07,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,94.62,0.40,37.85,Pix,Gustavo Machado
+A00619,2025-02-08,Savassi,MG,Sudeste,Fábio Nunes,Manicure,70.53,0.50,35.26,Pix,Camila Loureiro
+A00620,2025-02-08,Asa Sul,DF,Centro-Oeste,Paulo Krause,Hidratação,166.95,0.35,58.43,Crédito,Natália Loureiro
+A00621,2025-02-09,Meireles,CE,Nordeste,Marina Fontes,Escova,115.02,0.40,46.01,Pix,Thiago Duarte
+A00622,2025-02-11,Savassi,MG,Sudeste,Fábio Nunes,Coloração,359.01,0.35,125.65,Dinheiro,Kelly Horta
+A00623,2025-02-12,Vila Madalena,SP,Sudeste,Ana Prado,Escova,97.22,0.40,38.89,Pix,Kelly Oliveira
+A00624,2025-02-12,Copacabana,RJ,Sudeste,Diego Moura,Barba,71.92,0.45,32.37,Dinheiro,Juliana Machado
+A00625,2025-02-12,Boa Viagem,PE,Nordeste,Lucas Bandeira,Coloração,273.79,0.35,95.83,Pix,Thiago Peixoto
+A00626,2025-02-14,Vila Madalena,SP,Sudeste,Bruno Tavares,Corte,105.16,0.40,42.06,Crédito,Igor Peixoto
+A00627,2025-02-14,Moinhos de Vento,RS,Sul,Gabriela Lima,Coloração,235.28,0.35,82.35,Pix,Alice Peixoto
+A00628,2025-02-16,Vila Madalena,SP,Sudeste,Bruno Tavares,Manicure,52.36,0.50,26.18,Crédito,Eduardo Queiroz
+A00629,2025-02-16,Umarizal,PA,Norte,Sérgio Maia,Corte,85.06,0.40,34.02,Dinheiro,Igor Barbosa
+A00630,2025-02-17,Boa Viagem,PE,Nordeste,Karina Melo,Coloração,224.33,0.35,78.52,Pix,Alice Almeida
+A00631,2025-02-18,Vila Madalena,SP,Sudeste,Bruno Tavares,Corte,98.54,0.40,39.42,Pix,Kelly Jardim
+A00632,2025-02-21,Asa Sul,DF,Centro-Oeste,Paulo Krause,Manicure,77.92,0.50,38.96,Dinheiro,Patrícia Ramos
+A00633,2025-02-25,Copacabana,RJ,Sudeste,Diego Moura,Escova,88.16,0.40,35.26,Débito,Kelly Teixeira
+A00634,2025-02-25,Copacabana,RJ,Sudeste,Diego Moura,Manicure,75.06,0.50,37.53,Dinheiro,Fernanda Nogueira
+A00635,2025-02-25,Moinhos de Vento,RS,Sul,Henrique Alves,Hidratação,152.94,0.35,53.53,Pix,Natália Klein
+A00636,2025-02-25,Asa Sul,DF,Centro-Oeste,Paulo Krause,Barba,45.85,0.45,20.63,Pix,Sofia Machado
+A00637,2025-02-25,Umarizal,PA,Norte,Renata Pinho,Escova,109.89,0.40,43.96,Dinheiro,Rafael Machado
+A00638,2025-02-27,Savassi,MG,Sudeste,Elisa Rocha,Escova,96.67,0.40,38.67,Pix,Leandro Machado
+A00639,2025-02-27,Savassi,MG,Sudeste,Fábio Nunes,Escova,80.41,0.40,32.16,Crédito,Fernanda Horta
+A00640,2025-02-27,Moinhos de Vento,RS,Sul,Gabriela Lima,Corte,126.77,0.40,50.71,Dinheiro,Beatriz Siqueira
+A00641,2025-02-28,Batel,PR,Sul,Isabel Cardoso,Manicure,84.58,0.50,42.29,Crédito,Helena Barbosa
+A00642,2025-02-28,Meireles,CE,Nordeste,Nelson Braga,Coloração,291.81,0.35,102.13,Crédito,Leandro Cavalcanti
+A00643,2025-02-28,Meireles,CE,Nordeste,Marina Fontes,Manicure,52.58,0.50,26.29,Dinheiro,Vanessa Loureiro
+A00644,2025-03-02,Moinhos de Vento,RS,Sul,Henrique Alves,Coloração,358.84,0.35,125.59,Pix,Daniel Machado
+A00645,2025-03-03,Vila Madalena,SP,Sudeste,Ana Prado,Escova,79.01,0.40,31.61,Pix,Rafael Almeida
+A00646,2025-03-03,Batel,PR,Sul,Isabel Cardoso,Corte,126.16,0.40,50.46,Pix,Patrícia Almeida
+A00647,2025-03-03,Asa Sul,DF,Centro-Oeste,Olívia Serra,Manicure,86.47,0.50,43.23,Crédito,Vanessa Peixoto
+A00648,2025-03-04,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,78.18,0.40,31.27,Débito,Natália Esteves
+A00649,2025-03-04,Moinhos de Vento,RS,Sul,Gabriela Lima,Coloração,243.31,0.35,85.16,Crédito,Mariana Oliveira
+A00650,2025-03-04,Batel,PR,Sul,Isabel Cardoso,Escova,72.43,0.40,28.97,Débito,Vanessa Ibrahim
+A00651,2025-03-04,Asa Sul,DF,Centro-Oeste,Olívia Serra,Manicure,71.82,0.50,35.91,Pix,Natália Loureiro
+A00652,2025-03-05,Copacabana,RJ,Sudeste,Diego Moura,Escova,100.49,0.40,40.20,Pix,Camila Teixeira
+A00653,2025-03-05,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,83.94,0.40,33.58,Pix,Otávio Horta
+A00654,2025-03-06,Vila Madalena,SP,Sudeste,Bruno Tavares,Coloração,327.98,0.35,114.79,Pix,Camila Siqueira
+A00655,2025-03-07,Vila Madalena,SP,Sudeste,Ana Prado,Manicure,72.87,0.50,36.43,Crédito,Mariana Peixoto
+A00656,2025-03-09,Copacabana,RJ,Sudeste,Carla Menezes,Corte,119.38,0.40,47.75,Débito,Vanessa Nogueira
+A00657,2025-03-10,Copacabana,RJ,Sudeste,Carla Menezes,Corte,98.96,0.40,39.58,Débito,Beatriz Farias
+A00658,2025-03-10,Umarizal,PA,Norte,Sérgio Maia,Hidratação,161.59,0.35,56.56,Pix,Thiago Ibrahim
+A00659,2025-03-11,Asa Sul,DF,Centro-Oeste,Olívia Serra,Manicure,50.09,0.50,25.05,Débito,Sofia Oliveira
+A00660,2025-03-12,Savassi,MG,Sudeste,Elisa Rocha,Coloração,276.91,0.35,96.92,Crédito,Igor Duarte
+A00661,2025-03-13,Boa Viagem,PE,Nordeste,Lucas Bandeira,Manicure,60.43,0.50,30.22,Débito,Rafael Barbosa
+A00662,2025-03-15,Vila Madalena,SP,Sudeste,Ana Prado,Manicure,67.09,0.50,33.54,Débito,Natália Queiroz
+A00663,2025-03-15,Copacabana,RJ,Sudeste,Carla Menezes,Corte,111.79,0.40,44.71,Pix,Thiago Gomes
+A00664,2025-03-16,Vila Madalena,SP,Sudeste,Bruno Tavares,Coloração,291.41,0.35,101.99,Pix,Alice Nogueira
+A00665,2025-03-16,Savassi,MG,Sudeste,Fábio Nunes,Escova,85.71,0.40,34.28,Crédito,Beatriz Teixeira
+A00666,2025-03-16,Moinhos de Vento,RS,Sul,Gabriela Lima,Corte,80.53,0.40,32.21,Crédito,Patrícia Almeida
+A00667,2025-03-16,Batel,PR,Sul,João Vitor Reis,Corte,110.72,0.40,44.29,Dinheiro,Helena Klein
+A00668,2025-03-16,Meireles,CE,Nordeste,Marina Fontes,Corte,89.86,0.40,35.95,Dinheiro,Thiago Ibrahim
+A00669,2025-03-17,Savassi,MG,Sudeste,Elisa Rocha,Coloração,296.57,0.35,103.80,Débito,Juliana Jardim
+A00670,2025-03-18,Savassi,MG,Sudeste,Fábio Nunes,Escova,113.98,0.40,45.59,Pix,Beatriz Almeida
+A00671,2025-03-19,Moinhos de Vento,RS,Sul,Gabriela Lima,Manicure,75.00,0.50,37.50,Dinheiro,Kelly Oliveira
+A00672,2025-03-19,Boa Viagem,PE,Nordeste,Karina Melo,Manicure,64.47,0.50,32.23,Crédito,Fernanda Siqueira
+A00673,2025-03-20,Copacabana,RJ,Sudeste,Carla Menezes,Hidratação,134.81,0.35,47.18,Pix,Camila Ibrahim
+A00674,2025-03-21,Vila Madalena,SP,Sudeste,Ana Prado,Coloração,250.37,0.35,87.63,Débito,Helena Siqueira
+A00675,2025-03-21,Copacabana,RJ,Sudeste,Carla Menezes,Hidratação,175.85,0.35,61.55,Débito,Beatriz Esteves
+A00676,2025-03-22,Savassi,MG,Sudeste,Elisa Rocha,Corte,115.04,0.40,46.02,Crédito,Mariana Queiroz
+A00677,2025-03-22,Boa Viagem,PE,Nordeste,Karina Melo,Corte,85.72,0.40,34.29,Crédito,Daniel Ramos
+A00678,2025-03-22,Umarizal,PA,Norte,Sérgio Maia,Coloração,351.17,0.35,122.91,Pix,Otávio Almeida
+A00679,2025-03-23,Batel,PR,Sul,João Vitor Reis,Coloração,247.30,0.35,86.56,Crédito,Otávio Loureiro
+A00680,2025-03-23,Boa Viagem,PE,Nordeste,Karina Melo,Manicure,51.49,0.50,25.74,Pix,Alice Teixeira
+A00681,2025-03-24,Batel,PR,Sul,Isabel Cardoso,Hidratação,162.95,0.35,57.03,Pix,Rafael Barbosa
+A00682,2025-03-24,Asa Sul,DF,Centro-Oeste,Olívia Serra,Escova,87.63,0.40,35.05,Débito,Rafael Barbosa
+A00683,2025-03-25,Moinhos de Vento,RS,Sul,Gabriela Lima,Corte,104.40,0.40,41.76,Débito,Camila Ramos
+A00684,2025-03-25,Boa Viagem,PE,Nordeste,Lucas Bandeira,Barba,50.07,0.45,22.53,Pix,Eduardo Loureiro
+A00685,2025-03-25,Umarizal,PA,Norte,Renata Pinho,Manicure,75.20,0.50,37.60,Pix,Eduardo Siqueira
+A00686,2025-03-27,Savassi,MG,Sudeste,Elisa Rocha,Barba,55.52,0.45,24.98,Débito,Camila Farias
+A00687,2025-03-27,Meireles,CE,Nordeste,Nelson Braga,Corte,98.03,0.40,39.21,Pix,Vanessa Machado
+A00688,2025-03-27,Meireles,CE,Nordeste,Nelson Braga,Corte,92.63,0.40,37.05,Crédito,Patrícia Barbosa
+A00689,2025-03-29,Meireles,CE,Nordeste,Nelson Braga,Escova,64.36,0.40,25.74,Débito,Vanessa Loureiro
+A00690,2025-03-30,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,100.81,0.40,40.32,Crédito,Eduardo Jardim
+A00691,2025-03-30,Batel,PR,Sul,Isabel Cardoso,Escova,95.55,0.40,38.22,Pix,Camila Farias
+A00692,2025-03-30,Umarizal,PA,Norte,Sérgio Maia,Barba,51.26,0.45,23.07,Pix,Leandro Farias
+A00693,2025-04-01,Moinhos de Vento,RS,Sul,Gabriela Lima,Escova,66.16,0.40,26.46,Crédito,Otávio Loureiro
+A00694,2025-04-02,Savassi,MG,Sudeste,Fábio Nunes,Corte,124.64,0.40,49.86,Pix,Eduardo Teixeira
+A00695,2025-04-02,Umarizal,PA,Norte,Renata Pinho,Barba,70.32,0.45,31.64,Pix,Kelly Cavalcanti
+A00696,2025-04-03,Copacabana,RJ,Sudeste,Diego Moura,Escova,91.35,0.40,36.54,Pix,Leandro Barbosa
+A00697,2025-04-03,Boa Viagem,PE,Nordeste,Lucas Bandeira,Manicure,76.50,0.50,38.25,Pix,Alice Teixeira
+A00698,2025-04-04,Savassi,MG,Sudeste,Elisa Rocha,Manicure,82.04,0.50,41.02,Débito,Camila Almeida
+A00699,2025-04-04,Savassi,MG,Sudeste,Fábio Nunes,Corte,113.13,0.40,45.25,Pix,Leandro Loureiro
+A00700,2025-04-05,Batel,PR,Sul,João Vitor Reis,Corte,87.11,0.40,34.84,Crédito,Kelly Cavalcanti
+A00701,2025-04-05,Asa Sul,DF,Centro-Oeste,Paulo Krause,Manicure,75.77,0.50,37.89,Crédito,Igor Teixeira
+A00702,2025-04-06,Copacabana,RJ,Sudeste,Diego Moura,Coloração,203.41,0.35,71.19,Crédito,Daniel Ibrahim
+A00703,2025-04-06,Meireles,CE,Nordeste,Nelson Braga,Escova,110.43,0.40,44.17,Pix,Rafael Ramos
+A00704,2025-04-06,Umarizal,PA,Norte,Renata Pinho,Barba,71.08,0.45,31.99,Pix,Camila Duarte
+A00705,2025-04-07,Vila Madalena,SP,Sudeste,Bruno Tavares,Coloração,326.47,0.35,114.27,Dinheiro,Helena Machado
+A00706,2025-04-07,Savassi,MG,Sudeste,Fábio Nunes,Escova,81.09,0.40,32.44,Crédito,Helena Barbosa
+A00707,2025-04-08,Batel,PR,Sul,Isabel Cardoso,Manicure,74.70,0.50,37.35,Crédito,Mariana Jardim
+A00708,2025-04-09,Savassi,MG,Sudeste,Fábio Nunes,Manicure,69.54,0.50,34.77,Dinheiro,Gustavo Duarte
+A00709,2025-04-10,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,75.23,0.40,30.09,Dinheiro,Beatriz Oliveira
+A00710,2025-04-10,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,85.21,0.40,34.08,Débito,Igor Siqueira
+A00711,2025-04-11,Copacabana,RJ,Sudeste,Carla Menezes,Corte,106.46,0.40,42.58,Crédito,Igor Oliveira
+A00712,2025-04-12,Copacabana,RJ,Sudeste,Diego Moura,Corte,83.24,0.40,33.30,Pix,Sofia Machado
+A00713,2025-04-12,Meireles,CE,Nordeste,Marina Fontes,Corte,89.75,0.40,35.90,Pix,Mariana Jardim
+A00714,2025-04-13,Meireles,CE,Nordeste,Nelson Braga,Escova,113.82,0.40,45.53,Pix,Daniel Almeida
+A00715,2025-04-13,Meireles,CE,Nordeste,Marina Fontes,Manicure,67.29,0.50,33.65,Pix,Helena Machado
+A00716,2025-04-14,Vila Madalena,SP,Sudeste,Bruno Tavares,Barba,63.62,0.45,28.63,Dinheiro,Igor Gomes
+A00717,2025-04-14,Umarizal,PA,Norte,Sérgio Maia,Escova,97.16,0.40,38.87,Dinheiro,Beatriz Nogueira
+A00718,2025-04-15,Umarizal,PA,Norte,Renata Pinho,Hidratação,136.52,0.35,47.78,Crédito,Vanessa Esteves
+A00719,2025-04-16,Vila Madalena,SP,Sudeste,Ana Prado,Corte,119.62,0.40,47.85,Crédito,Vanessa Barbosa
+A00720,2025-04-16,Moinhos de Vento,RS,Sul,Henrique Alves,Corte,116.19,0.40,46.48,Pix,Leandro Gomes
+A00721,2025-04-17,Copacabana,RJ,Sudeste,Carla Menezes,Manicure,50.65,0.50,25.33,Pix,Kelly Cavalcanti
+A00722,2025-04-17,Moinhos de Vento,RS,Sul,Henrique Alves,Barba,43.41,0.45,19.53,Débito,Igor Almeida
+A00723,2025-04-17,Boa Viagem,PE,Nordeste,Karina Melo,Escova,91.42,0.40,36.57,Pix,Eduardo Nogueira
+A00724,2025-04-18,Moinhos de Vento,RS,Sul,Gabriela Lima,Coloração,235.72,0.35,82.50,Crédito,Thiago Machado
+A00725,2025-04-18,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,81.83,0.40,32.73,Pix,Vanessa Queiroz
+A00726,2025-04-21,Copacabana,RJ,Sudeste,Diego Moura,Escova,82.23,0.40,32.89,Pix,Igor Horta
+A00727,2025-04-21,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,123.99,0.40,49.60,Débito,Patrícia Gomes
+A00728,2025-04-22,Copacabana,RJ,Sudeste,Carla Menezes,Manicure,71.01,0.50,35.51,Pix,Igor Jardim
+A00729,2025-04-23,Boa Viagem,PE,Nordeste,Karina Melo,Hidratação,146.59,0.35,51.31,Dinheiro,Vanessa Loureiro
+A00730,2025-04-23,Boa Viagem,PE,Nordeste,Karina Melo,Coloração,258.42,0.35,90.45,Débito,Igor Ibrahim
+A00731,2025-04-24,Vila Madalena,SP,Sudeste,Bruno Tavares,Coloração,355.86,0.35,124.55,Débito,Helena Duarte
+A00732,2025-04-25,Boa Viagem,PE,Nordeste,Karina Melo,Manicure,56.45,0.50,28.23,Débito,Vanessa Nogueira
+A00733,2025-04-25,Meireles,CE,Nordeste,Marina Fontes,Corte,98.20,0.40,39.28,Pix,Fernanda Barbosa
+A00734,2025-04-25,Asa Sul,DF,Centro-Oeste,Paulo Krause,Corte,79.68,0.40,31.87,Crédito,Helena Peixoto
+A00735,2025-04-26,Vila Madalena,SP,Sudeste,Ana Prado,Manicure,67.78,0.50,33.89,Pix,Vanessa Machado
+A00736,2025-04-26,Batel,PR,Sul,Isabel Cardoso,Corte,110.46,0.40,44.19,Pix,Eduardo Ramos
+A00737,2025-04-26,Batel,PR,Sul,João Vitor Reis,Coloração,351.05,0.35,122.87,Débito,Leandro Gomes
+A00738,2025-04-27,Savassi,MG,Sudeste,Elisa Rocha,Corte,75.98,0.40,30.39,Pix,Otávio Barbosa
+A00739,2025-04-28,Vila Madalena,SP,Sudeste,Ana Prado,Hidratação,202.56,0.35,70.90,Pix,Alice Horta
+A00740,2025-04-28,Moinhos de Vento,RS,Sul,Henrique Alves,Manicure,66.89,0.50,33.44,Pix,Natália Klein
+A00741,2025-04-30,Batel,PR,Sul,João Vitor Reis,Hidratação,208.61,0.35,73.01,Pix,Helena Teixeira
+A00742,2025-05-01,Vila Madalena,SP,Sudeste,Bruno Tavares,Corte,116.60,0.40,46.64,Pix,Otávio Peixoto
+A00743,2025-05-01,Moinhos de Vento,RS,Sul,Henrique Alves,Hidratação,175.85,0.35,61.55,Débito,Fernanda Oliveira
+A00744,2025-05-02,Copacabana,RJ,Sudeste,Diego Moura,Barba,52.75,0.45,23.74,Dinheiro,Helena Jardim
+A00745,2025-05-02,Boa Viagem,PE,Nordeste,Karina Melo,Hidratação,159.25,0.35,55.74,Pix,Alice Machado
+A00746,2025-05-03,Vila Madalena,SP,Sudeste,Bruno Tavares,Manicure,56.56,0.50,28.28,Dinheiro,Thiago Jardim
+A00747,2025-05-03,Savassi,MG,Sudeste,Fábio Nunes,Barba,77.34,0.45,34.80,Pix,Igor Barbosa
+A00748,2025-05-03,Meireles,CE,Nordeste,Nelson Braga,Manicure,71.86,0.50,35.93,Débito,Fernanda Cavalcanti
+A00749,2025-05-03,Meireles,CE,Nordeste,Marina Fontes,Corte,127.09,0.40,50.84,Débito,Otávio Oliveira
+A00750,2025-05-04,Copacabana,RJ,Sudeste,Diego Moura,Barba,69.02,0.45,31.06,Pix,Helena Queiroz
+A00751,2025-05-04,Savassi,MG,Sudeste,Fábio Nunes,Escova,103.40,0.40,41.36,Pix,Leandro Siqueira
+A00752,2025-05-05,Moinhos de Vento,RS,Sul,Henrique Alves,Escova,112.95,0.40,45.18,Crédito,Rafael Loureiro
+A00753,2025-05-05,Batel,PR,Sul,João Vitor Reis,Escova,85.25,0.40,34.10,Débito,Fernanda Esteves
+A00754,2025-05-06,Vila Madalena,SP,Sudeste,Bruno Tavares,Hidratação,151.07,0.35,52.87,Crédito,Helena Oliveira
+A00755,2025-05-06,Copacabana,RJ,Sudeste,Carla Menezes,Barba,67.25,0.45,30.26,Crédito,Natália Siqueira
+A00756,2025-05-06,Moinhos de Vento,RS,Sul,Gabriela Lima,Escova,82.13,0.40,32.85,Pix,Leandro Klein
+A00757,2025-05-06,Asa Sul,DF,Centro-Oeste,Paulo Krause,Manicure,80.00,0.50,40.00,Pix,Patrícia Duarte
+A00758,2025-05-06,Umarizal,PA,Norte,Sérgio Maia,Corte,118.23,0.40,47.29,Pix,Igor Loureiro
+A00759,2025-05-07,Asa Sul,DF,Centro-Oeste,Paulo Krause,Corte,100.91,0.40,40.36,Crédito,Patrícia Nogueira
+A00760,2025-05-08,Vila Madalena,SP,Sudeste,Ana Prado,Coloração,221.87,0.35,77.65,Débito,Juliana Siqueira
+A00761,2025-05-08,Moinhos de Vento,RS,Sul,Gabriela Lima,Corte,114.46,0.40,45.78,Crédito,Gustavo Siqueira
+A00762,2025-05-08,Boa Viagem,PE,Nordeste,Karina Melo,Corte,125.01,0.40,50.00,Crédito,Beatriz Horta
+A00763,2025-05-08,Boa Viagem,PE,Nordeste,Lucas Bandeira,Barba,76.24,0.45,34.31,Crédito,Alice Jardim
+A00764,2025-05-10,Batel,PR,Sul,João Vitor Reis,Escova,94.51,0.40,37.80,Crédito,Fernanda Teixeira
+A00765,2025-05-10,Batel,PR,Sul,Isabel Cardoso,Barba,56.57,0.45,25.46,Pix,Mariana Queiroz
+A00766,2025-05-10,Meireles,CE,Nordeste,Nelson Braga,Manicure,58.75,0.50,29.37,Pix,Camila Siqueira
+A00767,2025-05-12,Savassi,MG,Sudeste,Fábio Nunes,Corte,135.36,0.40,54.14,Crédito,Beatriz Queiroz
+A00768,2025-05-12,Batel,PR,Sul,João Vitor Reis,Barba,67.67,0.45,30.45,Dinheiro,Rafael Nogueira
+A00769,2025-05-13,Copacabana,RJ,Sudeste,Carla Menezes,Escova,76.75,0.40,30.70,Débito,Fernanda Barbosa
+A00770,2025-05-13,Meireles,CE,Nordeste,Nelson Braga,Corte,99.43,0.40,39.77,Dinheiro,Otávio Siqueira
+A00771,2025-05-14,Batel,PR,Sul,João Vitor Reis,Escova,104.09,0.40,41.64,Dinheiro,Camila Esteves
+A00772,2025-05-15,Savassi,MG,Sudeste,Fábio Nunes,Escova,99.07,0.40,39.63,Dinheiro,Beatriz Oliveira
+A00773,2025-05-15,Asa Sul,DF,Centro-Oeste,Paulo Krause,Coloração,352.85,0.35,123.50,Pix,Igor Queiroz
+A00774,2025-05-17,Vila Madalena,SP,Sudeste,Ana Prado,Hidratação,166.26,0.35,58.19,Pix,Kelly Jardim
+A00775,2025-05-18,Vila Madalena,SP,Sudeste,Bruno Tavares,Barba,51.04,0.45,22.97,Pix,Patrícia Teixeira
+A00776,2025-05-18,Vila Madalena,SP,Sudeste,Bruno Tavares,Hidratação,150.11,0.35,52.54,Débito,Juliana Esteves
+A00777,2025-05-18,Boa Viagem,PE,Nordeste,Karina Melo,Escova,75.04,0.40,30.01,Dinheiro,Mariana Almeida
+A00778,2025-05-19,Savassi,MG,Sudeste,Elisa Rocha,Hidratação,140.76,0.35,49.27,Débito,Igor Horta
+A00779,2025-05-19,Umarizal,PA,Norte,Renata Pinho,Manicure,58.28,0.50,29.14,Débito,Thiago Peixoto
+A00780,2025-05-19,Umarizal,PA,Norte,Sérgio Maia,Barba,44.93,0.45,20.22,Débito,Thiago Nogueira
+A00781,2025-05-21,Vila Madalena,SP,Sudeste,Bruno Tavares,Barba,63.09,0.45,28.39,Débito,Patrícia Teixeira
+A00782,2025-05-21,Asa Sul,DF,Centro-Oeste,Olívia Serra,Manicure,70.23,0.50,35.11,Crédito,Eduardo Ibrahim
+A00783,2025-05-22,Moinhos de Vento,RS,Sul,Gabriela Lima,Coloração,278.97,0.35,97.64,Pix,Alice Esteves
+A00784,2025-05-23,Savassi,MG,Sudeste,Fábio Nunes,Coloração,295.48,0.35,103.42,Pix,Fernanda Ibrahim
+A00785,2025-05-23,Asa Sul,DF,Centro-Oeste,Paulo Krause,Corte,82.34,0.40,32.94,Pix,Helena Farias
+A00786,2025-05-24,Moinhos de Vento,RS,Sul,Gabriela Lima,Corte,88.57,0.40,35.43,Débito,Beatriz Jardim
+A00787,2025-05-24,Umarizal,PA,Norte,Renata Pinho,Barba,78.57,0.45,35.36,Dinheiro,Thiago Peixoto
+A00788,2025-05-25,Copacabana,RJ,Sudeste,Carla Menezes,Hidratação,152.30,0.35,53.31,Pix,Beatriz Klein
+A00789,2025-05-25,Copacabana,RJ,Sudeste,Diego Moura,Barba,76.72,0.45,34.52,Crédito,Helena Ibrahim
+A00790,2025-05-25,Batel,PR,Sul,João Vitor Reis,Coloração,261.36,0.35,91.48,Pix,Camila Teixeira
+A00791,2025-05-26,Copacabana,RJ,Sudeste,Carla Menezes,Corte,87.62,0.40,35.05,Dinheiro,Rafael Farias
+A00792,2025-05-26,Moinhos de Vento,RS,Sul,Gabriela Lima,Manicure,74.02,0.50,37.01,Pix,Rafael Loureiro
+A00793,2025-05-26,Meireles,CE,Nordeste,Nelson Braga,Corte,119.33,0.40,47.73,Crédito,Kelly Klein
+A00794,2025-05-28,Meireles,CE,Nordeste,Marina Fontes,Manicure,74.04,0.50,37.02,Pix,Kelly Klein
+A00795,2025-05-29,Vila Madalena,SP,Sudeste,Ana Prado,Barba,50.51,0.45,22.73,Crédito,Alice Peixoto
+A00796,2025-05-30,Copacabana,RJ,Sudeste,Diego Moura,Barba,72.39,0.45,32.58,Crédito,Igor Loureiro
+A00797,2025-05-30,Batel,PR,Sul,Isabel Cardoso,Corte,74.61,0.40,29.84,Pix,Kelly Siqueira
+A00798,2025-05-31,Vila Madalena,SP,Sudeste,Bruno Tavares,Barba,53.08,0.45,23.89,Dinheiro,Juliana Duarte
+A00799,2025-05-31,Boa Viagem,PE,Nordeste,Lucas Bandeira,Coloração,231.01,0.35,80.85,Débito,Eduardo Jardim
+A00800,2025-06-01,Copacabana,RJ,Sudeste,Diego Moura,Corte,122.37,0.40,48.95,Pix,Juliana Esteves
+A00801,2025-06-02,Savassi,MG,Sudeste,Elisa Rocha,Manicure,68.35,0.50,34.17,Crédito,Helena Barbosa
+A00802,2025-06-03,Batel,PR,Sul,João Vitor Reis,Corte,118.80,0.40,47.52,Pix,Juliana Siqueira
+A00803,2025-06-04,Copacabana,RJ,Sudeste,Carla Menezes,Barba,59.33,0.45,26.70,Pix,Mariana Esteves
+A00804,2025-06-04,Moinhos de Vento,RS,Sul,Gabriela Lima,Hidratação,127.98,0.35,44.79,Débito,Juliana Cavalcanti
+A00805,2025-06-04,Moinhos de Vento,RS,Sul,Henrique Alves,Manicure,55.27,0.50,27.64,Crédito,Eduardo Ramos
+A00806,2025-06-05,Batel,PR,Sul,João Vitor Reis,Coloração,346.41,0.35,121.24,Crédito,Gustavo Machado
+A00807,2025-06-06,Copacabana,RJ,Sudeste,Carla Menezes,Manicure,78.94,0.50,39.47,Pix,Kelly Barbosa
+A00808,2025-06-06,Batel,PR,Sul,João Vitor Reis,Coloração,310.52,0.35,108.68,Crédito,Fernanda Jardim
+A00809,2025-06-06,Boa Viagem,PE,Nordeste,Lucas Bandeira,Escova,77.72,0.40,31.09,Débito,Helena Loureiro
+A00810,2025-06-06,Boa Viagem,PE,Nordeste,Lucas Bandeira,Manicure,75.43,0.50,37.71,Crédito,Leandro Queiroz
+A00811,2025-06-06,Meireles,CE,Nordeste,Marina Fontes,Escova,106.24,0.40,42.50,Crédito,Gustavo Siqueira
+A00812,2025-06-07,Asa Sul,DF,Centro-Oeste,Paulo Krause,Coloração,242.46,0.35,84.86,Pix,Leandro Klein
+A00813,2025-06-07,Umarizal,PA,Norte,Renata Pinho,Coloração,267.95,0.35,93.78,Pix,Leandro Oliveira
+A00814,2025-06-07,Umarizal,PA,Norte,Renata Pinho,Barba,53.60,0.45,24.12,Crédito,Leandro Jardim
+A00815,2025-06-08,Copacabana,RJ,Sudeste,Diego Moura,Coloração,339.08,0.35,118.68,Dinheiro,Alice Farias
+A00816,2025-06-08,Boa Viagem,PE,Nordeste,Lucas Bandeira,Escova,73.21,0.40,29.28,Pix,Mariana Klein
+A00817,2025-06-09,Moinhos de Vento,RS,Sul,Gabriela Lima,Coloração,314.30,0.35,110.01,Crédito,Juliana Almeida
+A00818,2025-06-11,Boa Viagem,PE,Nordeste,Lucas Bandeira,Coloração,217.37,0.35,76.08,Pix,Vanessa Farias
+A00819,2025-06-11,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,92.53,0.40,37.01,Pix,Thiago Jardim
+A00820,2025-06-13,Asa Sul,DF,Centro-Oeste,Paulo Krause,Corte,105.79,0.40,42.32,Dinheiro,Daniel Klein
+A00821,2025-06-13,Umarizal,PA,Norte,Renata Pinho,Escova,68.53,0.40,27.41,Dinheiro,Gustavo Jardim
+A00822,2025-06-14,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,71.92,0.40,28.77,Pix,Gustavo Machado
+A00823,2025-06-15,Copacabana,RJ,Sudeste,Diego Moura,Coloração,261.41,0.35,91.49,Pix,Natália Gomes
+A00824,2025-06-15,Moinhos de Vento,RS,Sul,Gabriela Lima,Hidratação,153.35,0.35,53.67,Dinheiro,Gustavo Gomes
+A00825,2025-06-16,Savassi,MG,Sudeste,Fábio Nunes,Coloração,205.53,0.35,71.94,Crédito,Camila Machado
+A00826,2025-06-17,Vila Madalena,SP,Sudeste,Ana Prado,Corte,91.31,0.40,36.52,Pix,Leandro Ramos
+A00827,2025-06-17,Asa Sul,DF,Centro-Oeste,Paulo Krause,Escova,94.83,0.40,37.93,Pix,Beatriz Queiroz
+A00828,2025-06-18,Copacabana,RJ,Sudeste,Diego Moura,Coloração,357.88,0.35,125.26,Pix,Otávio Peixoto
+A00829,2025-06-18,Savassi,MG,Sudeste,Elisa Rocha,Manicure,88.15,0.50,44.07,Crédito,Igor Almeida
+A00830,2025-06-18,Meireles,CE,Nordeste,Nelson Braga,Escova,84.56,0.40,33.82,Pix,Kelly Siqueira
+A00831,2025-06-19,Vila Madalena,SP,Sudeste,Bruno Tavares,Barba,63.73,0.45,28.68,Dinheiro,Igor Esteves
+A00832,2025-06-19,Vila Madalena,SP,Sudeste,Ana Prado,Corte,121.26,0.40,48.50,Débito,Patrícia Duarte
+A00833,2025-06-20,Savassi,MG,Sudeste,Elisa Rocha,Coloração,248.93,0.35,87.13,Crédito,Kelly Oliveira
+A00834,2025-06-20,Moinhos de Vento,RS,Sul,Gabriela Lima,Coloração,293.47,0.35,102.72,Dinheiro,Kelly Ibrahim
+A00835,2025-06-20,Umarizal,PA,Norte,Renata Pinho,Corte,114.29,0.40,45.72,Crédito,Beatriz Machado
+A00836,2025-06-21,Moinhos de Vento,RS,Sul,Henrique Alves,Corte,115.41,0.40,46.16,Crédito,Otávio Farias
+A00837,2025-06-22,Batel,PR,Sul,João Vitor Reis,Corte,86.99,0.40,34.80,Débito,Juliana Teixeira
+A00838,2025-06-23,Savassi,MG,Sudeste,Elisa Rocha,Barba,51.73,0.45,23.28,Pix,Alice Barbosa
+A00839,2025-06-23,Meireles,CE,Nordeste,Nelson Braga,Corte,137.05,0.40,54.82,Crédito,Gustavo Gomes
+A00840,2025-06-25,Batel,PR,Sul,João Vitor Reis,Escova,114.60,0.40,45.84,Pix,Natália Peixoto
+A00841,2025-06-25,Meireles,CE,Nordeste,Marina Fontes,Hidratação,162.27,0.35,56.80,Pix,Gustavo Queiroz
+A00842,2025-06-26,Savassi,MG,Sudeste,Elisa Rocha,Corte,124.10,0.40,49.64,Pix,Gustavo Teixeira
+A00843,2025-06-27,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,87.45,0.40,34.98,Pix,Juliana Ramos
+A00844,2025-06-27,Copacabana,RJ,Sudeste,Carla Menezes,Barba,50.78,0.45,22.85,Dinheiro,Leandro Klein
+A00845,2025-06-27,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,120.56,0.40,48.22,Débito,Natália Farias
+A00846,2025-06-29,Boa Viagem,PE,Nordeste,Lucas Bandeira,Manicure,81.87,0.50,40.93,Débito,Alice Nogueira
+A00847,2025-06-30,Vila Madalena,SP,Sudeste,Ana Prado,Escova,79.57,0.40,31.83,Pix,Fernanda Loureiro
+A00848,2025-06-30,Vila Madalena,SP,Sudeste,Bruno Tavares,Corte,89.65,0.40,35.86,Crédito,Juliana Machado
+A00849,2025-06-30,Meireles,CE,Nordeste,Marina Fontes,Hidratação,132.90,0.35,46.52,Crédito,Gustavo Ibrahim
+A00850,2025-07-01,Savassi,MG,Sudeste,Fábio Nunes,Coloração,203.46,0.35,71.21,Débito,Helena Machado
+A00851,2025-07-01,Umarizal,PA,Norte,Sérgio Maia,Manicure,62.08,0.50,31.04,Pix,Gustavo Gomes
+A00852,2025-07-02,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,97.64,0.40,39.06,Dinheiro,Igor Queiroz
+A00853,2025-07-02,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,134.98,0.40,53.99,Dinheiro,Rafael Ibrahim
+A00854,2025-07-03,Copacabana,RJ,Sudeste,Carla Menezes,Corte,119.11,0.40,47.64,Crédito,Thiago Klein
+A00855,2025-07-03,Boa Viagem,PE,Nordeste,Karina Melo,Corte,107.32,0.40,42.93,Pix,Camila Ibrahim
+A00856,2025-07-03,Asa Sul,DF,Centro-Oeste,Olívia Serra,Manicure,66.74,0.50,33.37,Dinheiro,Helena Nogueira
+A00857,2025-07-04,Copacabana,RJ,Sudeste,Carla Menezes,Hidratação,181.73,0.35,63.61,Pix,Mariana Horta
+A00858,2025-07-04,Asa Sul,DF,Centro-Oeste,Paulo Krause,Barba,45.55,0.45,20.50,Pix,Leandro Esteves
+A00859,2025-07-05,Vila Madalena,SP,Sudeste,Ana Prado,Hidratação,227.69,0.35,79.69,Pix,Helena Duarte
+A00860,2025-07-05,Batel,PR,Sul,Isabel Cardoso,Barba,45.83,0.45,20.62,Pix,Vanessa Siqueira
+A00861,2025-07-05,Boa Viagem,PE,Nordeste,Lucas Bandeira,Barba,72.88,0.45,32.80,Crédito,Leandro Almeida
+A00862,2025-07-06,Copacabana,RJ,Sudeste,Carla Menezes,Corte,120.74,0.40,48.30,Pix,Sofia Almeida
+A00863,2025-07-06,Boa Viagem,PE,Nordeste,Karina Melo,Escova,109.17,0.40,43.67,Débito,Alice Ibrahim
+A00864,2025-07-07,Savassi,MG,Sudeste,Fábio Nunes,Hidratação,143.32,0.35,50.16,Crédito,Kelly Gomes
+A00865,2025-07-07,Boa Viagem,PE,Nordeste,Karina Melo,Manicure,82.15,0.50,41.07,Pix,Fernanda Nogueira
+A00866,2025-07-07,Asa Sul,DF,Centro-Oeste,Olívia Serra,Hidratação,155.10,0.35,54.28,Crédito,Igor Farias
+A00867,2025-07-07,Umarizal,PA,Norte,Sérgio Maia,Manicure,60.37,0.50,30.19,Crédito,Mariana Esteves
+A00868,2025-07-08,Copacabana,RJ,Sudeste,Carla Menezes,Coloração,226.11,0.35,79.14,Pix,Sofia Nogueira
+A00869,2025-07-09,Batel,PR,Sul,Isabel Cardoso,Corte,97.02,0.40,38.81,Pix,Otávio Queiroz
+A00870,2025-07-11,Moinhos de Vento,RS,Sul,Gabriela Lima,Corte,136.19,0.40,54.48,Dinheiro,Sofia Teixeira
+A00871,2025-07-11,Moinhos de Vento,RS,Sul,Henrique Alves,Barba,55.04,0.45,24.77,Débito,Rafael Duarte
+A00872,2025-07-11,Umarizal,PA,Norte,Sérgio Maia,Coloração,345.40,0.35,120.89,Crédito,Juliana Oliveira
+A00873,2025-07-12,Moinhos de Vento,RS,Sul,Gabriela Lima,Escova,102.97,0.40,41.19,Pix,Eduardo Farias
+A00874,2025-07-13,Moinhos de Vento,RS,Sul,Henrique Alves,Hidratação,175.31,0.35,61.36,Pix,Kelly Barbosa
+A00875,2025-07-14,Moinhos de Vento,RS,Sul,Gabriela Lima,Hidratação,215.05,0.35,75.27,Pix,Sofia Esteves
+A00876,2025-07-15,Savassi,MG,Sudeste,Elisa Rocha,Barba,55.77,0.45,25.10,Crédito,Fernanda Oliveira
+A00877,2025-07-15,Batel,PR,Sul,Isabel Cardoso,Manicure,53.35,0.50,26.67,Débito,Sofia Machado
+A00878,2025-07-16,Moinhos de Vento,RS,Sul,Gabriela Lima,Manicure,67.13,0.50,33.56,Crédito,Kelly Esteves
+A00879,2025-07-16,Batel,PR,Sul,Isabel Cardoso,Escova,98.78,0.40,39.51,Dinheiro,Sofia Ibrahim
+A00880,2025-07-16,Meireles,CE,Nordeste,Marina Fontes,Escova,101.83,0.40,40.73,Crédito,Eduardo Machado
+A00881,2025-07-18,Vila Madalena,SP,Sudeste,Ana Prado,Hidratação,191.48,0.35,67.02,Dinheiro,Otávio Horta
+A00882,2025-07-18,Vila Madalena,SP,Sudeste,Bruno Tavares,Corte,112.55,0.40,45.02,Crédito,Alice Loureiro
+A00883,2025-07-19,Batel,PR,Sul,João Vitor Reis,Coloração,219.64,0.35,76.88,Pix,Sofia Peixoto
+A00884,2025-07-20,Savassi,MG,Sudeste,Fábio Nunes,Coloração,281.21,0.35,98.42,Crédito,Patrícia Barbosa
+A00885,2025-07-21,Vila Madalena,SP,Sudeste,Ana Prado,Coloração,302.89,0.35,106.01,Crédito,Kelly Ibrahim
+A00886,2025-07-21,Copacabana,RJ,Sudeste,Carla Menezes,Escova,96.92,0.40,38.77,Débito,Helena Ramos
+A00887,2025-07-21,Copacabana,RJ,Sudeste,Carla Menezes,Coloração,249.54,0.35,87.34,Débito,Mariana Ramos
+A00888,2025-07-21,Boa Viagem,PE,Nordeste,Karina Melo,Manicure,60.45,0.50,30.23,Crédito,Helena Cavalcanti
+A00889,2025-07-22,Umarizal,PA,Norte,Sérgio Maia,Coloração,330.36,0.35,115.62,Pix,Igor Esteves
+A00890,2025-07-23,Savassi,MG,Sudeste,Fábio Nunes,Escova,70.76,0.40,28.30,Pix,Beatriz Gomes
+A00891,2025-07-26,Meireles,CE,Nordeste,Nelson Braga,Barba,54.30,0.45,24.44,Pix,Vanessa Siqueira
+A00892,2025-07-26,Meireles,CE,Nordeste,Marina Fontes,Escova,83.85,0.40,33.54,Débito,Alice Duarte
+A00893,2025-07-28,Meireles,CE,Nordeste,Nelson Braga,Escova,72.97,0.40,29.19,Crédito,Helena Nogueira
+A00894,2025-07-30,Vila Madalena,SP,Sudeste,Ana Prado,Escova,115.74,0.40,46.30,Pix,Daniel Oliveira
+A00895,2025-07-30,Vila Madalena,SP,Sudeste,Ana Prado,Coloração,328.36,0.35,114.93,Crédito,Eduardo Klein
+A00896,2025-07-30,Copacabana,RJ,Sudeste,Diego Moura,Hidratação,150.93,0.35,52.83,Dinheiro,Leandro Cavalcanti
+A00897,2025-07-30,Meireles,CE,Nordeste,Nelson Braga,Escova,70.20,0.40,28.08,Crédito,Igor Ramos
+A00898,2025-07-30,Asa Sul,DF,Centro-Oeste,Olívia Serra,Hidratação,169.55,0.35,59.34,Crédito,Gustavo Peixoto
+A00899,2025-07-31,Vila Madalena,SP,Sudeste,Ana Prado,Coloração,267.26,0.35,93.54,Débito,Igor Almeida
+A00900,2025-07-31,Savassi,MG,Sudeste,Fábio Nunes,Barba,75.21,0.45,33.84,Dinheiro,Daniel Cavalcanti
+A00901,2025-08-01,Savassi,MG,Sudeste,Fábio Nunes,Escova,66.90,0.40,26.76,Crédito,Alice Ramos
+A00902,2025-08-01,Boa Viagem,PE,Nordeste,Lucas Bandeira,Hidratação,148.21,0.35,51.87,Dinheiro,Daniel Nogueira
+A00903,2025-08-02,Vila Madalena,SP,Sudeste,Ana Prado,Escova,104.88,0.40,41.95,Pix,Camila Jardim
+A00904,2025-08-02,Copacabana,RJ,Sudeste,Diego Moura,Corte,125.75,0.40,50.30,Pix,Patrícia Teixeira
+A00905,2025-08-02,Savassi,MG,Sudeste,Fábio Nunes,Escova,85.32,0.40,34.13,Pix,Otávio Ibrahim
+A00906,2025-08-03,Batel,PR,Sul,Isabel Cardoso,Corte,84.90,0.40,33.96,Pix,Beatriz Nogueira
+A00907,2025-08-05,Vila Madalena,SP,Sudeste,Bruno Tavares,Coloração,336.84,0.35,117.89,Pix,Alice Gomes
+A00908,2025-08-05,Copacabana,RJ,Sudeste,Carla Menezes,Escova,98.15,0.40,39.26,Dinheiro,Natália Queiroz
+A00909,2025-08-05,Batel,PR,Sul,Isabel Cardoso,Corte,98.79,0.40,39.52,Pix,Leandro Farias
+A00910,2025-08-06,Meireles,CE,Nordeste,Marina Fontes,Escova,115.80,0.40,46.32,Débito,Beatriz Jardim
+A00911,2025-08-07,Vila Madalena,SP,Sudeste,Bruno Tavares,Barba,61.41,0.45,27.63,Crédito,Igor Queiroz
+A00912,2025-08-07,Savassi,MG,Sudeste,Elisa Rocha,Coloração,336.60,0.35,117.81,Crédito,Kelly Klein
+A00913,2025-08-09,Copacabana,RJ,Sudeste,Carla Menezes,Manicure,49.57,0.50,24.79,Crédito,Otávio Duarte
+A00914,2025-08-09,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,75.90,0.40,30.36,Crédito,Eduardo Queiroz
+A00915,2025-08-11,Copacabana,RJ,Sudeste,Carla Menezes,Escova,93.86,0.40,37.54,Débito,Beatriz Jardim
+A00916,2025-08-13,Meireles,CE,Nordeste,Marina Fontes,Coloração,243.86,0.35,85.35,Pix,Daniel Machado
+A00917,2025-08-13,Umarizal,PA,Norte,Sérgio Maia,Corte,128.25,0.40,51.30,Pix,Beatriz Esteves
+A00918,2025-08-14,Savassi,MG,Sudeste,Fábio Nunes,Corte,99.64,0.40,39.86,Pix,Igor Queiroz
+A00919,2025-08-14,Boa Viagem,PE,Nordeste,Karina Melo,Manicure,47.97,0.50,23.98,Débito,Fernanda Almeida
+A00920,2025-08-15,Moinhos de Vento,RS,Sul,Henrique Alves,Manicure,77.93,0.50,38.97,Pix,Sofia Loureiro
+A00921,2025-08-15,Boa Viagem,PE,Nordeste,Karina Melo,Corte,92.19,0.40,36.87,Crédito,Rafael Esteves
+A00922,2025-08-15,Asa Sul,DF,Centro-Oeste,Paulo Krause,Manicure,79.20,0.50,39.60,Pix,Mariana Duarte
+A00923,2025-08-16,Savassi,MG,Sudeste,Elisa Rocha,Corte,102.64,0.40,41.05,Crédito,Vanessa Horta
+A00924,2025-08-17,Meireles,CE,Nordeste,Marina Fontes,Barba,68.43,0.45,30.79,Pix,Patrícia Loureiro
+A00925,2025-08-18,Vila Madalena,SP,Sudeste,Ana Prado,Corte,109.68,0.40,43.87,Pix,Helena Farias
+A00926,2025-08-18,Savassi,MG,Sudeste,Fábio Nunes,Barba,55.38,0.45,24.92,Pix,Otávio Machado
+A00927,2025-08-18,Moinhos de Vento,RS,Sul,Henrique Alves,Escova,73.25,0.40,29.30,Crédito,Alice Nogueira
+A00928,2025-08-18,Umarizal,PA,Norte,Sérgio Maia,Escova,111.23,0.40,44.49,Crédito,Alice Gomes
+A00929,2025-08-19,Umarizal,PA,Norte,Renata Pinho,Hidratação,167.73,0.35,58.70,Pix,Vanessa Jardim
+A00930,2025-08-20,Moinhos de Vento,RS,Sul,Gabriela Lima,Escova,93.62,0.40,37.45,Dinheiro,Juliana Farias
+A00931,2025-08-20,Moinhos de Vento,RS,Sul,Henrique Alves,Manicure,65.99,0.50,33.00,Débito,Camila Horta
+A00932,2025-08-21,Batel,PR,Sul,Isabel Cardoso,Escova,90.42,0.40,36.17,Crédito,Mariana Duarte
+A00933,2025-08-22,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,102.12,0.40,40.85,Débito,Otávio Ibrahim
+A00934,2025-08-22,Vila Madalena,SP,Sudeste,Ana Prado,Corte,80.43,0.40,32.17,Pix,Gustavo Loureiro
+A00935,2025-08-22,Asa Sul,DF,Centro-Oeste,Paulo Krause,Escova,70.54,0.40,28.22,Pix,Alice Esteves
+A00936,2025-08-24,Copacabana,RJ,Sudeste,Diego Moura,Corte,126.62,0.40,50.65,Crédito,Leandro Gomes
+A00937,2025-08-24,Moinhos de Vento,RS,Sul,Gabriela Lima,Hidratação,144.63,0.35,50.62,Pix,Juliana Ibrahim
+A00938,2025-08-24,Meireles,CE,Nordeste,Nelson Braga,Corte,99.30,0.40,39.72,Débito,Gustavo Almeida
+A00939,2025-08-24,Asa Sul,DF,Centro-Oeste,Paulo Krause,Corte,80.25,0.40,32.10,Crédito,Leandro Jardim
+A00940,2025-08-27,Vila Madalena,SP,Sudeste,Bruno Tavares,Corte,125.48,0.40,50.19,Dinheiro,Natália Barbosa
+A00941,2025-08-27,Vila Madalena,SP,Sudeste,Bruno Tavares,Manicure,89.42,0.50,44.71,Pix,Juliana Almeida
+A00942,2025-08-27,Copacabana,RJ,Sudeste,Carla Menezes,Manicure,70.69,0.50,35.35,Débito,Beatriz Esteves
+A00943,2025-08-27,Savassi,MG,Sudeste,Fábio Nunes,Corte,119.28,0.40,47.71,Dinheiro,Beatriz Horta
+A00944,2025-08-28,Vila Madalena,SP,Sudeste,Ana Prado,Corte,98.29,0.40,39.31,Pix,Juliana Esteves
+A00945,2025-08-28,Copacabana,RJ,Sudeste,Carla Menezes,Corte,101.83,0.40,40.73,Dinheiro,Kelly Duarte
+A00946,2025-08-29,Boa Viagem,PE,Nordeste,Lucas Bandeira,Manicure,68.71,0.50,34.36,Pix,Mariana Teixeira
+A00947,2025-08-29,Asa Sul,DF,Centro-Oeste,Paulo Krause,Corte,105.10,0.40,42.04,Crédito,Mariana Duarte
+A00948,2025-08-30,Copacabana,RJ,Sudeste,Carla Menezes,Manicure,50.54,0.50,25.27,Débito,Juliana Ramos
+A00949,2025-08-30,Batel,PR,Sul,João Vitor Reis,Corte,122.85,0.40,49.14,Dinheiro,Juliana Horta
+A00950,2025-08-31,Batel,PR,Sul,João Vitor Reis,Barba,65.81,0.45,29.62,Crédito,Patrícia Oliveira
+A00951,2025-08-31,Meireles,CE,Nordeste,Nelson Braga,Manicure,70.17,0.50,35.09,Crédito,Natália Horta
+A00952,2025-09-01,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,113.74,0.40,45.50,Dinheiro,Gustavo Nogueira
+A00953,2025-09-01,Batel,PR,Sul,João Vitor Reis,Escova,115.31,0.40,46.12,Crédito,Beatriz Cavalcanti
+A00954,2025-09-02,Copacabana,RJ,Sudeste,Diego Moura,Hidratação,185.62,0.35,64.97,Pix,Leandro Queiroz
+A00955,2025-09-03,Boa Viagem,PE,Nordeste,Karina Melo,Hidratação,133.10,0.35,46.59,Crédito,Beatriz Jardim
+A00956,2025-09-04,Savassi,MG,Sudeste,Fábio Nunes,Manicure,49.38,0.50,24.69,Pix,Rafael Ramos
+A00957,2025-09-04,Moinhos de Vento,RS,Sul,Henrique Alves,Coloração,357.57,0.35,125.15,Dinheiro,Leandro Horta
+A00958,2025-09-04,Moinhos de Vento,RS,Sul,Gabriela Lima,Coloração,327.78,0.35,114.72,Crédito,Kelly Machado
+A00959,2025-09-04,Batel,PR,Sul,Isabel Cardoso,Barba,71.56,0.45,32.20,Dinheiro,Daniel Nogueira
+A00960,2025-09-04,Boa Viagem,PE,Nordeste,Karina Melo,Hidratação,134.73,0.35,47.15,Débito,Patrícia Klein
+A00961,2025-09-05,Moinhos de Vento,RS,Sul,Henrique Alves,Escova,83.02,0.40,33.21,Crédito,Fernanda Queiroz
+A00962,2025-09-06,Savassi,MG,Sudeste,Fábio Nunes,Escova,80.42,0.40,32.17,Crédito,Beatriz Queiroz
+A00963,2025-09-06,Meireles,CE,Nordeste,Nelson Braga,Manicure,64.04,0.50,32.02,Crédito,Rafael Barbosa
+A00964,2025-09-07,Copacabana,RJ,Sudeste,Carla Menezes,Corte,87.90,0.40,35.16,Crédito,Natália Jardim
+A00965,2025-09-07,Savassi,MG,Sudeste,Elisa Rocha,Manicure,86.72,0.50,43.36,Débito,Rafael Siqueira
+A00966,2025-09-08,Copacabana,RJ,Sudeste,Carla Menezes,Escova,75.48,0.40,30.19,Dinheiro,Camila Queiroz
+A00967,2025-09-09,Copacabana,RJ,Sudeste,Diego Moura,Coloração,224.67,0.35,78.64,Pix,Vanessa Jardim
+A00968,2025-09-09,Asa Sul,DF,Centro-Oeste,Olívia Serra,Manicure,69.82,0.50,34.91,Crédito,Thiago Nogueira
+A00969,2025-09-10,Vila Madalena,SP,Sudeste,Ana Prado,Manicure,78.35,0.50,39.18,Crédito,Eduardo Duarte
+A00970,2025-09-11,Copacabana,RJ,Sudeste,Diego Moura,Escova,81.52,0.40,32.61,Pix,Camila Cavalcanti
+A00971,2025-09-12,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,68.11,0.40,27.24,Crédito,Leandro Klein
+A00972,2025-09-12,Batel,PR,Sul,João Vitor Reis,Barba,53.39,0.45,24.02,Crédito,Helena Queiroz
+A00973,2025-09-13,Vila Madalena,SP,Sudeste,Bruno Tavares,Barba,75.08,0.45,33.78,Crédito,Beatriz Barbosa
+A00974,2025-09-13,Asa Sul,DF,Centro-Oeste,Olívia Serra,Hidratação,182.74,0.35,63.96,Crédito,Mariana Oliveira
+A00975,2025-09-15,Vila Madalena,SP,Sudeste,Ana Prado,Corte,79.79,0.40,31.92,Crédito,Camila Ramos
+A00976,2025-09-16,Savassi,MG,Sudeste,Elisa Rocha,Coloração,337.03,0.35,117.96,Crédito,Juliana Oliveira
+A00977,2025-09-17,Umarizal,PA,Norte,Sérgio Maia,Hidratação,203.03,0.35,71.06,Pix,Gustavo Jardim
+A00978,2025-09-18,Copacabana,RJ,Sudeste,Carla Menezes,Coloração,343.71,0.35,120.30,Pix,Vanessa Farias
+A00979,2025-09-18,Savassi,MG,Sudeste,Fábio Nunes,Coloração,353.92,0.35,123.87,Débito,Patrícia Cavalcanti
+A00980,2025-09-18,Meireles,CE,Nordeste,Nelson Braga,Corte,82.44,0.40,32.98,Crédito,Natália Peixoto
+A00981,2025-09-19,Boa Viagem,PE,Nordeste,Lucas Bandeira,Coloração,223.57,0.35,78.25,Débito,Juliana Almeida
+A00982,2025-09-19,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,100.91,0.40,40.36,Dinheiro,Leandro Horta
+A00983,2025-09-19,Asa Sul,DF,Centro-Oeste,Olívia Serra,Escova,92.14,0.40,36.86,Crédito,Mariana Siqueira
+A00984,2025-09-20,Savassi,MG,Sudeste,Fábio Nunes,Coloração,247.36,0.35,86.58,Débito,Beatriz Siqueira
+A00985,2025-09-21,Savassi,MG,Sudeste,Fábio Nunes,Barba,58.34,0.45,26.25,Crédito,Kelly Ibrahim
+A00986,2025-09-21,Moinhos de Vento,RS,Sul,Henrique Alves,Corte,104.01,0.40,41.60,Crédito,Fernanda Nogueira
+A00987,2025-09-21,Boa Viagem,PE,Nordeste,Lucas Bandeira,Coloração,228.79,0.35,80.08,Crédito,Gustavo Farias
+A00988,2025-09-22,Vila Madalena,SP,Sudeste,Ana Prado,Corte,99.82,0.40,39.93,Pix,Beatriz Ibrahim
+A00989,2025-09-22,Boa Viagem,PE,Nordeste,Lucas Bandeira,Corte,85.04,0.40,34.02,Débito,Daniel Duarte
+A00990,2025-09-22,Meireles,CE,Nordeste,Marina Fontes,Barba,53.03,0.45,23.86,Crédito,Gustavo Farias
+A00991,2025-09-24,Umarizal,PA,Norte,Sérgio Maia,Escova,107.97,0.40,43.19,Crédito,Rafael Klein
+A00992,2025-09-25,Vila Madalena,SP,Sudeste,Ana Prado,Manicure,69.15,0.50,34.57,Pix,Daniel Machado
+A00993,2025-09-25,Meireles,CE,Nordeste,Marina Fontes,Corte,96.72,0.40,38.69,Pix,Camila Almeida
+A00994,2025-09-26,Copacabana,RJ,Sudeste,Carla Menezes,Manicure,85.77,0.50,42.88,Débito,Mariana Oliveira
+A00995,2025-09-26,Asa Sul,DF,Centro-Oeste,Olívia Serra,Barba,61.24,0.45,27.56,Crédito,Camila Duarte
+A00996,2025-09-26,Umarizal,PA,Norte,Sérgio Maia,Corte,85.45,0.40,34.18,Crédito,Sofia Duarte
+A00997,2025-09-26,Umarizal,PA,Norte,Renata Pinho,Escova,84.10,0.40,33.64,Crédito,Thiago Cavalcanti
+A00998,2025-09-27,Batel,PR,Sul,João Vitor Reis,Corte,135.39,0.40,54.16,Crédito,Juliana Loureiro
+A00999,2025-09-27,Boa Viagem,PE,Nordeste,Lucas Bandeira,Coloração,217.06,0.35,75.97,Crédito,Fernanda Duarte
+A01000,2025-09-29,Vila Madalena,SP,Sudeste,Bruno Tavares,Manicure,56.05,0.50,28.02,Pix,Rafael Oliveira
+A01001,2025-09-29,Copacabana,RJ,Sudeste,Carla Menezes,Coloração,295.57,0.35,103.45,Pix,Vanessa Siqueira
+A01002,2025-09-29,Batel,PR,Sul,Isabel Cardoso,Escova,71.29,0.40,28.52,Débito,Kelly Loureiro
+A01003,2025-09-30,Moinhos de Vento,RS,Sul,Henrique Alves,Escova,105.57,0.40,42.23,Débito,Rafael Cavalcanti
+A01004,2025-10-01,Moinhos de Vento,RS,Sul,Henrique Alves,Escova,78.38,0.40,31.35,Pix,Leandro Klein
+A01005,2025-10-02,Copacabana,RJ,Sudeste,Carla Menezes,Coloração,243.98,0.35,85.39,Pix,Gustavo Loureiro
+A01006,2025-10-02,Asa Sul,DF,Centro-Oeste,Olívia Serra,Coloração,355.39,0.35,124.39,Dinheiro,Alice Esteves
+A01007,2025-10-02,Umarizal,PA,Norte,Renata Pinho,Corte,116.90,0.40,46.76,Crédito,Juliana Gomes
+A01008,2025-10-04,Vila Madalena,SP,Sudeste,Bruno Tavares,Manicure,56.25,0.50,28.13,Pix,Patrícia Farias
+A01009,2025-10-04,Vila Madalena,SP,Sudeste,Ana Prado,Manicure,63.66,0.50,31.83,Dinheiro,Beatriz Loureiro
+A01010,2025-10-04,Vila Madalena,SP,Sudeste,Ana Prado,Manicure,69.03,0.50,34.52,Pix,Juliana Ibrahim
+A01011,2025-10-04,Copacabana,RJ,Sudeste,Carla Menezes,Corte,132.00,0.40,52.80,Crédito,Mariana Queiroz
+A01012,2025-10-04,Savassi,MG,Sudeste,Fábio Nunes,Manicure,89.80,0.50,44.90,Pix,Alice Peixoto
+A01013,2025-10-04,Moinhos de Vento,RS,Sul,Gabriela Lima,Hidratação,164.13,0.35,57.44,Débito,Alice Cavalcanti
+A01014,2025-10-04,Umarizal,PA,Norte,Renata Pinho,Manicure,79.92,0.50,39.96,Crédito,Otávio Ramos
+A01015,2025-10-05,Copacabana,RJ,Sudeste,Diego Moura,Coloração,274.07,0.35,95.92,Pix,Camila Machado
+A01016,2025-10-05,Savassi,MG,Sudeste,Fábio Nunes,Manicure,72.08,0.50,36.04,Pix,Otávio Oliveira
+A01017,2025-10-05,Meireles,CE,Nordeste,Nelson Braga,Corte,133.37,0.40,53.35,Crédito,Camila Ibrahim
+A01018,2025-10-06,Vila Madalena,SP,Sudeste,Ana Prado,Corte,118.28,0.40,47.31,Pix,Fernanda Klein
+A01019,2025-10-06,Copacabana,RJ,Sudeste,Diego Moura,Manicure,82.37,0.50,41.18,Crédito,Eduardo Queiroz
+A01020,2025-10-07,Boa Viagem,PE,Nordeste,Karina Melo,Coloração,294.88,0.35,103.21,Dinheiro,Gustavo Teixeira
+A01021,2025-10-07,Boa Viagem,PE,Nordeste,Karina Melo,Coloração,236.22,0.35,82.68,Crédito,Daniel Machado
+A01022,2025-10-07,Boa Viagem,PE,Nordeste,Karina Melo,Barba,61.68,0.45,27.76,Débito,Fernanda Barbosa
+A01023,2025-10-07,Asa Sul,DF,Centro-Oeste,Paulo Krause,Escova,75.48,0.40,30.19,Pix,Otávio Barbosa
+A01024,2025-10-10,Copacabana,RJ,Sudeste,Carla Menezes,Escova,106.97,0.40,42.79,Crédito,Kelly Gomes
+A01025,2025-10-10,Boa Viagem,PE,Nordeste,Lucas Bandeira,Barba,79.13,0.45,35.61,Dinheiro,Leandro Esteves
+A01026,2025-10-11,Moinhos de Vento,RS,Sul,Henrique Alves,Coloração,206.88,0.35,72.41,Crédito,Igor Jardim
+A01027,2025-10-12,Savassi,MG,Sudeste,Fábio Nunes,Manicure,73.28,0.50,36.64,Dinheiro,Eduardo Duarte
+A01028,2025-10-12,Batel,PR,Sul,Isabel Cardoso,Escova,107.69,0.40,43.08,Dinheiro,Camila Oliveira
+A01029,2025-10-12,Umarizal,PA,Norte,Renata Pinho,Coloração,343.76,0.35,120.32,Crédito,Rafael Esteves
+A01030,2025-10-15,Meireles,CE,Nordeste,Marina Fontes,Coloração,247.92,0.35,86.77,Pix,Fernanda Teixeira
+A01031,2025-10-15,Asa Sul,DF,Centro-Oeste,Paulo Krause,Corte,93.91,0.40,37.56,Débito,Juliana Siqueira
+A01032,2025-10-16,Vila Madalena,SP,Sudeste,Ana Prado,Barba,54.77,0.45,24.64,Débito,Juliana Queiroz
+A01033,2025-10-16,Meireles,CE,Nordeste,Nelson Braga,Manicure,47.81,0.50,23.91,Dinheiro,Natália Klein
+A01034,2025-10-16,Umarizal,PA,Norte,Sérgio Maia,Escova,111.02,0.40,44.41,Pix,Kelly Farias
+A01035,2025-10-17,Copacabana,RJ,Sudeste,Diego Moura,Barba,69.67,0.45,31.35,Crédito,Daniel Nogueira
+A01036,2025-10-17,Savassi,MG,Sudeste,Fábio Nunes,Manicure,88.44,0.50,44.22,Dinheiro,Sofia Barbosa
+A01037,2025-10-17,Batel,PR,Sul,Isabel Cardoso,Corte,112.94,0.40,45.18,Crédito,Mariana Farias
+A01038,2025-10-18,Moinhos de Vento,RS,Sul,Henrique Alves,Corte,96.87,0.40,38.75,Crédito,Helena Almeida
+A01039,2025-10-18,Moinhos de Vento,RS,Sul,Gabriela Lima,Escova,114.14,0.40,45.66,Pix,Patrícia Klein
+A01040,2025-10-18,Moinhos de Vento,RS,Sul,Henrique Alves,Corte,121.02,0.40,48.41,Pix,Rafael Siqueira
+A01041,2025-10-18,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,128.33,0.40,51.33,Dinheiro,Gustavo Teixeira
+A01042,2025-10-19,Vila Madalena,SP,Sudeste,Bruno Tavares,Corte,131.67,0.40,52.67,Débito,Daniel Peixoto
+A01043,2025-10-19,Boa Viagem,PE,Nordeste,Karina Melo,Escova,77.03,0.40,30.81,Débito,Kelly Farias
+A01044,2025-10-20,Asa Sul,DF,Centro-Oeste,Paulo Krause,Escova,85.17,0.40,34.07,Crédito,Camila Duarte
+A01045,2025-10-21,Savassi,MG,Sudeste,Fábio Nunes,Coloração,309.23,0.35,108.23,Pix,Kelly Esteves
+A01046,2025-10-21,Batel,PR,Sul,João Vitor Reis,Corte,100.16,0.40,40.06,Dinheiro,Mariana Siqueira
+A01047,2025-10-21,Meireles,CE,Nordeste,Marina Fontes,Corte,113.46,0.40,45.39,Dinheiro,Daniel Ramos
+A01048,2025-10-22,Savassi,MG,Sudeste,Elisa Rocha,Corte,125.53,0.40,50.21,Pix,Fernanda Teixeira
+A01049,2025-10-22,Boa Viagem,PE,Nordeste,Lucas Bandeira,Coloração,220.39,0.35,77.14,Débito,Otávio Barbosa
+A01050,2025-10-23,Vila Madalena,SP,Sudeste,Ana Prado,Corte,117.85,0.40,47.14,Pix,Thiago Jardim
+A01051,2025-10-23,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,112.34,0.40,44.94,Pix,Kelly Loureiro
+A01052,2025-10-24,Batel,PR,Sul,João Vitor Reis,Coloração,280.00,0.35,98.00,Dinheiro,Camila Siqueira
+A01053,2025-10-25,Vila Madalena,SP,Sudeste,Bruno Tavares,Corte,76.57,0.40,30.63,Crédito,Leandro Klein
+A01054,2025-10-25,Copacabana,RJ,Sudeste,Carla Menezes,Hidratação,232.14,0.35,81.25,Débito,Mariana Duarte
+A01055,2025-10-25,Savassi,MG,Sudeste,Elisa Rocha,Hidratação,167.99,0.35,58.80,Pix,Helena Ibrahim
+A01056,2025-10-27,Batel,PR,Sul,João Vitor Reis,Corte,117.94,0.40,47.18,Crédito,Camila Nogueira
+A01057,2025-10-30,Asa Sul,DF,Centro-Oeste,Paulo Krause,Escova,72.66,0.40,29.06,Crédito,Daniel Esteves
+A01058,2025-10-31,Moinhos de Vento,RS,Sul,Henrique Alves,Escova,110.09,0.40,44.04,Crédito,Leandro Oliveira
+A01059,2025-10-31,Meireles,CE,Nordeste,Marina Fontes,Escova,110.95,0.40,44.38,Pix,Kelly Esteves
+A01060,2025-11-01,Savassi,MG,Sudeste,Fábio Nunes,Escova,69.49,0.40,27.80,Débito,Beatriz Teixeira
+A01061,2025-11-01,Boa Viagem,PE,Nordeste,Lucas Bandeira,Barba,49.23,0.45,22.16,Crédito,Eduardo Loureiro
+A01062,2025-11-01,Boa Viagem,PE,Nordeste,Lucas Bandeira,Escova,93.51,0.40,37.41,Crédito,Eduardo Siqueira
+A01063,2025-11-04,Vila Madalena,SP,Sudeste,Bruno Tavares,Manicure,60.59,0.50,30.29,Pix,Beatriz Teixeira
+A01064,2025-11-04,Asa Sul,DF,Centro-Oeste,Paulo Krause,Coloração,256.03,0.35,89.61,Dinheiro,Helena Ibrahim
+A01065,2025-11-05,Copacabana,RJ,Sudeste,Carla Menezes,Escova,113.38,0.40,45.35,Crédito,Vanessa Oliveira
+A01066,2025-11-05,Moinhos de Vento,RS,Sul,Henrique Alves,Escova,113.16,0.40,45.26,Dinheiro,Igor Horta
+A01067,2025-11-05,Asa Sul,DF,Centro-Oeste,Paulo Krause,Manicure,79.21,0.50,39.60,Pix,Eduardo Ramos
+A01068,2025-11-06,Copacabana,RJ,Sudeste,Diego Moura,Corte,132.61,0.40,53.04,Débito,Otávio Nogueira
+A01069,2025-11-06,Moinhos de Vento,RS,Sul,Henrique Alves,Manicure,65.75,0.50,32.87,Crédito,Juliana Gomes
+A01070,2025-11-07,Boa Viagem,PE,Nordeste,Karina Melo,Corte,110.20,0.40,44.08,Débito,Rafael Esteves
+A01071,2025-11-07,Meireles,CE,Nordeste,Nelson Braga,Corte,100.29,0.40,40.12,Pix,Otávio Ramos
+A01072,2025-11-07,Umarizal,PA,Norte,Sérgio Maia,Coloração,328.88,0.35,115.11,Pix,Vanessa Peixoto
+A01073,2025-11-08,Boa Viagem,PE,Nordeste,Karina Melo,Manicure,84.22,0.50,42.11,Pix,Gustavo Jardim
+A01074,2025-11-09,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,108.17,0.40,43.27,Débito,Vanessa Queiroz
+A01075,2025-11-10,Vila Madalena,SP,Sudeste,Bruno Tavares,Corte,126.04,0.40,50.41,Pix,Thiago Jardim
+A01076,2025-11-11,Vila Madalena,SP,Sudeste,Ana Prado,Corte,118.07,0.40,47.23,Pix,Helena Farias
+A01077,2025-11-11,Vila Madalena,SP,Sudeste,Bruno Tavares,Corte,103.18,0.40,41.27,Dinheiro,Leandro Almeida
+A01078,2025-11-11,Savassi,MG,Sudeste,Fábio Nunes,Corte,110.39,0.40,44.15,Pix,Juliana Queiroz
+A01079,2025-11-12,Vila Madalena,SP,Sudeste,Bruno Tavares,Barba,47.51,0.45,21.38,Pix,Camila Queiroz
+A01080,2025-11-12,Copacabana,RJ,Sudeste,Carla Menezes,Coloração,244.93,0.35,85.73,Débito,Juliana Oliveira
+A01081,2025-11-12,Savassi,MG,Sudeste,Fábio Nunes,Escova,93.94,0.40,37.58,Crédito,Thiago Horta
+A01082,2025-11-12,Savassi,MG,Sudeste,Elisa Rocha,Corte,74.82,0.40,29.93,Pix,Igor Gomes
+A01083,2025-11-13,Batel,PR,Sul,João Vitor Reis,Corte,108.23,0.40,43.29,Pix,Thiago Almeida
+A01084,2025-11-13,Boa Viagem,PE,Nordeste,Karina Melo,Coloração,226.80,0.35,79.38,Pix,Mariana Oliveira
+A01085,2025-11-14,Copacabana,RJ,Sudeste,Diego Moura,Escova,96.59,0.40,38.64,Dinheiro,Rafael Almeida
+A01086,2025-11-14,Asa Sul,DF,Centro-Oeste,Paulo Krause,Coloração,236.96,0.35,82.93,Crédito,Alice Queiroz
+A01087,2025-11-14,Umarizal,PA,Norte,Renata Pinho,Corte,124.84,0.40,49.93,Pix,Kelly Ramos
+A01088,2025-11-15,Meireles,CE,Nordeste,Nelson Braga,Barba,51.39,0.45,23.13,Dinheiro,Patrícia Queiroz
+A01089,2025-11-15,Umarizal,PA,Norte,Renata Pinho,Corte,82.58,0.40,33.03,Crédito,Kelly Siqueira
+A01090,2025-11-16,Moinhos de Vento,RS,Sul,Henrique Alves,Barba,74.48,0.45,33.51,Pix,Eduardo Ramos
+A01091,2025-11-17,Meireles,CE,Nordeste,Nelson Braga,Manicure,71.88,0.50,35.94,Crédito,Beatriz Peixoto
+A01092,2025-11-20,Vila Madalena,SP,Sudeste,Bruno Tavares,Barba,54.28,0.45,24.43,Dinheiro,Leandro Queiroz
+A01093,2025-11-20,Batel,PR,Sul,Isabel Cardoso,Manicure,83.30,0.50,41.65,Crédito,Patrícia Oliveira
+A01094,2025-11-20,Meireles,CE,Nordeste,Nelson Braga,Corte,85.18,0.40,34.07,Dinheiro,Otávio Barbosa
+A01095,2025-11-21,Copacabana,RJ,Sudeste,Diego Moura,Hidratação,153.93,0.35,53.87,Dinheiro,Gustavo Loureiro
+A01096,2025-11-21,Boa Viagem,PE,Nordeste,Karina Melo,Corte,130.20,0.40,52.08,Dinheiro,Vanessa Esteves
+A01097,2025-11-21,Asa Sul,DF,Centro-Oeste,Paulo Krause,Barba,53.60,0.45,24.12,Crédito,Rafael Oliveira
+A01098,2025-11-22,Vila Madalena,SP,Sudeste,Bruno Tavares,Manicure,52.35,0.50,26.18,Crédito,Helena Oliveira
+A01099,2025-11-22,Savassi,MG,Sudeste,Fábio Nunes,Manicure,80.77,0.50,40.39,Pix,Rafael Klein
+A01100,2025-11-22,Batel,PR,Sul,João Vitor Reis,Coloração,260.75,0.35,91.26,Crédito,Mariana Gomes
+A01101,2025-11-22,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,77.36,0.40,30.94,Pix,Eduardo Farias
+A01102,2025-11-23,Vila Madalena,SP,Sudeste,Ana Prado,Coloração,292.43,0.35,102.35,Pix,Camila Loureiro
+A01103,2025-11-23,Savassi,MG,Sudeste,Elisa Rocha,Escova,80.30,0.40,32.12,Crédito,Mariana Queiroz
+A01104,2025-11-24,Copacabana,RJ,Sudeste,Carla Menezes,Manicure,70.93,0.50,35.46,Crédito,Natália Cavalcanti
+A01105,2025-11-25,Moinhos de Vento,RS,Sul,Gabriela Lima,Manicure,58.83,0.50,29.41,Crédito,Alice Klein
+A01106,2025-11-27,Vila Madalena,SP,Sudeste,Bruno Tavares,Barba,56.31,0.45,25.34,Crédito,Daniel Peixoto
+A01107,2025-11-27,Meireles,CE,Nordeste,Marina Fontes,Escova,110.31,0.40,44.12,Pix,Beatriz Jardim
+A01108,2025-11-28,Copacabana,RJ,Sudeste,Carla Menezes,Corte,103.20,0.40,41.28,Débito,Daniel Duarte
+A01109,2025-11-28,Moinhos de Vento,RS,Sul,Henrique Alves,Hidratação,231.77,0.35,81.12,Pix,Daniel Almeida
+A01110,2025-11-28,Batel,PR,Sul,João Vitor Reis,Barba,78.69,0.45,35.41,Débito,Natália Ramos
+A01111,2025-11-28,Umarizal,PA,Norte,Renata Pinho,Manicure,82.81,0.50,41.41,Crédito,Sofia Siqueira
+A01112,2025-11-29,Vila Madalena,SP,Sudeste,Ana Prado,Manicure,83.69,0.50,41.84,Débito,Leandro Duarte
+A01113,2025-11-29,Batel,PR,Sul,João Vitor Reis,Escova,85.78,0.40,34.31,Crédito,Daniel Siqueira
+A01114,2025-11-30,Moinhos de Vento,RS,Sul,Gabriela Lima,Escova,103.60,0.40,41.44,Crédito,Rafael Esteves
+A01115,2025-12-01,Moinhos de Vento,RS,Sul,Henrique Alves,Coloração,220.25,0.35,77.09,Pix,Camila Ramos
+A01116,2025-12-01,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,133.12,0.40,53.25,Débito,Camila Ramos
+A01117,2025-12-02,Copacabana,RJ,Sudeste,Carla Menezes,Coloração,323.67,0.35,113.28,Dinheiro,Helena Jardim
+A01118,2025-12-02,Batel,PR,Sul,Isabel Cardoso,Escova,71.47,0.40,28.59,Pix,Juliana Oliveira
+A01119,2025-12-04,Umarizal,PA,Norte,Sérgio Maia,Corte,98.03,0.40,39.21,Pix,Juliana Klein
+A01120,2025-12-05,Savassi,MG,Sudeste,Fábio Nunes,Corte,135.13,0.40,54.05,Pix,Kelly Duarte
+A01121,2025-12-05,Asa Sul,DF,Centro-Oeste,Paulo Krause,Corte,87.91,0.40,35.17,Crédito,Igor Almeida
+A01122,2025-12-06,Copacabana,RJ,Sudeste,Diego Moura,Escova,94.83,0.40,37.93,Pix,Patrícia Barbosa
+A01123,2025-12-06,Batel,PR,Sul,Isabel Cardoso,Hidratação,158.45,0.35,55.46,Pix,Camila Barbosa
+A01124,2025-12-07,Savassi,MG,Sudeste,Fábio Nunes,Coloração,316.29,0.35,110.70,Crédito,Natália Siqueira
+A01125,2025-12-07,Boa Viagem,PE,Nordeste,Lucas Bandeira,Corte,86.48,0.40,34.59,Débito,Patrícia Klein
+A01126,2025-12-08,Vila Madalena,SP,Sudeste,Bruno Tavares,Hidratação,192.16,0.35,67.26,Débito,Mariana Ramos
+A01127,2025-12-08,Moinhos de Vento,RS,Sul,Henrique Alves,Coloração,243.22,0.35,85.13,Crédito,Eduardo Esteves
+A01128,2025-12-09,Vila Madalena,SP,Sudeste,Bruno Tavares,Barba,64.54,0.45,29.04,Débito,Rafael Esteves
+A01129,2025-12-09,Vila Madalena,SP,Sudeste,Bruno Tavares,Corte,100.88,0.40,40.35,Pix,Rafael Gomes
+A01130,2025-12-09,Boa Viagem,PE,Nordeste,Karina Melo,Corte,100.89,0.40,40.36,Dinheiro,Helena Gomes
+A01131,2025-12-09,Meireles,CE,Nordeste,Marina Fontes,Manicure,59.12,0.50,29.56,Crédito,Sofia Klein
+A01132,2025-12-10,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,76.58,0.40,30.63,Débito,Thiago Barbosa
+A01133,2025-12-10,Batel,PR,Sul,Isabel Cardoso,Barba,48.48,0.45,21.82,Débito,Mariana Almeida
+A01134,2025-12-10,Asa Sul,DF,Centro-Oeste,Paulo Krause,Manicure,60.20,0.50,30.10,Dinheiro,Mariana Oliveira
+A01135,2025-12-11,Batel,PR,Sul,João Vitor Reis,Hidratação,189.09,0.35,66.18,Pix,Eduardo Cavalcanti
+A01136,2025-12-11,Boa Viagem,PE,Nordeste,Lucas Bandeira,Hidratação,161.23,0.35,56.43,Crédito,Gustavo Farias
+A01137,2025-12-12,Vila Madalena,SP,Sudeste,Ana Prado,Coloração,205.46,0.35,71.91,Débito,Leandro Gomes
+A01138,2025-12-12,Copacabana,RJ,Sudeste,Diego Moura,Corte,87.44,0.40,34.98,Pix,Juliana Queiroz
+A01139,2025-12-13,Vila Madalena,SP,Sudeste,Ana Prado,Corte,99.97,0.40,39.99,Pix,Thiago Oliveira
+A01140,2025-12-13,Savassi,MG,Sudeste,Elisa Rocha,Escova,85.96,0.40,34.38,Crédito,Eduardo Nogueira
+A01141,2025-12-13,Boa Viagem,PE,Nordeste,Lucas Bandeira,Corte,87.38,0.40,34.95,Pix,Gustavo Peixoto
+A01142,2025-12-14,Copacabana,RJ,Sudeste,Carla Menezes,Escova,81.20,0.40,32.48,Pix,Kelly Ibrahim
+A01143,2025-12-14,Savassi,MG,Sudeste,Fábio Nunes,Coloração,318.98,0.35,111.64,Crédito,Eduardo Siqueira
+A01144,2025-12-14,Meireles,CE,Nordeste,Marina Fontes,Manicure,86.67,0.50,43.33,Pix,Leandro Horta
+A01145,2025-12-14,Meireles,CE,Nordeste,Marina Fontes,Corte,133.07,0.40,53.23,Débito,Juliana Nogueira
+A01146,2025-12-16,Meireles,CE,Nordeste,Nelson Braga,Corte,110.36,0.40,44.14,Dinheiro,Igor Oliveira
+A01147,2025-12-16,Asa Sul,DF,Centro-Oeste,Olívia Serra,Hidratação,138.81,0.35,48.58,Pix,Mariana Almeida
+A01148,2025-12-16,Umarizal,PA,Norte,Renata Pinho,Manicure,48.80,0.50,24.40,Crédito,Otávio Nogueira
+A01149,2025-12-19,Batel,PR,Sul,Isabel Cardoso,Manicure,61.70,0.50,30.85,Pix,Helena Machado
+A01150,2025-12-19,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,109.55,0.40,43.82,Pix,Thiago Oliveira
+A01151,2025-12-20,Vila Madalena,SP,Sudeste,Ana Prado,Coloração,303.26,0.35,106.14,Crédito,Vanessa Queiroz
+A01152,2025-12-20,Copacabana,RJ,Sudeste,Carla Menezes,Barba,63.53,0.45,28.59,Crédito,Leandro Cavalcanti
+A01153,2025-12-20,Moinhos de Vento,RS,Sul,Henrique Alves,Coloração,330.30,0.35,115.60,Pix,Rafael Almeida
+A01154,2025-12-20,Batel,PR,Sul,João Vitor Reis,Barba,56.04,0.45,25.22,Crédito,Patrícia Oliveira
+A01155,2025-12-20,Meireles,CE,Nordeste,Marina Fontes,Barba,56.65,0.45,25.49,Pix,Rafael Cavalcanti
+A01156,2025-12-21,Vila Madalena,SP,Sudeste,Ana Prado,Corte,96.95,0.40,38.78,Pix,Thiago Loureiro
+A01157,2025-12-21,Moinhos de Vento,RS,Sul,Gabriela Lima,Escova,100.11,0.40,40.04,Crédito,Natália Oliveira
+A01158,2025-12-22,Meireles,CE,Nordeste,Marina Fontes,Corte,125.83,0.40,50.33,Crédito,Sofia Jardim
+A01159,2025-12-22,Umarizal,PA,Norte,Sérgio Maia,Manicure,68.09,0.50,34.05,Pix,Helena Queiroz
+A01160,2025-12-23,Copacabana,RJ,Sudeste,Carla Menezes,Manicure,68.61,0.50,34.31,Pix,Rafael Cavalcanti
+A01161,2025-12-23,Copacabana,RJ,Sudeste,Diego Moura,Manicure,57.73,0.50,28.86,Pix,Helena Nogueira
+A01162,2025-12-23,Savassi,MG,Sudeste,Elisa Rocha,Corte,86.82,0.40,34.73,Crédito,Eduardo Farias
+A01163,2025-12-24,Moinhos de Vento,RS,Sul,Henrique Alves,Coloração,226.14,0.35,79.15,Pix,Fernanda Klein
+A01164,2025-12-24,Asa Sul,DF,Centro-Oeste,Olívia Serra,Hidratação,143.22,0.35,50.13,Dinheiro,Sofia Horta
+A01165,2025-12-25,Moinhos de Vento,RS,Sul,Gabriela Lima,Barba,76.11,0.45,34.25,Pix,Juliana Teixeira
+A01166,2025-12-25,Moinhos de Vento,RS,Sul,Gabriela Lima,Manicure,49.03,0.50,24.51,Pix,Beatriz Cavalcanti
+A01167,2025-12-26,Boa Viagem,PE,Nordeste,Karina Melo,Corte,90.38,0.40,36.15,Pix,Igor Oliveira
+A01168,2025-12-27,Vila Madalena,SP,Sudeste,Ana Prado,Corte,81.12,0.40,32.45,Pix,Juliana Ibrahim
+A01169,2025-12-27,Savassi,MG,Sudeste,Fábio Nunes,Escova,69.32,0.40,27.73,Crédito,Eduardo Klein
+A01170,2025-12-27,Boa Viagem,PE,Nordeste,Lucas Bandeira,Corte,120.50,0.40,48.20,Pix,Leandro Esteves
+A01171,2025-12-28,Copacabana,RJ,Sudeste,Diego Moura,Coloração,226.51,0.35,79.28,Dinheiro,Daniel Esteves
+A01172,2025-12-28,Moinhos de Vento,RS,Sul,Gabriela Lima,Manicure,52.73,0.50,26.36,Pix,Camila Ibrahim
+A01173,2025-12-29,Batel,PR,Sul,João Vitor Reis,Corte,83.60,0.40,33.44,Pix,Daniel Oliveira
+A01174,2025-12-29,Umarizal,PA,Norte,Renata Pinho,Corte,117.45,0.40,46.98,Crédito,Vanessa Ibrahim
+A01175,2025-12-30,Umarizal,PA,Norte,Renata Pinho,Coloração,334.59,0.35,117.11,Pix,Otávio Loureiro
+A01176,2025-12-31,Vila Madalena,SP,Sudeste,Ana Prado,Corte,104.16,0.40,41.66,Crédito,Camila Duarte
+A01177,2025-12-31,Savassi,MG,Sudeste,Fábio Nunes,Corte,125.55,0.40,50.22,Crédito,Juliana Peixoto
+A01178,2025-12-31,Boa Viagem,PE,Nordeste,Karina Melo,Coloração,234.44,0.35,82.06,Crédito,Daniel Machado
+A01179,2026-01-01,Moinhos de Vento,RS,Sul,Gabriela Lima,Corte,124.97,0.40,49.99,Pix,Vanessa Peixoto
+A01180,2026-01-01,Meireles,CE,Nordeste,Marina Fontes,Escova,77.69,0.40,31.08,Débito,Alice Barbosa
+A01181,2026-01-01,Meireles,CE,Nordeste,Marina Fontes,Coloração,297.67,0.35,104.18,Pix,Patrícia Gomes
+A01182,2026-01-02,Batel,PR,Sul,João Vitor Reis,Manicure,55.49,0.50,27.74,Pix,Patrícia Peixoto
+A01183,2026-01-02,Batel,PR,Sul,Isabel Cardoso,Hidratação,203.90,0.35,71.37,Débito,Leandro Horta
+A01184,2026-01-04,Batel,PR,Sul,Isabel Cardoso,Corte,99.16,0.40,39.66,Débito,Rafael Nogueira
+A01185,2026-01-04,Asa Sul,DF,Centro-Oeste,Olívia Serra,Manicure,73.41,0.50,36.71,Dinheiro,Leandro Duarte
+A01186,2026-01-05,Copacabana,RJ,Sudeste,Diego Moura,Corte,118.82,0.40,47.53,Crédito,Otávio Farias
+A01187,2026-01-05,Moinhos de Vento,RS,Sul,Gabriela Lima,Barba,52.31,0.45,23.54,Crédito,Patrícia Ibrahim
+A01188,2026-01-05,Umarizal,PA,Norte,Renata Pinho,Manicure,63.37,0.50,31.69,Crédito,Leandro Teixeira
+A01189,2026-01-06,Vila Madalena,SP,Sudeste,Ana Prado,Manicure,80.95,0.50,40.48,Pix,Eduardo Cavalcanti
+A01190,2026-01-07,Vila Madalena,SP,Sudeste,Ana Prado,Hidratação,213.19,0.35,74.62,Crédito,Kelly Horta
+A01191,2026-01-07,Batel,PR,Sul,João Vitor Reis,Hidratação,183.64,0.35,64.27,Crédito,Thiago Gomes
+A01192,2026-01-07,Umarizal,PA,Norte,Renata Pinho,Corte,109.30,0.40,43.72,Débito,Beatriz Almeida
+A01193,2026-01-09,Copacabana,RJ,Sudeste,Carla Menezes,Corte,133.55,0.40,53.42,Pix,Vanessa Cavalcanti
+A01194,2026-01-10,Moinhos de Vento,RS,Sul,Henrique Alves,Escova,116.33,0.40,46.53,Pix,Patrícia Oliveira
+A01195,2026-01-10,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,96.99,0.40,38.79,Pix,Eduardo Esteves
+A01196,2026-01-11,Moinhos de Vento,RS,Sul,Henrique Alves,Barba,66.85,0.45,30.08,Pix,Vanessa Farias
+A01197,2026-01-12,Savassi,MG,Sudeste,Fábio Nunes,Manicure,56.96,0.50,28.48,Crédito,Helena Barbosa
+A01198,2026-01-12,Boa Viagem,PE,Nordeste,Karina Melo,Coloração,373.91,0.35,130.87,Pix,Rafael Farias
+A01199,2026-01-13,Savassi,MG,Sudeste,Fábio Nunes,Escova,105.21,0.40,42.09,Pix,Helena Gomes
+A01200,2026-01-13,Umarizal,PA,Norte,Renata Pinho,Hidratação,219.84,0.35,76.94,Pix,Daniel Loureiro
+A01201,2026-01-14,Vila Madalena,SP,Sudeste,Ana Prado,Manicure,65.38,0.50,32.69,Pix,Helena Duarte
+A01202,2026-01-14,Copacabana,RJ,Sudeste,Carla Menezes,Escova,120.51,0.40,48.21,Pix,Daniel Ibrahim
+A01203,2026-01-14,Copacabana,RJ,Sudeste,Diego Moura,Barba,82.68,0.45,37.21,Débito,Otávio Gomes
+A01204,2026-01-15,Boa Viagem,PE,Nordeste,Lucas Bandeira,Barba,68.87,0.45,30.99,Débito,Natália Almeida
+A01205,2026-01-16,Umarizal,PA,Norte,Renata Pinho,Corte,108.43,0.40,43.37,Crédito,Alice Queiroz
+A01206,2026-01-17,Batel,PR,Sul,Isabel Cardoso,Escova,78.87,0.40,31.55,Crédito,Otávio Klein
+A01207,2026-01-18,Vila Madalena,SP,Sudeste,Ana Prado,Manicure,59.72,0.50,29.86,Pix,Gustavo Ibrahim
+A01208,2026-01-18,Meireles,CE,Nordeste,Nelson Braga,Coloração,362.61,0.35,126.91,Pix,Alice Duarte
+A01209,2026-01-19,Copacabana,RJ,Sudeste,Diego Moura,Corte,111.51,0.40,44.60,Débito,Leandro Almeida
+A01210,2026-01-19,Savassi,MG,Sudeste,Fábio Nunes,Manicure,55.45,0.50,27.73,Crédito,Alice Klein
+A01211,2026-01-19,Meireles,CE,Nordeste,Nelson Braga,Hidratação,236.39,0.35,82.74,Crédito,Beatriz Almeida
+A01212,2026-01-20,Copacabana,RJ,Sudeste,Diego Moura,Hidratação,206.23,0.35,72.18,Crédito,Igor Ibrahim
+A01213,2026-01-20,Savassi,MG,Sudeste,Elisa Rocha,Coloração,354.45,0.35,124.06,Dinheiro,Fernanda Klein
+A01214,2026-01-21,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,99.38,0.40,39.75,Pix,Fernanda Farias
+A01215,2026-01-21,Vila Madalena,SP,Sudeste,Ana Prado,Corte,105.58,0.40,42.23,Dinheiro,Igor Nogueira
+A01216,2026-01-21,Copacabana,RJ,Sudeste,Carla Menezes,Escova,67.78,0.40,27.11,Crédito,Vanessa Gomes
+A01217,2026-01-21,Meireles,CE,Nordeste,Nelson Braga,Corte,141.48,0.40,56.59,Crédito,Kelly Barbosa
+A01218,2026-01-21,Asa Sul,DF,Centro-Oeste,Olívia Serra,Coloração,258.37,0.35,90.43,Pix,Mariana Queiroz
+A01219,2026-01-22,Vila Madalena,SP,Sudeste,Ana Prado,Corte,135.72,0.40,54.29,Pix,Rafael Barbosa
+A01220,2026-01-22,Vila Madalena,SP,Sudeste,Ana Prado,Corte,95.67,0.40,38.27,Pix,Patrícia Horta
+A01221,2026-01-22,Savassi,MG,Sudeste,Elisa Rocha,Manicure,62.50,0.50,31.25,Pix,Juliana Loureiro
+A01222,2026-01-22,Moinhos de Vento,RS,Sul,Henrique Alves,Manicure,88.18,0.50,44.09,Pix,Leandro Nogueira
+A01223,2026-01-22,Boa Viagem,PE,Nordeste,Karina Melo,Hidratação,219.61,0.35,76.86,Pix,Sofia Klein
+A01224,2026-01-22,Asa Sul,DF,Centro-Oeste,Paulo Krause,Escova,75.57,0.40,30.23,Pix,Juliana Klein
+A01225,2026-01-23,Savassi,MG,Sudeste,Elisa Rocha,Corte,113.74,0.40,45.49,Crédito,Daniel Klein
+A01226,2026-01-24,Asa Sul,DF,Centro-Oeste,Paulo Krause,Escova,111.24,0.40,44.50,Crédito,Sofia Gomes
+A01227,2026-01-24,Asa Sul,DF,Centro-Oeste,Olívia Serra,Corte,89.78,0.40,35.91,Pix,Rafael Horta
+A01228,2026-01-25,Boa Viagem,PE,Nordeste,Karina Melo,Corte,97.67,0.40,39.07,Débito,Patrícia Teixeira
+A01229,2026-01-26,Boa Viagem,PE,Nordeste,Lucas Bandeira,Hidratação,230.90,0.35,80.81,Dinheiro,Beatriz Peixoto
+A01230,2026-01-27,Vila Madalena,SP,Sudeste,Ana Prado,Escova,91.27,0.40,36.51,Pix,Mariana Jardim
+A01231,2026-01-27,Batel,PR,Sul,Isabel Cardoso,Hidratação,167.54,0.35,58.64,Débito,Mariana Ibrahim
+A01232,2026-01-27,Boa Viagem,PE,Nordeste,Karina Melo,Coloração,222.52,0.35,77.88,Pix,Camila Farias
+A01233,2026-01-29,Moinhos de Vento,RS,Sul,Gabriela Lima,Manicure,50.77,0.50,25.38,Débito,Alice Oliveira
+A01234,2026-02-01,Vila Madalena,SP,Sudeste,Ana Prado,Corte,98.62,0.40,39.45,Débito,Thiago Queiroz
+A01235,2026-02-01,Boa Viagem,PE,Nordeste,Karina Melo,Coloração,356.22,0.35,124.68,Débito,Natália Oliveira
+A01236,2026-02-02,Vila Madalena,SP,Sudeste,Ana Prado,Escova,71.92,0.40,28.77,Pix,Natália Cavalcanti
+A01237,2026-02-02,Batel,PR,Sul,Isabel Cardoso,Corte,108.37,0.40,43.35,Dinheiro,Beatriz Esteves
+A01238,2026-02-02,Umarizal,PA,Norte,Sérgio Maia,Corte,125.33,0.40,50.13,Débito,Rafael Ibrahim
+A01239,2026-02-03,Savassi,MG,Sudeste,Elisa Rocha,Hidratação,206.63,0.35,72.32,Dinheiro,Camila Almeida
+A01240,2026-02-03,Savassi,MG,Sudeste,Fábio Nunes,Barba,80.11,0.45,36.05,Crédito,Alice Oliveira
+A01241,2026-02-03,Meireles,CE,Nordeste,Nelson Braga,Corte,144.00,0.40,57.60,Dinheiro,Rafael Loureiro
+A01242,2026-02-05,Umarizal,PA,Norte,Renata Pinho,Manicure,65.32,0.50,32.66,Débito,Gustavo Machado
+A01243,2026-02-06,Meireles,CE,Nordeste,Nelson Braga,Escova,116.61,0.40,46.65,Pix,Otávio Farias
+A01244,2026-02-06,Asa Sul,DF,Centro-Oeste,Paulo Krause,Barba,62.89,0.45,28.30,Crédito,Mariana Teixeira
+A01245,2026-02-07,Boa Viagem,PE,Nordeste,Karina Melo,Escova,77.96,0.40,31.18,Pix,Mariana Barbosa
+A01246,2026-02-08,Copacabana,RJ,Sudeste,Diego Moura,Escova,104.59,0.40,41.83,Pix,Fernanda Farias
+A01247,2026-02-08,Savassi,MG,Sudeste,Elisa Rocha,Corte,94.12,0.40,37.65,Pix,Kelly Nogueira
+A01248,2026-02-09,Copacabana,RJ,Sudeste,Diego Moura,Corte,120.50,0.40,48.20,Crédito,Thiago Horta
+A01249,2026-02-09,Asa Sul,DF,Centro-Oeste,Olívia Serra,Coloração,357.07,0.35,124.97,Dinheiro,Fernanda Barbosa
+A01250,2026-02-09,Asa Sul,DF,Centro-Oeste,Paulo Krause,Hidratação,222.65,0.35,77.93,Dinheiro,Kelly Queiroz
+A01251,2026-02-11,Copacabana,RJ,Sudeste,Diego Moura,Manicure,74.31,0.50,37.15,Pix,Fernanda Klein
+A01252,2026-02-11,Copacabana,RJ,Sudeste,Carla Menezes,Barba,76.96,0.45,34.63,Crédito,Daniel Siqueira
+A01253,2026-02-11,Batel,PR,Sul,Isabel Cardoso,Escova,96.54,0.40,38.62,Crédito,Daniel Horta
+A01254,2026-02-12,Copacabana,RJ,Sudeste,Diego Moura,Escova,112.01,0.40,44.80,Pix,Rafael Gomes
+A01255,2026-02-13,Moinhos de Vento,RS,Sul,Gabriela Lima,Corte,119.50,0.40,47.80,Débito,Gustavo Esteves
+A01256,2026-02-16,Moinhos de Vento,RS,Sul,Henrique Alves,Barba,54.34,0.45,24.45,Dinheiro,Kelly Ramos
+A01257,2026-02-16,Meireles,CE,Nordeste,Nelson Braga,Corte,92.38,0.40,36.95,Pix,Otávio Machado
+A01258,2026-02-16,Umarizal,PA,Norte,Sérgio Maia,Manicure,84.93,0.50,42.46,Crédito,Juliana Nogueira
+A01259,2026-02-17,Moinhos de Vento,RS,Sul,Henrique Alves,Manicure,84.00,0.50,42.00,Dinheiro,Gustavo Barbosa
+A01260,2026-02-17,Boa Viagem,PE,Nordeste,Lucas Bandeira,Escova,68.22,0.40,27.29,Crédito,Igor Klein
+A01261,2026-02-17,Asa Sul,DF,Centro-Oeste,Paulo Krause,Coloração,230.22,0.35,80.58,Crédito,Gustavo Ibrahim
+A01262,2026-02-18,Batel,PR,Sul,João Vitor Reis,Hidratação,145.83,0.35,51.04,Crédito,Gustavo Cavalcanti
+A01263,2026-02-18,Asa Sul,DF,Centro-Oeste,Paulo Krause,Corte,135.94,0.40,54.38,Crédito,Juliana Duarte
+A01264,2026-02-19,Vila Madalena,SP,Sudeste,Ana Prado,Corte,98.53,0.40,39.41,Dinheiro,Kelly Klein
+A01265,2026-02-19,Boa Viagem,PE,Nordeste,Karina Melo,Coloração,282.03,0.35,98.71,Pix,Otávio Esteves
+A01266,2026-02-20,Copacabana,RJ,Sudeste,Diego Moura,Escova,83.12,0.40,33.25,Pix,Igor Almeida
+A01267,2026-02-21,Savassi,MG,Sudeste,Elisa Rocha,Manicure,87.62,0.50,43.81,Pix,Rafael Cavalcanti
+A01268,2026-02-21,Savassi,MG,Sudeste,Elisa Rocha,Escova,95.14,0.40,38.05,Crédito,Kelly Klein
+A01269,2026-02-21,Batel,PR,Sul,Isabel Cardoso,Corte,103.33,0.40,41.33,Pix,Sofia Queiroz
+A01270,2026-02-21,Batel,PR,Sul,Isabel Cardoso,Coloração,322.70,0.35,112.94,Dinheiro,Leandro Klein
+A01271,2026-02-21,Boa Viagem,PE,Nordeste,Lucas Bandeira,Escova,97.24,0.40,38.89,Dinheiro,Rafael Oliveira
+A01272,2026-02-21,Meireles,CE,Nordeste,Marina Fontes,Corte,97.47,0.40,38.99,Pix,Beatriz Klein
+A01273,2026-02-21,Umarizal,PA,Norte,Sérgio Maia,Hidratação,190.65,0.35,66.73,Pix,Juliana Queiroz
+A01274,2026-02-22,Vila Madalena,SP,Sudeste,Ana Prado,Corte,101.81,0.40,40.72,Pix,Eduardo Horta
+A01275,2026-02-22,Copacabana,RJ,Sudeste,Carla Menezes,Hidratação,190.43,0.35,66.65,Pix,Rafael Cavalcanti
+A01276,2026-02-22,Savassi,MG,Sudeste,Fábio Nunes,Escova,103.12,0.40,41.25,Pix,Patrícia Ramos
+A01277,2026-02-23,Moinhos de Vento,RS,Sul,Henrique Alves,Manicure,86.35,0.50,43.18,Dinheiro,Gustavo Esteves
+A01278,2026-02-23,Batel,PR,Sul,Isabel Cardoso,Hidratação,200.76,0.35,70.27,Crédito,Beatriz Cavalcanti
+A01279,2026-02-24,Vila Madalena,SP,Sudeste,Ana Prado,Coloração,304.78,0.35,106.67,Pix,Kelly Queiroz
+A01280,2026-02-25,Vila Madalena,SP,Sudeste,Ana Prado,Manicure,75.16,0.50,37.58,Crédito,Kelly Peixoto
+A01281,2026-02-25,Vila Madalena,SP,Sudeste,Bruno Tavares,Corte,121.94,0.40,48.78,Dinheiro,Patrícia Machado
+A01282,2026-02-25,Meireles,CE,Nordeste,Marina Fontes,Manicure,88.00,0.50,44.00,Dinheiro,Thiago Horta
+A01283,2026-02-25,Asa Sul,DF,Centro-Oeste,Olívia Serra,Escova,83.97,0.40,33.59,Débito,Juliana Oliveira
+A01284,2026-02-28,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,105.14,0.40,42.05,Pix,Fernanda Ibrahim
+A01285,2026-02-28,Moinhos de Vento,RS,Sul,Henrique Alves,Coloração,269.63,0.35,94.37,Crédito,Sofia Almeida
+A01286,2026-03-01,Asa Sul,DF,Centro-Oeste,Paulo Krause,Coloração,280.38,0.35,98.13,Pix,Beatriz Ramos
+A01287,2026-03-02,Vila Madalena,SP,Sudeste,Ana Prado,Coloração,289.10,0.35,101.19,Crédito,Rafael Loureiro
+A01288,2026-03-02,Vila Madalena,SP,Sudeste,Ana Prado,Coloração,333.86,0.35,116.85,Pix,Eduardo Queiroz
+A01289,2026-03-02,Moinhos de Vento,RS,Sul,Henrique Alves,Coloração,329.29,0.35,115.25,Débito,Leandro Almeida
+A01290,2026-03-03,Boa Viagem,PE,Nordeste,Lucas Bandeira,Barba,64.09,0.45,28.84,Pix,Alice Peixoto
+A01291,2026-03-04,Copacabana,RJ,Sudeste,Diego Moura,Hidratação,207.88,0.35,72.76,Pix,Gustavo Esteves
+A01292,2026-03-04,Moinhos de Vento,RS,Sul,Gabriela Lima,Barba,45.00,0.45,20.25,Pix,Helena Queiroz
+A01293,2026-03-05,Vila Madalena,SP,Sudeste,Ana Prado,Coloração,252.32,0.35,88.31,Crédito,Helena Klein
+A01294,2026-03-05,Vila Madalena,SP,Sudeste,Bruno Tavares,Escova,101.79,0.40,40.72,Dinheiro,Helena Siqueira
+A01295,2026-03-05,Boa Viagem,PE,Nordeste,Lucas Bandeira,Manicure,55.72,0.50,27.86,Crédito,Natália Klein
+A01296,2026-03-06,Savassi,MG,Sudeste,Fábio Nunes,Hidratação,211.98,0.35,74.19,Débito,Natália Gomes
+A01297,2026-03-06,Batel,PR,Sul,Isabel Cardoso,Hidratação,192.66,0.35,67.43,Pix,Alice Klein
+A01298,2026-03-06,Asa Sul,DF,Centro-Oeste,Paulo Krause,Barba,61.58,0.45,27.71,Pix,Helena Duarte
+A01299,2026-03-08,Copacabana,RJ,Sudeste,Diego Moura,Corte,81.17,0.40,32.47,Crédito,Eduardo Esteves
+A01300,2026-03-08,Moinhos de Vento,RS,Sul,Henrique Alves,Manicure,93.51,0.50,46.75,Crédito,Natália Horta
+A01301,2026-03-11,Vila Madalena,SP,Sudeste,Bruno Tavares,Manicure,76.55,0.50,38.28,Crédito,Eduardo Jardim
+A01302,2026-03-11,Savassi,MG,Sudeste,Fábio Nunes,Hidratação,233.39,0.35,81.69,Dinheiro,Daniel Siqueira
+A01303,2026-03-11,Batel,PR,Sul,João Vitor Reis,Corte,112.44,0.40,44.98,Pix,Leandro Ramos
+A01304,2026-03-11,Umarizal,PA,Norte,Renata Pinho,Escova,73.39,0.40,29.36,Pix,Helena Peixoto
+A01305,2026-03-12,Meireles,CE,Nordeste,Marina Fontes,Barba,63.87,0.45,28.74,Crédito,Daniel Almeida
+A01306,2026-03-14,Batel,PR,Sul,Isabel Cardoso,Corte,121.45,0.40,48.58,Crédito,Eduardo Nogueira
+A01307,2026-03-15,Copacabana,RJ,Sudeste,Carla Menezes,Corte,142.53,0.40,57.01,Débito,Beatriz Jardim
+A01308,2026-03-16,Boa Viagem,PE,Nordeste,Lucas Bandeira,Coloração,276.11,0.35,96.64,Crédito,Thiago Siqueira
+A01309,2026-03-16,Boa Viagem,PE,Nordeste,Lucas Bandeira,Hidratação,169.06,0.35,59.17,Pix,Otávio Horta
+A01310,2026-03-16,Meireles,CE,Nordeste,Nelson Braga,Escova,117.17,0.40,46.87,Pix,Mariana Horta
+A01311,2026-03-16,Asa Sul,DF,Centro-Oeste,Olívia Serra,Barba,78.70,0.45,35.42,Crédito,Camila Horta
+A01312,2026-03-17,Moinhos de Vento,RS,Sul,Gabriela Lima,Escova,84.47,0.40,33.79,Débito,Rafael Teixeira
+A01313,2026-03-17,Batel,PR,Sul,João Vitor Reis,Coloração,330.98,0.35,115.84,Pix,Patrícia Duarte
+A01314,2026-03-17,Meireles,CE,Nordeste,Marina Fontes,Corte,123.27,0.40,49.31,Pix,Kelly Almeida
+A01315,2026-03-17,Asa Sul,DF,Centro-Oeste,Paulo Krause,Escova,80.81,0.40,32.32,Pix,Daniel Siqueira
+A01316,2026-03-18,Savassi,MG,Sudeste,Elisa Rocha,Manicure,68.35,0.50,34.17,Dinheiro,Gustavo Peixoto
+A01317,2026-03-18,Batel,PR,Sul,João Vitor Reis,Manicure,60.21,0.50,30.11,Crédito,Camila Siqueira
+A01318,2026-03-19,Copacabana,RJ,Sudeste,Diego Moura,Manicure,67.21,0.50,33.60,Pix,Beatriz Ramos
+A01319,2026-03-20,Meireles,CE,Nordeste,Nelson Braga,Coloração,292.75,0.35,102.46,Crédito,Otávio Esteves
+A01320,2026-03-21,Vila Madalena,SP,Sudeste,Ana Prado,Corte,142.09,0.40,56.84,Débito,Beatriz Jardim
+A01321,2026-03-22,Umarizal,PA,Norte,Renata Pinho,Barba,67.98,0.45,30.59,Pix,Rafael Queiroz
+A01322,2026-03-23,Savassi,MG,Sudeste,Elisa Rocha,Escova,67.74,0.40,27.10,Pix,Vanessa Loureiro
+A01323,2026-03-23,Boa Viagem,PE,Nordeste,Lucas Bandeira,Coloração,311.28,0.35,108.95,Débito,Daniel Oliveira
+A01324,2026-03-23,Umarizal,PA,Norte,Renata Pinho,Manicure,66.48,0.50,33.24,Crédito,Igor Machado
+A01325,2026-03-24,Copacabana,RJ,Sudeste,Carla Menezes,Corte,104.13,0.40,41.65,Crédito,Natália Horta
+A01326,2026-03-25,Copacabana,RJ,Sudeste,Diego Moura,Coloração,264.57,0.35,92.60,Dinheiro,Beatriz Nogueira
+A01327,2026-03-26,Copacabana,RJ,Sudeste,Carla Menezes,Manicure,60.94,0.50,30.47,Crédito,Fernanda Loureiro
+A01328,2026-03-26,Savassi,MG,Sudeste,Fábio Nunes,Corte,86.31,0.40,34.52,Dinheiro,Igor Jardim
+A01329,2026-03-26,Moinhos de Vento,RS,Sul,Gabriela Lima,Manicure,74.88,0.50,37.44,Débito,Fernanda Barbosa
+A01330,2026-03-27,Asa Sul,DF,Centro-Oeste,Olívia Serra,Coloração,221.03,0.35,77.36,Débito,Vanessa Siqueira
+A01331,2026-03-28,Vila Madalena,SP,Sudeste,Bruno Tavares,Manicure,92.99,0.50,46.49,Pix,Igor Cavalcanti
+A01332,2026-03-28,Moinhos de Vento,RS,Sul,Henrique Alves,Coloração,367.00,0.35,128.45,Crédito,Kelly Horta
+A01333,2026-03-29,Savassi,MG,Sudeste,Fábio Nunes,Corte,79.48,0.40,31.79,Pix,Kelly Oliveira
+A01334,2026-03-30,Batel,PR,Sul,Isabel Cardoso,Manicure,84.40,0.50,42.20,Pix,Juliana Horta
+A01335,2026-03-30,Meireles,CE,Nordeste,Marina Fontes,Escova,121.54,0.40,48.61,Débito,Thiago Barbosa
+A01336,2026-03-30,Asa Sul,DF,Centro-Oeste,Olívia Serra,Hidratação,213.28,0.35,74.65,Pix,Natália Cavalcanti
+A01337,2026-03-30,Umarizal,PA,Norte,Renata Pinho,Barba,63.47,0.45,28.56,Crédito,Otávio Teixeira
+A01338,2026-03-31,Boa Viagem,PE,Nordeste,Karina Melo,Coloração,239.29,0.35,83.75,Pix,Otávio Barbosa

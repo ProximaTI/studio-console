@@ -1,0 +1,22 @@
+{
+  "name": "studio-console",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Console local que replica o Evidence Studio (Markdown + SQL + DuckDB)",
+  "workspaces": [
+    "server",
+    "web"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,web -c blue,magenta \"npm run dev -w server\" \"npm run dev -w web\"",
+    "build": "npm run build -w web",
+    "start": "npm run start -w server",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "vitest": "^4.1.9"
+  }
+}
