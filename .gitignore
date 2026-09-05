@@ -30,6 +30,12 @@
 !/docs/
 !/projects/
 
+#    A skill do Claude Code que ensina o dialeto e os compiladores. Só ela sai
+#    de .claude/ — o resto (launch.json, estado local) fica de fora.
+!/.claude/
+/.claude/*
+!/.claude/skills/
+
 # 3) Dentro de projects/, SÓ o projeto de exemplo.
 #    Os demais projetos da instalação ficam de fora.
 /projects/*
