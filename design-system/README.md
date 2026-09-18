@@ -42,18 +42,17 @@ O modo claro/escuro **não** vem do preset — segue o global em Settings.
 
 ### Logotipos
 
-Os SVGs são marca, não código: não versionam. Com acesso à rede interna:
+Os SVGs são marca, não código: **não versionam, e não estão neste repositório**
+— nem eles nem o script que os baixa, que depende da rede interna de quem os
+licencia. Nada aqui precisa deles: os tokens e o `tokens.css` funcionam sozinhos.
 
-```bash
-node scripts/fetch_brand_assets.mjs
-```
-
-Na página, `<img>` (e não `![](…)`) é o que permite tamanho — vários logos,
-o da CAPES entre eles, só têm `viewBox` e sem largura esticariam a coluna
-inteira:
+Para usar logotipos próprios, ponha os SVGs em `web/public/brand/` da sua
+instalação e referencie-os pela raiz. Na página, use `<img>` e **não**
+`![](…)`: é o que permite definir largura, e um SVG que só declara `viewBox`
+(o caso de muitos logotipos institucionais) esticaria a coluna inteira sem ela.
 
 ```html
-<img src="/brand/capes.svg" alt="CAPES" width=190/>
+<img src="/brand/minha-marca.svg" alt="Minha Marca" width=190/>
 ```
 
 No publish a imagem é embutida como data URI, então o 📦 continua sendo um

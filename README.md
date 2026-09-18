@@ -7,11 +7,14 @@ produto é independente: o runtime próprio e os publishes funcionam sem Evidenc
 
 > **Começando?** Escolha entre o [guia detalhado](GUIA_RELATORIOS.md) e o [roteiro de 5 minutos](GUIA_RELATORIOS_5_MINUTOS.md).
 >
-> **Nunca abriu o console (ou vai dar um treinamento)?** O
-> [tutorial de treinamento](docs/TUTORIAL_TREINAMENTO.md) vai do `git clone` ao relatório
-> publicado em passos pequenos, com um CSV de exemplo e roteiro de 3 horas. Para montar
-> relatórios pedindo em português ao Claude Code, veja o
-> [quickstart da skill `/montar-relatorio`](docs/QUICKSTART_MONTAR_RELATORIO.md).
+> **Nunca abriu o console?** Comece pelo projeto `projects/exemplo` — uma rede fictícia
+> de salões, com dados sintéticos que acompanham o repositório. Ele tem páginas artesanais,
+> um catálogo semântico completo e relatórios spec-driven prontos para abrir e mexer.
+>
+> **Usa Claude Code?** As skills `montar-relatorio` e `montar-historia` vêm versionadas em
+> [`.claude/skills/`](.claude/skills/) — a primeira ensina o dialeto, os compiladores e a
+> verificação; a segunda acrescenta a disciplina narrativa. O gabarito de pedido está em
+> [`montar-relatorio/PROMPT.md`](.claude/skills/montar-relatorio/PROMPT.md).
 
 **O projeto é a unidade de trabalho.** Páginas, fontes de dados, queries, models e o
 catálogo semântico vivem *dentro* do projeto (isolados por schema DuckDB — upload num
