@@ -431,12 +431,40 @@ router.post('/:project/publish-app', async (req, res) => {
     const base = path.basename(rel).replace(/\.md$/, '');
     const segs = rel.replace(/\\/g, '/').split('/').filter(Boolean);
     const page = base.startsWith('[') && segs.length > 1 ? segs[segs.length - 2] : base.replace(/[\[\]]/g, '');
+    const dirs = projectDirs(project);
+
+    // Recorte por valor (páginas parametrizadas): um PACOTE por valor, cada um
+    // com o parquet filtrado. Sem isso o app de uma unidade/IES leva os dados
+    // de todas — ver scopePredicate em server/publish/app.js.
+    const valores = ((req.body || {}).param || {}).values;
+    if (Array.isArray(valores) && valores.length) {
+      if (!base.startsWith('[')) return res.status(400).json({ error: 'recorte por valor só vale para página parametrizada ([nome].md)' });
+      const apps = [];
+      for (const v of valores) {
+        const slug = String(v).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '').toLowerCase();
+        const out = path.join(publishedDir(project), project, `${page}-${slug}-app`);
+        fs.mkdirSync(out, { recursive: true });
+        const r = await buildPublishedApp(project, path.basename(rel), mdSource, settings, baseUrl, out, dirs.queriesDir, dirs.pagesDir, v);
+        apps.push({ valor: v, page: `${page}-${slug}`, dir: out, previewUrl: `/api/projects/${project}/app/${page}-${slug}/app.html`, ...r });
+      }
+      const semRecorte = apps.flatMap((a) => (a.escopo || []).filter((e) => !e.recortado).map((e) => e.source));
+      return res.json({
+        ok: true,
+        apps,
+        ...(semRecorte.length ? { aviso: `fontes NÃO recortadas (saem inteiras em cada pacote): ${[...new Set(semRecorte)].join(', ')}` } : {}),
+      });
+    }
+
     const outDir = path.join(publishedDir(project), project, page + '-app');
     fs.mkdirSync(outDir, { recursive: true });
-    const dirs = projectDirs(project);
     const info = await buildPublishedApp(project, path.basename(rel), mdSource, settings, baseUrl, outDir, dirs.queriesDir, dirs.pagesDir);
 
-    res.json({ ok: true, dir: outDir, page, previewUrl: `/api/projects/${project}/app/${page}/app.html`, ...info });
+    // Guarda: página parametrizada publicada SEM recorte leva todos os valores.
+    const aviso =
+      base.startsWith('[') && !info.scopeValue
+        ? 'página parametrizada publicada SEM recorte: o pacote contém TODOS os valores, e quem abre o app de um valor pode baixar o parquet inteiro. Use {param: {values: [...]}} para publicar um pacote por valor.'
+        : undefined;
+    res.json({ ok: true, dir: outDir, page, previewUrl: `/api/projects/${project}/app/${page}/app.html`, ...info, ...(aviso ? { aviso } : {}) });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -450,6 +478,11 @@ router.get('/:project/app/:page/*', (req, res) => {
     // aceita também esse formato quando chega pela rota de preview.
     if (!fs.existsSync(baseDir) && req.params.page.endsWith('-app')) {
       baseDir = path.join(publishedDir(req.params.project), req.params.project, req.params.page);
+    }
+    // Runtime DuckDB-WASM COMPARTILHADO: os apps o referenciam por '../duckdb/',
+    // que pela rota de preview chega como se 'duckdb' fosse uma página.
+    if (req.params.page === 'duckdb') {
+      baseDir = path.join(publishedDir(req.params.project), req.params.project, 'duckdb');
     }
     const rest = req.params[0] || 'app.html';
     const f = safeJoin(baseDir, rest);

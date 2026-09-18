@@ -85,8 +85,27 @@ export function collectMaps(blocks) {
 const WASM_FILES = ['duckdb-mvp.wasm', 'duckdb-browser-mvp.worker.js', 'duckdb-eh.wasm', 'duckdb-browser-eh.worker.js'];
 
 /** Copia o runtime DuckDB-WASM e gera o módulo browser bundlado (apache-arrow inline). */
-export async function copyDuckdbRuntime(outDir) {
-  const duckDir = path.join(outDir, 'duckdb');
+/**
+ * Grava o runtime DuckDB-WASM em `duckDir` — 76MB de .wasm + workers.
+ *
+ * Ele é IDÊNTICO em todo app publicado e era copiado DENTRO de cada um: os 87
+ * apps publicados ocupavam 6,9GB, dos quais ~6,6GB eram a mesma coisa 87 vezes.
+ * Isso inviabilizava o recorte por valor (486 IES × 81MB ≈ 38GB). Agora mora
+ * uma vez por projeto e cada app o referencia por `../duckdb/`.
+ *
+ * Reaproveita o que já está no lugar (comparando tamanho); `force` regrava —
+ * é o caminho quando a versão do duckdb-wasm muda.
+ */
+export async function copyDuckdbRuntime(duckDir, { force = false } = {}) {
+  const jaEsta =
+    !force &&
+    fs.existsSync(path.join(duckDir, 'duckdb-browser.mjs')) &&
+    WASM_FILES.every((f) => {
+      const src = path.join(DUCKDB_WASM_DIST, f);
+      const dst = path.join(duckDir, f);
+      return !fs.existsSync(src) || (fs.existsSync(dst) && fs.statSync(dst).size === fs.statSync(src).size);
+    });
+  if (jaEsta) return duckDir;
   fs.mkdirSync(duckDir, { recursive: true });
   for (const f of WASM_FILES) {
     const src = path.join(DUCKDB_WASM_DIST, f);
@@ -100,6 +119,7 @@ export async function copyDuckdbRuntime(outDir) {
     platform: 'browser',
     logLevel: 'silent',
   });
+  return duckDir;
 }
 
 export function escapeHtml(s) {

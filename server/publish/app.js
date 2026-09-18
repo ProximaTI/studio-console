@@ -11,8 +11,48 @@ import { resolveQueries, detectSources, listSchemaViews, itemsFromBlocks, collec
 import { mountSourceUrls } from '../materialize.js';
 import { getRuntimeBundle, readVendors, collectMaps, copyDuckdbRuntime, escapeHtml, publishCss, inlineBrandAssets } from './assets.js';
 import { themeFor } from '../projectConfig.js';
+import { findViewblocks } from '../../shared/viewblock.js';
+import { dimExprOf } from '../../shared/semanticCompile.js';
+import { escapeSqlValue } from '../../shared/templating.js';
+import { loadCatalogs } from '../semantic.js';
 
-export async function buildPublishedApp(projectName, fileName, mdSource, settings, baseUrl, outDir, queriesDir, pagesDir) {
+/**
+ * Predicado que recorta o FATO para um valor do parâmetro da página.
+ *
+ * Sem isso, o ☁ de uma página parametrizada exporta `SELECT *`: o app de uma
+ * unidade/IES carrega o parquet de TODAS. Quem tem acesso legítimo a um recorte
+ * baixa o arquivo inteiro que está ao lado do app.html — não é invasão, é o
+ * artefato entregando o que ninguém pediu.
+ *
+ * O predicado é derivável do que já está no marcador: o filtro injetado pelo
+ * compilador carrega {dim, level} (o level entrou junto com parameter.level), e
+ * o catálogo converte isso na expressão sobre o fato — `"unidade"` para uma
+ * dimensão simples, `year(cast("data" as date))` para um nível temporal.
+ *
+ * Devolve null quando não dá para derivar; o chamador então NÃO recorta e
+ * declara isso no resultado, em vez de exportar tudo em silêncio.
+ */
+export function scopePredicate(projectName, mdSource, paramName, valor) {
+  if (!paramName || valor === undefined || valor === null) return null;
+  const alvo = '${params.' + paramName + '}';
+  for (const node of findViewblocks(mdSource)) {
+    const meta = node.meta || {};
+    if (meta.source?.kind !== 'semantic' || !meta.source?.name) continue;
+    const f = (meta.filters || []).find((x) => String((x.values || [])[0] ?? '') === alvo);
+    if (!f) continue;
+    const entrada = loadCatalogs(projectName).find((c) => c.valid && c.model === meta.source.name);
+    if (!entrada) return null;
+    try {
+      const expr = dimExprOf(entrada.catalog, { dim: f.dim, ...(f.level ? { level: f.level } : {}) }, []);
+      return { fato: entrada.catalog.fact, sql: `cast(${expr} as varchar) = '${escapeSqlValue(valor)}'`, dim: f.dim };
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
+export async function buildPublishedApp(projectName, fileName, mdSource, settings, baseUrl, outDir, queriesDir, pagesDir, scopeValue) {
   mdSource = inlineBrandAssets(mdSource); // /brand/x.svg -> data URI (ver assets.js)
   const blocks = parseBlocks(mdSource);
   const queries = resolveQueries(blocks, queriesDir);
@@ -24,6 +64,9 @@ export async function buildPublishedApp(projectName, fileName, mdSource, setting
   fs.mkdirSync(dataDir, { recursive: true });
   const conn = await getConnection(projectName);
   const exported = [];
+  const escopo = [];
+  const paramFile = paramNameFromFile(fileName);
+  const recorte = scopePredicate(projectName, mdSource, paramFile, scopeValue);
   // Fontes de MOUNT (Fase Fontes §2): ☁ lê DIRETO da URL — sem cópia; o
   // Airflow sobrescreve o objeto e o app reflete no reload, sem republicar.
   const mountUrls = mountSourceUrls(projectName);
@@ -34,11 +77,16 @@ export async function buildPublishedApp(projectName, fileName, mdSource, setting
       // remoto: URL como está; pasta local: servida pela rota mountfs do projeto
       sourceUrls[name] = mu.remote ? mu.url : `../../mountfs/${mu.mount}/${mu.file}`;
       exported.push(name);
+      escopo.push({ source: name, recortado: false, motivo: 'mount — o arquivo é servido de fora do pacote' });
       continue;
     }
     const target = path.join(dataDir, name + '.parquet');
-    await conn.run(`COPY (SELECT * FROM "${name}") TO '${sqlPath(target)}' (FORMAT parquet)`);
+    // Só o FATO é recortável pelo parâmetro; tabelas de apoio saem inteiras e
+    // isso é DECLARADO no resultado (ver `escopo` no retorno).
+    const where = recorte && recorte.fato === name ? ` where ${recorte.sql}` : '';
+    await conn.run(`COPY (SELECT * FROM "${name}"${where}) TO '${sqlPath(target)}' (FORMAT parquet)`);
     exported.push(name);
+    escopo.push({ source: name, recortado: !!where });
   }
   // Fontes qualificadas por schema (ex.: vendas.base — views de data/views/*.sql):
   // exporta o RESULTADO da view como parquet e recria schema+view no DuckDB-WASM.
@@ -50,17 +98,20 @@ export async function buildPublishedApp(projectName, fileName, mdSource, setting
     const target = path.join(dataDir, file + '.parquet');
     await conn.run(`COPY (SELECT * FROM "${sv.schema}"."${sv.table}") TO '${sqlPath(target)}' (FORMAT parquet)`);
     schemaSources.push({ schema: sv.schema, table: sv.table, file });
+    escopo.push({ source: sv.schema + '.' + sv.table, recortado: false, motivo: 'view de schema — recorte não implementado' });
   }
 
-  // 3. Runtime DuckDB-WASM (.wasm + workers + módulo bundlado).
-  await copyDuckdbRuntime(outDir);
+  // 3. Runtime DuckDB-WASM: UMA cópia por projeto, ao lado dos apps — ver
+  //    copyDuckdbRuntime. `duckBase` é como o app.html o alcança.
+  await copyDuckdbRuntime(path.join(path.dirname(outDir), 'duckdb'));
+  const duckBase = '../duckdb';
 
   // 4. Itens em ordem (recursivo) + queries cruas (placeholders resolvem no cliente).
   const items = itemsFromBlocks(blocks);
   const queryMap = {};
   for (const q of queries) queryMap[q.name] = q.sql; // mantém ${inputs..} e ${$page.params..} crus
   const inputNames = [...new Set(queries.flatMap((q) => collectInputNames(q.sql)))];
-  const paramName = paramNameFromFile(fileName);
+  const paramName = paramFile;
 
   const payload = {
     title: fileName.replace(/\.md$/, ''),
@@ -74,6 +125,9 @@ export async function buildPublishedApp(projectName, fileName, mdSource, setting
     remote: !!(baseUrl && baseUrl.trim()),
     inputNames,
     paramName,
+    // Recorte por valor: o app já nasce no valor, sem seletor para trocar —
+    // trocar não faria sentido, os dados dos outros não estão no pacote.
+    fixedParam: scopeValue !== undefined && scopeValue !== null ? { name: paramName, value: String(scopeValue) } : null,
     paramPages: collectParamPages(pagesDir),
     maps: collectMaps(blocks),
     // Tema EFETIVO do projeto (project.yaml → settings global → default).
@@ -84,12 +138,23 @@ export async function buildPublishedApp(projectName, fileName, mdSource, setting
 
   const vendors = readVendors();
   const runtime = await getRuntimeBundle();
-  const html = renderAppHtml(payload, vendors.echarts, vendors.markdownit, runtime);
+  const html = renderAppHtml(payload, vendors.echarts, vendors.markdownit, runtime, duckBase);
   fs.writeFileSync(path.join(outDir, 'app.html'), html, 'utf8');
-  return { sources: [...exported, ...schemaSources.map((s) => s.schema + '.' + s.table)], dataBase: payload.dataBase, paramName };
+  return {
+    sources: [...exported, ...schemaSources.map((s) => s.schema + '.' + s.table)],
+    dataBase: payload.dataBase,
+    paramName,
+    // O que o PACOTE contém, não o que a tela mostra. `recortado: false` numa
+    // página parametrizada significa que o artefato leva todos os valores.
+    escopo,
+    scopeValue: scopeValue ?? null,
+    scopeDim: recorte ? recorte.dim : null,
+  };
 }
 
-function renderAppHtml(payload, echartsSrc, markdownitSrc, runtimeSrc) {
+// `duckBase`: caminho do runtime DuckDB-WASM visto pelo app.html. Ele é
+// compartilhado entre os apps do projeto, então nunca é './duckdb'.
+function renderAppHtml(payload, echartsSrc, markdownitSrc, runtimeSrc, duckBase) {
   const data = JSON.stringify(payload).replace(/<\//g, '<\\/');
   return `<!doctype html>
 <html lang="pt-BR">
@@ -113,7 +178,7 @@ function renderAppHtml(payload, echartsSrc, markdownitSrc, runtimeSrc) {
 <script>${markdownitSrc}</script>
 <script>${runtimeSrc}</script>
 <script type="module">
-import * as duckdb from './duckdb/duckdb-browser.mjs';
+import * as duckdb from '${duckBase}/duckdb-browser.mjs';
 const P = ${data};
 const md = window.markdownit ? window.markdownit({html:false,linkify:true}) : { render:function(s){return s;} };
 StudioRuntime.allowInlineSvg(md); // aceita ![x](data:image/svg+xml;base64,…) — ver shared/markdownPolicy.js
@@ -167,8 +232,8 @@ async function runAll(){
 
 async function init(){
   const BUNDLES = {
-    mvp:{ mainModule:'./duckdb/duckdb-mvp.wasm', mainWorker:'./duckdb/duckdb-browser-mvp.worker.js' },
-    eh:{ mainModule:'./duckdb/duckdb-eh.wasm', mainWorker:'./duckdb/duckdb-browser-eh.worker.js' }
+    mvp:{ mainModule:'${duckBase}/duckdb-mvp.wasm', mainWorker:'${duckBase}/duckdb-browser-mvp.worker.js' },
+    eh:{ mainModule:'${duckBase}/duckdb-eh.wasm', mainWorker:'${duckBase}/duckdb-browser-eh.worker.js' }
   };
   const bundle = await duckdb.selectBundle(BUNDLES);
   const worker = new Worker(new URL(bundle.mainWorker, location.href));
@@ -188,8 +253,18 @@ async function init(){
     await conn.query('CREATE SCHEMA IF NOT EXISTS "' + sv.schema + '"');
     await conn.query('CREATE OR REPLACE VIEW "' + sv.schema + '"."' + sv.table + '" AS SELECT * FROM read_parquet(\\'' + sv.file + '.parquet\\')');
   }
+  // Pacote RECORTADO: o valor já é o do pacote e não há o que trocar — os dados
+  // dos outros valores não estão aqui. Fixa e mostra como rótulo, sem seletor.
+  if(P.fixedParam){
+    params[P.fixedParam.name] = P.fixedParam.value;
+    var bar0 = document.getElementById('parambar');
+    bar0.className='pb';
+    bar0.innerHTML='';
+    bar0.appendChild(el('b',null,P.fixedParam.name+': '));
+    bar0.appendChild(el('span',null,P.fixedParam.value));
+  }
   // Página parametrizada: lê ?<param>=valor da URL; default = 1º valor da query-convenção.
-  if(P.paramName){
+  else if(P.paramName){
     var urlVal = new URLSearchParams(location.search).get(P.paramName);
     var values = [];
     var cq = P.queries[P.paramName];
