@@ -6,6 +6,12 @@ rodando offline na sua máquina. O dialeto é o do **Evidence.dev** (portabilida
 produto é independente: o runtime próprio e os publishes funcionam sem Evidence.
 
 > **Começando?** Escolha entre o [guia detalhado](GUIA_RELATORIOS.md) e o [roteiro de 5 minutos](GUIA_RELATORIOS_5_MINUTOS.md).
+>
+> **Nunca abriu o console (ou vai dar um treinamento)?** O
+> [tutorial de treinamento](docs/TUTORIAL_TREINAMENTO.md) vai do `git clone` ao relatório
+> publicado em passos pequenos, com um CSV de exemplo e roteiro de 3 horas. Para montar
+> relatórios pedindo em português ao Claude Code, veja o
+> [quickstart da skill `/montar-relatorio`](docs/QUICKSTART_MONTAR_RELATORIO.md).
 
 **O projeto é a unidade de trabalho.** Páginas, fontes de dados, queries, models e o
 catálogo semântico vivem *dentro* do projeto (isolados por schema DuckDB — upload num

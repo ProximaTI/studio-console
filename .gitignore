@@ -30,6 +30,11 @@
 !/docs/
 !/projects/
 
+#    O design system exportado (tokens.css/json + README + folha de amostras).
+#    É GERADO por scripts/export_design_system.mjs, mas versiona: é o artefato
+#    que outro relatório/equipe consome sem precisar rodar este código.
+!/design-system/
+
 #    A skill do Claude Code que ensina o dialeto e os compiladores. Só ela sai
 #    de .claude/ — o resto (launch.json, estado local) fica de fora.
 !/.claude/
@@ -62,6 +67,12 @@ build/
 /models/
 /published/
 /scripts/
+#    …exceto o gerador do design system: sem ele o `npm run design:export`
+#    declarado no package.json não existe para quem clona. Os demais scripts
+#    ficam fora — são geradores locais amarrados a dados reais.
+!/scripts/
+/scripts/*
+!/scripts/export_design_system.mjs
 *.duckdb
 *.parquet
 *.zip
@@ -85,3 +96,6 @@ build/
 /tests/reports.test.js
 /tests/semantic.test.js
 /tests/semanticCompile.test.js
+
+# Logotipos institucionais baixados do Nexus (marca, não código) — scripts/fetch_brand_assets.mjs
+web/public/brand/

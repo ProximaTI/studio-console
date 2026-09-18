@@ -5,7 +5,12 @@ description: Montar páginas/relatórios do Studio Console (Markdown+SQL, View B
 
 # Montar relatórios no Studio Console
 
-Raiz do app: `studio-console/` (monorepo npm workspaces: `web/` React+Vite, `server/` Express+DuckDB, `shared/` JS puro, `tests/` vitest na RAIZ). Detalhes completos: `README.md` e os guias `GUIA_ARQUITETO.md` / `GUIA_RELATORIOS.md`. As specs normativas (`SPEC_arquitetura_informacao_viewblock.md`, `SPEC_fase3_semantica_nested.md`, `SPEC_fase4_semantica_rica.md`) ficam no workspace de desenvolvimento, um nível acima — não acompanham o repositório publicado; quando não estiverem presentes, o contrato vigente é o CÓDIGO em `shared/` mais os testes.
+Raiz do app: `studio-console/` (monorepo npm workspaces: `web/` React+Vite, `server/` Express+DuckDB, `shared/` JS puro, `tests/` vitest na RAIZ). Detalhes completos: `README.md` e os guias `GUIA_ARQUITETO.md` / `GUIA_RELATORIOS.md`. As specs normativas (`SPEC_arquitetura_informacao_viewblock.md`, `SPEC_fase3_semantica_nested.md`, `SPEC_fase4_semantica_rica.md`, `SPEC_distribuicao_histograma.md`, `SPEC_ranking_ao_longo_do_tempo.md`, `SPEC_escolha_de_grafico.md`) ficam no workspace de desenvolvimento, um nível acima — não acompanham o repositório publicado; quando não estiverem presentes, o contrato vigente é o CÓDIGO em `shared/` mais os testes.
+
+**Modelo de pedido**: `PROMPT.md` (nesta pasta) tem o gabarito do que um pedido de
+relatório precisa trazer, o que eu assumo quando falta campo, e como enunciar a
+pergunta para que a escolha do gráfico saia do registro de estilos em vez de vir
+pronta no pedido.
 
 ## Estrutura de um projeto
 
@@ -57,7 +62,12 @@ em vez de inventar nomes.
 
 Bloco reeditável entre `<!-- viewblock v1 {json} -->` … `<!-- /viewblock -->`. O JSON tem forma canônica (1 linha, `>` escapado `>`, segmentos separados por linha em branco) — gerar SEMPRE pelos compiladores de `shared/`:
 
-- Cru: `compileViewblock(vb, ctx)` de `shared/viewStyles.js` (11 estilos: tabular, graph.bar/line/bubble, group, freeform, pivot, connectionmap, collabgraph, areamap, nested). Os estilos propagam `label` e `fmt` da métrica para o componente — `tabular`/`group` em `<Column>`, `freeform` em `<BigValue>`; métrica sem `fmt` sai sem o atributo.
+- Cru: `compileViewblock(vb, ctx)` de `shared/viewStyles.js` (14 estilos: tabular, graph.bar/line/bubble/**range**/**bump**/**histogram**, group, freeform, pivot, connectionmap, collabgraph, areamap, nested). Os estilos propagam `label` e `fmt` da métrica para o componente — `tabular`/`group` em `<Column>`, `freeform` em `<BigValue>`; métrica sem `fmt` sai sem o atributo.
+- Cada estilo declara, além de `requires`/`compile`: `question` (a pergunta que ele responde),
+  `breaks` (`{quando, use}` — o que INVALIDA o estilo mesmo com o contrato atendido), `fallback`
+  e `planHint`. O menu do prompt do planejador é **GERADO** daí por `styleMenuLines()` —
+  nunca edite a lista de estilos à mão em `server/routes/agent.js`. Medido: o formato do menu
+  importa tanto quanto o conteúdo (`SPEC_escolha_de_grafico.md` §3b).
 - Semântico: `compileCatalogSql(...)` de `shared/semanticCompile.js` + `compileViewblock` — ou, no web, `compileSemanticFromState`/`recompileSemanticVb` de `web/src/wizard/vbState.ts`.
 - Reedição: `spliceViewblock(md, vbId, novoBloco)` de `shared/viewblock.js` — troca só o bloco, byte-preservando o resto.
 
@@ -73,7 +83,37 @@ const sql = compileCatalogSql({ catalog, hash: 'dev', metrics: ['faturamento'], 
 
 ## Fonte semântica (preferir quando o modelo existe)
 
-`semantic/<m>.yaml`: `fact`, `dimensions` (column/columns+key/bins/map, hierarchy temporal, pii), `metrics` (agg fechado sum/avg/min/max/count/count_distinct; `filters` embutidos; `derived` com aritmética + `total(m[, scope: all])` + `lag/acum/movel`; `semi_additive`), `joins` (declarados, com `cardinality`), `hierarchies` (drill ⤵/⤴ entre dims), `policies` (expose: internal), `description`/`synonyms` (grounding do agente). O SQL sai do compilador com header `-- semantic: <m>@<hash>` — **SQL nunca é escrito à mão nem vem de IA para bloco semântico**. Publish público recusa dims internas/pii (erro, use visibility internal).
+`semantic/<m>.yaml`: `fact`, `dimensions` (column/columns+key/bins/map, hierarchy temporal, pii), `metrics` (agg fechado sum/avg/min/max/count/count_distinct **+ dispersão: median/p25/p75/p90/stddev**; `filters` embutidos; `derived` com aritmética + `total(m[, scope: all])` + `lag/acum/movel` **+ `posicao(m, nível)` e `variacao_posicao(m, nível)`**; `semi_additive`), `joins` (declarados, com `cardinality`), `hierarchies` (drill ⤵/⤴ entre dims), `policies` (expose: internal), `description`/`synonyms` (grounding do agente). O SQL sai do compilador com header `-- semantic: <m>@<hash>` — **SQL nunca é escrito à mão nem vem de IA para bloco semântico**. Publish público recusa dims internas/pii (erro, use visibility internal).
+
+## Três formas que o produto aprendeu nesta frente
+
+- **`graph.range`** — marca de intervalo (faixa + centro). 1 dimensão e EXATAMENTE 3 métricas na
+  ordem mínimo · centro · máximo (p25/mediana/p75 do catálogo). É a saída do `graph.bar` quando há
+  várias observações por grupo: três barras mostram três números e escondem a faixa.
+- **`graph.histogram`** — a FORMA da distribuição. 1 métrica, NENHUMA dimensão, `distribution: {bins: N}`
+  no bloco (5..100). A métrica só APONTA A COLUNA: a agregação dela não é aplicada, o histograma conta
+  linhas do fato pelo valor bruto. SQL vem de `compileDistributionSql` (`shared/semanticCompile.js`),
+  o **segundo caminho de compilação** ao lado de `compileCatalogSql` — bifurcação em
+  `compileSemanticBlock`, em lugar nenhum mais. Bordas calculadas dentro da query; cauda aparada no
+  p99 com a última faixa ABERTA (`339+`), preservando o N.
+- **`graph.bump`** — posição no ranking ao longo do tempo. 2 dimensões (uma temporal = eixo, outra
+  rankeada) e 1 métrica `posicao(...)` do catálogo; `bump: {top: N}` recorta "esteve no top N em ALGUM
+  período", preservando a trajetória inteira. `variacao_posicao` exige DOIS estágios de janela (janela
+  aninhada é ilegal em SQL) — o compilador materializa a posição na CTE `posicoes`.
+
+Config de bloco por estilo: `pivot`, `nested`, `distribution`, `bump` — atravessam
+`compileSemanticBlock` → marcador → absorção F6, todos pelo mesmo padrão.
+
+## Nível obrigatório onde o valor é COMPARADO
+
+Dimensão com `hierarchy` exige `level` em **filtro** e em **argumento** (`globalParams[].from`),
+e em `parameter.level` de página parametrizada. Sem o nível, `{dim: tempo, values: ["2024"]}`
+compila para `"data" = '2024'` — coluna DATE contra string, que o banco recusa; como argumento vira
+um LIKE que nunca casa, errado em silêncio. Exceção: quando a COLUNA da dimensão já é um dos níveis
+(`year` com `hierarchy: [year]`), o SQL sai idêntico e o nível é dispensado.
+
+`parameter.level` acompanha o filtro injetado na rota E o índice de valores clicáveis — os dois têm
+de casar, senão o índice oferece links que a página não encontra.
 
 ## APIs (server na porta 3001, `node --watch` — reinicia sozinho ao editar)
 
@@ -124,6 +164,11 @@ Regras ao trabalhar com relatórios:
 1. Editor: abrir a página (localStorage `studio.file.<proj>` + `/projects/<proj>`), modo Dividido, dados renderizando, lint ✓.
 2. Publicar 📦 e ☁ e conferir no navegador (as 3 execuções devem concordar).
 3. `npx vitest run` **da raiz** `studio-console/` (nunca de `web/`) + `npx tsc --noEmit` em `web/` se tocou TypeScript.
+4. **Componente novo ⇒ registrar em `shared/evidenceLint.js`** (`CONSOLE_COMPONENTS` e, se não
+   existir no Evidence core, `CUSTOM_NEEDS_PORT`). Sem isso o badge do editor acusa
+   `unknown-component` como ERRO em toda página que o usa — foi o que aconteceu com
+   `RangeChart`, despercebido por horas. `tests/lintCobertura.test.js` liga o registro de
+   estilos ao linter e quebra quando um estilo emite componente não registrado.
 
 ## Armadilhas do ambiente
 
