@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import MarkdownIt from 'markdown-it';
+import { allowInlineSvg } from '../../../shared/markdownPolicy.js';
 import { runQuery } from '../api';
 import { applyTemplates, renderInline } from './interpolate';
 import { resolveAttrs } from '../../../shared/templating.js';
@@ -8,6 +9,7 @@ import BigValue from './components/BigValue';
 import BarChart from './components/BarChart';
 import LineChart from './components/LineChart';
 import BubbleChart from './components/BubbleChart';
+import RangeChart from './components/RangeChart';
 import DataTable from './components/DataTable';
 import Dropdown from './components/Dropdown';
 import ConnectionMap from './components/ConnectionMap';
@@ -17,14 +19,17 @@ import TextInput from './components/TextInput';
 import Slider from './components/Slider';
 import DateRange from './components/DateRange';
 import Repeat from './components/Repeat';
-import { Note, LinkButton, Grid, Card, CardTitle, CardBody, Tabs, Tab, Details, Div, Value } from './components/Layout';
+import { Note, LinkButton, Grid, Card, CardTitle, CardBody, Tabs, Tab, Details, Div, Img, Value } from './components/Layout';
+import { themeVars } from '../../../shared/designTokens.js';
 
-const mdIt = new MarkdownIt({ html: false, linkify: true, breaks: false });
+// allowInlineSvg: mesma política de links dos publicados (shared/markdownPolicy.js)
+const mdIt = allowInlineSvg(new MarkdownIt({ html: false, linkify: true, breaks: false }));
 const COMPONENTS: Record<string, any> = {
   BigValue,
   BarChart,
   LineChart,
   BubbleChart,
+  RangeChart,
   DataTable,
   Dropdown,
   ConnectionMap,
@@ -45,6 +50,7 @@ const COMPONENTS: Record<string, any> = {
   DateRange,
   Repeat,
   div: Div,
+  img: Img,
 };
 // Tags que são apenas estruturais (filhos consumidos pelo componente pai).
 const CHILD_ONLY = new Set(['Column', 'DropdownOption']);
@@ -107,6 +113,7 @@ export default function PreviewRenderer({
   onLink,
   loadQuery,
   project,
+  theme,
 }: {
   source: string;
   settings: any;
@@ -116,6 +123,9 @@ export default function PreviewRenderer({
   loadQuery?: (file: string) => Promise<{ content?: string; error?: string }>;
   /** Projeto dono da página — as queries rodam no schema dele. */
   project?: string;
+  /** Tema EFETIVO do projeto. Escopado ao preview: a moldura do console segue
+   *  com o tema global, mas a página mostra a marca que o publish vai gravar. */
+  theme?: any;
 }) {
   const blocks = useMemo(() => parseBlocks(source), [source]);
   const meta = (blocks[0]?.type === 'frontmatter' ? blocks[0].meta : null) as any;
@@ -194,9 +204,15 @@ export default function PreviewRenderer({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [qKey, inputs, paramsKey]);
 
+  // Tokens do projeto aplicados NO CONTAINER (as CSS vars cascateiam): trocar de
+  // projeto não repinta o console. `settings.theme` também passa a ser o do
+  // projeto, senão os gráficos usariam a paleta global.
+  const pvSettings = theme ? { ...settings, theme } : settings;
+  const pvStyle = theme ? (themeVars(theme) as React.CSSProperties) : undefined;
+
   return (
-    <PreviewCtx.Provider value={{ dataMap, errors, inputs, setInput, settings, params, onLink }}>
-      <div className="preview">
+    <PreviewCtx.Provider value={{ dataMap, errors, inputs, setInput, settings: pvSettings, params, onLink }}>
+      <div className="preview" style={pvStyle}>
         <Blocks blocks={blocks} />
       </div>
     </PreviewCtx.Provider>

@@ -32,3 +32,34 @@ export function formatNumber(v, fmt, settings) {
   }
   return n.toLocaleString(locale, { maximumFractionDigits: 2 });
 }
+
+/**
+ * Comparador de células para a ordenação client-side da DataTable (clique no
+ * cabeçalho). Único para os três ambientes — editor, snapshot 📦 e app ☁ —
+ * porque as três execuções têm que concordar.
+ *
+ * A DIREÇÃO entra aqui, não no chamador: nulo/vazio tem que cair no fim nas
+ * DUAS direções, e multiplicar o resultado por -1 fora da função inverteria
+ * isso, enchendo a primeira página de buracos na ordem decrescente.
+ *
+ * Número compara como número (senão "1000" < "9" como texto); o resto compara
+ * com localeCompare pt-BR, que trata acento e caixa do jeito que o leitor
+ * espera.
+ */
+export function cmpCell(a, b, dir = 1) {
+  const vazio = (v) => v === null || v === undefined || v === '';
+  if (vazio(a) && vazio(b)) return 0;
+  if (vazio(a)) return 1; // sempre por último, independente de dir
+  if (vazio(b)) return -1;
+  const na = typeof a === 'number' ? a : Number(a);
+  const nb = typeof b === 'number' ? b : Number(b);
+  const base =
+    Number.isFinite(na) && Number.isFinite(nb)
+      ? na === nb
+        ? 0
+        : na < nb
+          ? -1
+          : 1
+      : String(a).localeCompare(String(b), 'pt-BR', { numeric: true, sensitivity: 'base' });
+  return base * dir;
+}

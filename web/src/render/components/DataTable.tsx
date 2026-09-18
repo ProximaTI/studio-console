@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { usePreview } from '../markdown';
-import { formatNumber } from '../../format';
+import { formatNumber, cmpCell } from '../../format';
 
 type ColDef = {
   id: string;
@@ -16,6 +16,11 @@ type ColDef = {
 export default function DataTable(props: any) {
   const { dataMap, errors, settings, onLink } = usePreview();
   const [q, setQ] = useState('');
+  const [page, setPage] = useState(0); // paginação client-side (rows=N por página, padrão 50)
+  // Ordenação client-side: clique no cabeçalho. null = ordem que veio do SQL
+  // (o compilador semântico ordena pela 1ª métrica do bloco). Ordena APENAS as
+  // linhas já carregadas — com `limit` no bloco, não traz o top-N da coluna nova.
+  const [sort, setSort] = useState<{ col: string; dir: 1 | -1 } | null>(null);
   const allRows: any[] = dataMap[props.data] || [];
   const linkCol = props.link; // navegação no clique da 1ª coluna (dialeto console)
 
@@ -55,7 +60,15 @@ export default function DataTable(props: any) {
     return m;
   }, [cols, rows]);
 
-  const limit = props.rows ? Number(props.rows) : 50;
+  if (sort) {
+    const { col, dir } = sort;
+    rows = [...rows].sort((a, b) => cmpCell(a[col], b[col], dir));
+  }
+
+  const limit = Math.max(1, props.rows ? Number(props.rows) : 50);
+  const pageCount = Math.max(1, Math.ceil(rows.length / limit));
+  const cur = Math.min(page, pageCount - 1);
+  const pageRows = rows.slice(cur * limit, cur * limit + limit);
 
   function go(href: string, e: any) {
     if (onLink) {
@@ -90,7 +103,16 @@ export default function DataTable(props: any) {
     <div>
       {(searchable || String(props.downloadable) === 'true') && (
         <div className="dt-toolbar">
-          {searchable && <input placeholder="buscar…" value={q} onChange={(e) => setQ(e.target.value)} />}
+          {searchable && (
+            <input
+              placeholder="buscar…"
+              value={q}
+              onChange={(e) => {
+                setQ(e.target.value);
+                setPage(0);
+              }}
+            />
+          )}
           {String(props.downloadable) === 'true' && (
             <button onClick={downloadCsv} title="Baixar CSV ({rows} linhas filtradas)">
               ⬇ CSV
@@ -103,15 +125,29 @@ export default function DataTable(props: any) {
         <table className="grid">
           <thead>
             <tr>
-              {cols.map((c) => (
-                <th key={c.id} className={alignClass(c)}>
-                  {c.title || c.id}
-                </th>
-              ))}
+              {cols.map((c) => {
+                const ativa = sort?.col === c.id;
+                return (
+                  <th
+                    key={c.id}
+                    className={(alignClass(c) + (ativa ? ' sorted' : '')).trim()}
+                    onClick={() => {
+                      // 1º clique desc (o interessante quase sempre é o topo),
+                      // 2º asc, 3º volta à ordem do SQL.
+                      setSort(!ativa ? { col: c.id, dir: -1 } : sort!.dir === -1 ? { col: c.id, dir: 1 } : null);
+                      setPage(0);
+                    }}
+                    title="ordenar por esta coluna"
+                  >
+                    {c.title || c.id}
+                    <span className="sort-ind">{ativa ? (sort!.dir === -1 ? ' ▼' : ' ▲') : ''}</span>
+                  </th>
+                );
+              })}
             </tr>
           </thead>
           <tbody>
-            {rows.slice(0, limit).map((r: any, i: number) => {
+            {pageRows.map((r: any, i: number) => {
               const href = linkCol ? r[linkCol] : null;
               return (
                 <tr key={i}>
@@ -159,6 +195,19 @@ export default function DataTable(props: any) {
           </tbody>
         </table>
       </div>
+      {pageCount > 1 && (
+        <div className="dt-pager">
+          <button onClick={() => setPage(Math.max(0, cur - 1))} disabled={cur === 0} title="página anterior">
+            ‹
+          </button>
+          <span className="muted small">
+            página {cur + 1} de {pageCount} · {rows.length.toLocaleString('pt-BR')} linha(s), {limit} por página
+          </span>
+          <button onClick={() => setPage(Math.min(pageCount - 1, cur + 1))} disabled={cur >= pageCount - 1} title="próxima página">
+            ›
+          </button>
+        </div>
+      )}
     </div>
   );
 }

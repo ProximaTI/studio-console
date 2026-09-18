@@ -6,10 +6,12 @@ import { runQuery } from '../db.js';
 import { parseBlocks } from '../../shared/parser.js';
 import { applyTemplates, collectInputNames } from '../../shared/templating.js';
 import { resolveQueries, itemsFromBlocks, walkDropdowns, cartesian, comboKey } from './queries.js';
-import { getRuntimeBundle, readVendors, collectMaps, escapeHtml, publishCss } from './assets.js';
+import { getRuntimeBundle, readVendors, collectMaps, escapeHtml, publishCss, inlineBrandAssets } from './assets.js';
+import { themeFor } from '../projectConfig.js';
 import { sourceFreshness } from '../materialize.js';
 
 export async function buildPublishedHtml(projectName, fileName, mdSource, settings, queriesDir) {
+  mdSource = inlineBrandAssets(mdSource); // /brand/x.svg -> data URI (ver assets.js)
   const blocks = parseBlocks(mdSource);
   const queries = resolveQueries(blocks, queriesDir);
   const items = itemsFromBlocks(blocks);
@@ -112,7 +114,8 @@ export async function buildPublishedHtml(projectName, fileName, mdSource, settin
     freeDefaults,
     queryNames: queries.map((q) => q.name),
     maps: collectMaps(blocks),
-    theme: settings?.theme || {},
+    // Tema EFETIVO do projeto (project.yaml → settings global → default).
+    theme: themeFor(projectName),
     decimalSeparator: settings?.organization?.decimalSeparator || ',',
     generatedAt: new Date().toISOString(),
     // Transparência de frescor (Fase Fontes §5): "dados de quando" no artefato.
@@ -156,6 +159,7 @@ function renderHtml(payload, echartsSrc, markdownitSrc, runtimeSrc) {
 <script>
 const P = ${data};
 const md = window.markdownit ? window.markdownit({html:false,linkify:true}) : { render:function(s){return s;} };
+StudioRuntime.allowInlineSvg(md); // aceita ![x](data:image/svg+xml;base64,…) — ver shared/markdownPolicy.js
 const inputs = Object.assign({}, P.freeDefaults || {}, P.defaults);
 
 function comboKey(){ return P.inputNames.map(function(n){ return n+'='+(inputs[n]!=null?inputs[n]:''); }).join('&'); }

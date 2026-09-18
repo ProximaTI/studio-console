@@ -5,6 +5,7 @@ export { renderInline, applyTemplates, resolveAttr, resolveAttrs } from './templ
 export { buildMapOption, buildAreaMapOption, parseColorList } from './mapOption.js';
 export { buildChartOption } from './chartOption.js';
 export { formatNumber } from './format.js';
+export { allowInlineSvg } from './markdownPolicy.js';
 export { parseBlocks, parseAttrs, parseFrontmatter, stripHtmlComments } from './parser.js';
 export { createPublishRenderer } from './publishRender.js';
 export { parseVbMeta, isVbClose, serializeVbMeta, findViewblocks, stripViewblockMarkers, spliceViewblock } from './viewblock.js';

@@ -111,3 +111,20 @@ describe('stripHtmlComments', () => {
     expect(stripHtmlComments('a <!-- x\ny -->b')).toBe('a b');
   });
 });
+
+describe('<img> como bloco (imagem com tamanho)', () => {
+  it('vira componente com os atributos, não texto markdown escapado', () => {
+    // A regressão: o lint já aceitava <img> (HTML_TAGS) mas o parser não o
+    // reconhecia, então a tag saía impressa como texto na página.
+    const b = parseBlocks('# T\n\n<img src="/brand/capes.svg" alt="CAPES" width=190/>\n\nfim');
+    const img = b.find((x) => x.type === 'component' && x.name === 'img');
+    expect(img).toBeTruthy();
+    expect(img.attrs).toEqual({ src: '/brand/capes.svg', alt: 'CAPES', width: '190' });
+    expect(b.filter((x) => x.type === 'md')).toHaveLength(2); // não engoliu o texto ao redor
+  });
+
+  it('outras tags minúsculas seguem como markdown (só div e img são blocos)', () => {
+    const b = parseBlocks('<span>oi</span>');
+    expect(b.every((x) => x.type === 'md')).toBe(true);
+  });
+});

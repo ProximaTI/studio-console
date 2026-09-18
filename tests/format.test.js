@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatNumber } from '../shared/format.js';
+import { formatNumber, cmpCell } from '../shared/format.js';
 
 // Settings default: decimalSeparator ',' → locale pt-BR.
 const PT = { organization: { decimalSeparator: ',' } };
@@ -42,5 +42,31 @@ describe('formatNumber — códigos fmt do dialeto Evidence', () => {
     expect(formatNumber(undefined, 'num0', PT)).toBe('—');
     expect(formatNumber('', 'num0', PT)).toBe('—');
     expect(formatNumber('abc', 'num0', PT)).toBe('abc');
+  });
+});
+
+describe('cmpCell — ordenação client-side da DataTable', () => {
+  const ord = (arr, dir = 1) => arr.slice().sort((a, b) => cmpCell(a, b, dir));
+
+  it('números comparam como números, não como texto', () => {
+    expect(ord([100, 9, 1000])).toEqual([9, 100, 1000]);
+    // o bug clássico: como texto, "1000" < "9"
+    expect(ord(['100', '9', '1000'])).toEqual(['9', '100', '1000']);
+  });
+
+  it('nulo e vazio vão para o fim nas DUAS direções', () => {
+    expect(ord([3, null, 1])).toEqual([1, 3, null]);
+    expect(ord([3, null, 1], -1)).toEqual([3, 1, null]);
+    expect(ord([3, '', 1], -1)).toEqual([3, 1, '']);
+    expect(ord([3, undefined, 1])).toEqual([1, 3, undefined]);
+  });
+
+  it('texto compara com acento e caixa do jeito do leitor (pt-BR)', () => {
+    expect(ord(['Óptica', 'Administração', 'zoologia'])).toEqual(['Administração', 'Óptica', 'zoologia']);
+  });
+
+  it('é estável para valores iguais', () => {
+    expect(cmpCell(5, 5)).toBe(0);
+    expect(cmpCell(null, undefined)).toBe(0);
   });
 });

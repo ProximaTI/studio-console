@@ -32,6 +32,8 @@ export default function ProjectEditor() {
   // Aba Queries: .sql do diretório queries/ do projeto (frontmatter Evidence).
   const [queryFiles, setQueryFiles] = useState<string[]>([]);
   const [activeQuery, setActiveQuery] = useState(''); // se setado, editamos um .sql
+  // Tema EFETIVO do projeto — o preview usa a MESMA marca que o publish grava.
+  const [projectTheme, setProjectTheme] = useState<any>(null);
   // Runner da query ativa: limite de linhas + valores de teste p/ placeholders.
   const [qLimit, setQLimit] = useState(20);
   const [qVals, setQVals] = useState<Record<string, string>>({});
@@ -137,6 +139,7 @@ export default function ProjectEditor() {
         open(last && fs.includes(last) ? last : fs.includes('home.md') ? 'home.md' : fs.includes('index.md') ? 'index.md' : fs[0]);
     });
     jget('/projects/' + project + '/query-files').then((d) => setQueryFiles(d.files || []));
+    jget('/projects/' + project + '/theme').then((d) => setProjectTheme(d.theme || null));
   }, [project, open]);
 
   // Para páginas parametrizadas: descobre os valores possíveis pela convenção Evidence
@@ -678,7 +681,7 @@ order by 2 desc
                 <CodeMirror value={content} height="100%" theme={cmTheme} extensions={[markdown()]} onChange={update} />
               </div>
               <div className="editor-right">
-                <PreviewRenderer source={content} settings={settings} params={params} onLink={onLink} loadQuery={loadQuery} project={project} />
+                <PreviewRenderer source={content} settings={settings} params={params} onLink={onLink} loadQuery={loadQuery} project={project} theme={projectTheme} />
               </div>
             </div>
           )}

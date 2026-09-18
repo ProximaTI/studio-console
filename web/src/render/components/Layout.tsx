@@ -27,6 +27,21 @@ export function Details(props: any) {
 }
 
 // <div> minúsculo: agrupador neutro (célula de <Grid cols=N>, etc.)
+// <img src alt width height> — a tag já era aceita pelo dialeto (HTML_TAGS do
+// lint); só faltava desenhá-la. É o jeito PORTÁVEL de dimensionar uma imagem:
+// markdown `![alt](src)` não expressa tamanho, e SVG só com viewBox estica.
+export function Img(props: any) {
+  return (
+    <img
+      src={props.src || ''}
+      alt={props.alt || ''}
+      width={props.width || undefined}
+      height={props.height || undefined}
+      style={{ maxWidth: '100%' }}
+    />
+  );
+}
+
 export function Div(props: any) {
   return (
     <div className="ev-div">

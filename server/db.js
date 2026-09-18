@@ -7,6 +7,7 @@
 import { DuckDBInstance } from '@duckdb/node-api';
 import path from 'node:path';
 import fs from 'node:fs';
+import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -20,8 +21,20 @@ export const SETTINGS_FILE = path.join(ROOT, 'settings.json');
 let instance = null;
 const connByProject = new Map(); // slug -> connection (search_path próprio)
 
+// A instância que SERVE as páginas também precisa de onde derramar: uma fonte
+// materializada grande (milhões de linhas) faz join/agregação não caber na RAM,
+// e sem temp_directory o DuckDB derruba o PROCESSO do servidor em vez de
+// paginar para disco — a página some com "API morta", sem erro útil.
 async function getInstance() {
-  if (!instance) instance = await DuckDBInstance.create(':memory:');
+  if (!instance) {
+    const tmp = path.join(os.tmpdir(), 'studio-duckdb-spill');
+    try {
+      fs.mkdirSync(tmp, { recursive: true });
+    } catch {
+      /* sem temp: cai no comportamento antigo */
+    }
+    instance = await DuckDBInstance.create(':memory:', { temp_directory: tmp });
+  }
   return instance;
 }
 

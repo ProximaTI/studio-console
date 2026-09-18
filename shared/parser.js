@@ -59,10 +59,12 @@ export function stripHtmlComments(text) {
 
 // Varre a tag de abertura a partir de '<Nome'. Respeita aspas e chaves {…} nos
 // atributos. Retorna { name, attrsStr, selfClosed, headEnd } ou null se incompleta.
-// Além de componentes Capitalizados, aceita <div> minúsculo (agrupador de layout
-// do Evidence dentro de <Grid> etc.).
+// Além de componentes Capitalizados, aceita dois minúsculos: <div> (agrupador de
+// layout do Evidence dentro de <Grid> etc.) e <img> (imagem com tamanho — o
+// markdown `![alt](src)` não expressa width/height). Ambos já eram aceitos pelo
+// lint (HTML_TAGS); <img> só não era PARSEADO, então saía como texto escapado.
 function scanTag(text) {
-  const m = text.match(/^<([A-Z]\w*|div)\b/);
+  const m = text.match(/^<([A-Z]\w*|div|img)\b/);
   if (!m) return null;
   let pos = m[0].length;
   let inQ = null;
@@ -151,7 +153,7 @@ export function parseBlocks(src, opts = {}) {
       continue;
     }
     const trimmed = lines[i].trim();
-    if (/^<([A-Z]\w*|div\b)/.test(trimmed)) {
+    if (/^<([A-Z]\w*|div\b|img\b)/.test(trimmed)) {
       // Junta o restante do arquivo e tenta consumir um componente completo.
       const offset = lines[i].indexOf('<');
       const rest = lines[i].slice(offset) + (i + 1 < lines.length ? '\n' + lines.slice(i + 1).join('\n') : '');

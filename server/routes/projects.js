@@ -17,7 +17,7 @@ import sourcesRouter from './sources.js';
 import modelsRouter from './models.js';
 import semanticRouter from './semantic.js';
 import { configRouter, secretsRouter } from './config.js';
-import { deployDirFor } from '../projectConfig.js';
+import { deployDirFor, themeFor } from '../projectConfig.js';
 
 const router = Router();
 fs.mkdirSync(PROJECTS_DIR, { recursive: true });
@@ -224,6 +224,17 @@ function listMd(dir, base = '') {
   }
   return out;
 }
+
+// Tema EFETIVO do projeto (project.yaml → settings global → default). O preview
+// do editor consome daqui para mostrar a MESMA marca que o publish vai gravar —
+// sem isso o preview mente sobre o resultado.
+router.get('/:project/theme', (req, res) => {
+  try {
+    res.json({ theme: themeFor(req.params.project) });
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
 
 router.get('/:project/files', (req, res) => {
   try {
