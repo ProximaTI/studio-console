@@ -249,6 +249,8 @@ export function blocksFromPage(md, { dropParamFilterOf } = {}) {
       ...(meta.roles && Object.keys(meta.roles).length ? { roles: meta.roles } : {}),
       ...(meta.pivot ? { pivot: meta.pivot } : {}),
       ...(meta.nested ? { nested: meta.nested } : {}),
+      ...(meta.distribution ? { distribution: meta.distribution } : {}),
+      ...(meta.bump ? { bump: meta.bump } : {}),
       ...(stdLimit(meta.limit) !== undefined ? { limit: meta.limit } : {}),
     });
   }
@@ -350,11 +352,13 @@ export function promoteReport(project, { name, pages }) {
     const paramName = mParam ? mParam[1] : null;
     // dimensão do parâmetro: revelada pelo filtro injetado '${params.x}'
     let paramDim = null;
+    let paramLevel = null;
     if (paramName) {
       for (const n of marks) {
         const f = (n.meta.filters || []).find((x) => String((x.values || [])[0] ?? '') === '${params.' + paramName + '}');
         if (f) {
           paramDim = f.dim;
+          paramLevel = f.level || null; // o nível volta junto — senão o build seguinte mudaria o SQL
           break;
         }
       }
@@ -363,7 +367,7 @@ export function promoteReport(project, { name, pages }) {
     specPages.push({
       path: paramName ? `[${paramName}].md` : String(rel).replace(/\\/g, '/'),
       title: h1.replace(/\s*—\s*\{params\.[^}]+\}\s*$/, ''),
-      ...(paramName ? { parameter: { name: paramName, dimension: paramDim || paramName } } : {}),
+      ...(paramName ? { parameter: { name: paramName, dimension: paramDim || paramName, ...(paramLevel ? { level: paramLevel } : {}) } } : {}),
       blocks: blocksFromPage(disk, { dropParamFilterOf: paramName || undefined }),
     });
   }

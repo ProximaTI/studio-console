@@ -5,7 +5,7 @@
 // nunca é "consertado" em silêncio.
 import { internalDims, hierarchyOf } from './semanticCatalog.js';
 import { styleById } from './viewStyles.js';
-import { dimAliasOf } from './semanticCompile.js';
+import { dimAliasOf, isRankMetric, MIN_BINS, MAX_BINS } from './semanticCompile.js';
 
 export const REPORT_LIMITS = { pages: 8, blocksPerPage: 8 };
 
@@ -39,13 +39,31 @@ export function validateReportPlan(plan, { catalog, factColumns } = {}) {
   const publico = plan.visibility === 'public';
   const source = { name: catalog.fact, columns: (factColumns || []).map((n) => ({ name: n, type: '' })) };
 
-  const checkDimRef = (path, ref, uso) => {
+  // `exigeNivel`: onde o valor é COMPARADO (filtro, argumento). Dimensão com
+  // hierarquia sem nível compara com a coluna CRUA — {dim: tempo, values:
+  // ["2024"]} vira `"data" = '2024'`, que o banco recusa, e como argumento
+  // vira um LIKE que nunca casa (errado em silêncio, que é pior). Onde há
+  // hierarquia, o nível é obrigatório.
+  const checkDimRef = (path, ref, uso, exigeNivel) => {
     if (!ref || !dims[ref.dim]) {
       err(path + '.dim', `dimensão "${ref?.dim}" não existe no modelo ${catalog.model}`);
       return false;
     }
     if (ref.level && !(dims[ref.dim].hierarchy || []).includes(ref.level)) {
       err(path + '.level', `nível "${ref.level}" não existe na hierarquia de "${ref.dim}"`);
+      return false;
+    }
+    const hier = dims[ref.dim].hierarchy || [];
+    // Quando a COLUNA da dimensão é ela mesma um nível (year com hierarchy
+    // [year]), omitir o nível NÃO é ambíguo: o SQL sai byte-idêntico. A regra
+    // existe contra ambiguidade, não contra a falta de cerimônia.
+    const colunaEhNivel = hier.includes(dims[ref.dim].column);
+    if (exigeNivel && !ref.level && hier.length && !colunaEhNivel) {
+      err(
+        path + '.level',
+        `"${ref.dim}" tem níveis (${hier.join(', ')}) — diga qual em ${uso}: sem nível o valor é ` +
+          `comparado com a coluna crua "${dims[ref.dim].column}", não com o nível`
+      );
       return false;
     }
     if (publico && internas.has(ref.dim)) err(path + '.dim', `"${ref.dim}" é interna (pii/expose) — proibida em ${uso} de relatório PÚBLICO`);
@@ -56,7 +74,7 @@ export function validateReportPlan(plan, { catalog, factColumns } = {}) {
     if (!p || !IDENT.test(String(p.name || ''))) err(path + '.name', 'identificador obrigatório');
     if (!PARAM_TYPES.has(p?.type)) err(path + '.type', 'enum | text | number | date');
     const [dimName, level] = String(p?.from || '').split('.');
-    checkDimRef(path + '.from', { dim: dimName, level }, 'argumento');
+    checkDimRef(path + '.from', { dim: dimName, level }, 'argumento', true);
   };
 
   (Array.isArray(plan.globalParams) ? plan.globalParams : []).forEach((p, i) => checkParam(`globalParams[${i}]`, p));
@@ -88,10 +106,10 @@ export function validateReportPlan(plan, { catalog, factColumns } = {}) {
     // params.<nome do arquivo>; divergência geraria página quebrada.
     const mParam = String(pg.path || '').match(/^\[([a-z_][a-z0-9_]*)\]\.md$/i);
     if (mParam && pg.parameter === undefined)
-      err(pp + '.parameter', `página ${pg.path} exige parameter {name: "${mParam[1]}", dimension: <dim do modelo>}`);
+      err(pp + '.parameter', `página ${pg.path} exige parameter {name: "${mParam[1]}", dimension: <dim do modelo>, level?: <nível, se a dim tiver>}`);
     if (pg.parameter !== undefined) {
       if (!pg.parameter || !IDENT.test(String(pg.parameter.name || ''))) err(pp + '.parameter.name', 'identificador obrigatório');
-      checkDimRef(pp + '.parameter', { dim: pg.parameter?.dimension }, 'página parametrizada');
+      checkDimRef(pp + '.parameter', { dim: pg.parameter?.dimension, level: pg.parameter?.level }, 'parameter.level', true);
       if (!mParam) err(pp + '.path', 'página parametrizada deve chamar [nome].md');
       else if (pg.parameter?.name && mParam[1] !== pg.parameter.name)
         err(pp + '.path', `o arquivo [${mParam[1]}].md deve casar com parameter.name "${pg.parameter.name}" — o runtime lê params.${mParam[1]}`);
@@ -132,7 +150,7 @@ export function validateReportPlan(plan, { catalog, factColumns } = {}) {
       });
       (Array.isArray(b.filters) ? b.filters : []).forEach((f, fi) => {
         const fp = `${bp}.filters[${fi}]`;
-        if (!checkDimRef(fp, f, 'filtro')) refsOk = false;
+        if (!checkDimRef(fp, f, 'filtro', true)) refsOk = false;
         if (!Array.isArray(f?.values) || !f.values.length) err(fp + '.values', 'lista não-vazia de valores');
       });
       if (b.filters !== undefined && !Array.isArray(b.filters)) err(bp + '.filters', 'deve ser lista de {dim, level?, values[]}');
@@ -143,6 +161,26 @@ export function validateReportPlan(plan, { catalog, factColumns } = {}) {
         return;
       }
       if (!refsOk) return; // sem referências válidas o requires() não tem o que checar
+      // graph.histogram: o contrato do estilo só vê aridade. O que a MÉTRICA
+      // é (ponteiro para uma coluna observável) só o catálogo sabe — e o erro
+      // precisa aparecer na validação do plano, não só no build.
+      if (b.style === 'graph.bump') {
+        if (!isRankMetric(catalog, metrics[0]))
+          err(bp + '.metrics[0]', `"${metrics[0]}" não é uma métrica de posição — declare no catálogo uma derivada posicao(<métrica>, <nível>)`);
+        const topo = b.bump?.top;
+        if (topo !== undefined && (!Number.isInteger(topo) || topo < 2))
+          err(bp + '.bump.top', 'quantas posições mostrar: inteiro ≥ 2 (recorte "esteve no top N em algum período")');
+      }
+      if (b.style === 'graph.histogram') {
+        const bins = b.distribution?.bins;
+        if (!Number.isInteger(bins) || bins < MIN_BINS || bins > MAX_BINS)
+          err(bp + '.distribution.bins', `número de faixas: inteiro entre ${MIN_BINS} e ${MAX_BINS}`);
+        const m = mets[metrics[0]];
+        if (m?.derived)
+          err(bp + '.metrics[0]', `"${metrics[0]}" é derivada e não tem coluna — o histograma observa uma COLUNA do fato`);
+        else if (m && (m.agg === 'count' || m.agg === 'count_distinct'))
+          err(bp + '.metrics[0]', `"${metrics[0]}" conta ocorrências — aponte uma métrica sum/avg/min/max sobre a medida a observar`);
+      }
       // mesmo vbDraft do Wizard (shapes com alias — contrato dos estilos igual)
       const vbDraft = {
         dims: bdims.map((s) => ({ dim: s.dim, level: s.level, alias: dimAliasOf(catalog, s), column: dimAliasOf(catalog, s), table: catalog.fact })),
@@ -151,6 +189,8 @@ export function validateReportPlan(plan, { catalog, factColumns } = {}) {
         roles: b.roles,
         pivot: b.pivot,
         nested: b.nested,
+        distribution: b.distribution,
+        bump: b.bump,
         source: { kind: 'semantic', name: catalog.model },
       };
       try {

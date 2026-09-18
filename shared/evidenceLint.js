@@ -19,7 +19,7 @@ const CONSOLE_COMPONENTS = new Set([
   'Dropdown', 'DropdownOption', 'ConnectionMap', 'CollaborationGraph',
   'Note', 'LinkButton', 'Grid', 'Card', 'CardTitle', 'CardBody',
   'Tabs', 'Tab', 'Details', 'Value', 'AreaMap', 'div',
-  'TextInput', 'Slider', 'DateRange', 'Repeat',
+  'TextInput', 'Slider', 'DateRange', 'Repeat', 'RangeChart',
 ]);
 
 // Componentes do Evidence core (docs.evidence.dev). Lista curada.
@@ -42,6 +42,8 @@ const CUSTOM_NEEDS_PORT = {
     'componente custom da console — não existe no Evidence core; será preciso criar um componente Svelte no projeto Evidence',
   Repeat:
     'container Nested (F3) — pleno no runtime próprio e nos dois Publish; deploy Evidence exige Repeat.svelte (P2 sob demanda)',
+  RangeChart:
+    'marca de intervalo (faixa + centro) da console — o equivalente mais próximo no Evidence core é <BoxPlot>, que tem outra premissa de entrada (linhas cruas, não p25/mediana/p75 já agregados); no deploy Evidence, crie um RangeChart.svelte',
 };
 
 // Existem na console mas NÃO no Evidence core.

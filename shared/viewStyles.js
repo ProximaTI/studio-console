@@ -71,10 +71,10 @@ function checkRoles(vb, source, required, optional = []) {
 // body helpers -------------------------------------------------------------
 
 function dataTableBody(vb, qname) {
-  const hasMeta = (vb.metrics || []).some((m) => m.label || m.fmt);
+  const hasMeta = (vb.metrics || []).some((m) => m.label || m.fmt) || (vb.dims || []).some((d) => d.label);
   if (!hasMeta) return `<DataTable data={${qname}}/>`;
   const cols = [
-    ...(vb.dims || []).map((d) => `  <Column id=${dimAlias(d)}/>`),
+    ...(vb.dims || []).map((d) => `  <Column id=${dimAlias(d)}${d.label ? ` title="${attrEsc(d.label)}"` : ''}/>`),
     ...(vb.metrics || []).map(
       (m) => `  <Column id=${metricAlias(m)}${m.label ? ` title="${attrEsc(m.label)}"` : ''}${m.fmt ? ` fmt=${m.fmt}` : ''}/>`
     ),
@@ -84,9 +84,16 @@ function dataTableBody(vb, qname) {
 
 function chartBody(tag, vb, qname) {
   const x = dimAlias(vb.dims[0]);
-  const ys = (vb.metrics || []).map(metricAlias);
+  const ms = vb.metrics || [];
+  const ys = ms.map(metricAlias);
   const y = ys.length === 1 ? ys[0] : `{${JSON.stringify(ys)}}`;
-  return `<${tag} data={${qname}} x=${x} y=${y}/>`;
+  // Paridade com <Column>/<BigValue>: fmt e label da métrica chegam ao gráfico.
+  // yFmt só quando TODAS as métricas compartilham o fmt (um eixo, um formato);
+  // seriesLabels quando alguma métrica tem label (legenda legível, não o alias).
+  const fmts = [...new Set(ms.map((m) => m.fmt || ''))];
+  const yFmt = fmts.length === 1 && fmts[0] ? ` yFmt=${fmts[0]}` : '';
+  const labels = ms.some((m) => m.label) ? ` seriesLabels={${JSON.stringify(ms.map((m) => m.label || metricAlias(m)))}}` : '';
+  return `<${tag} data={${qname}} x=${x} y=${y}${yFmt}${labels}/>`;
 }
 
 // registro ------------------------------------------------------------------
@@ -95,6 +102,10 @@ export const STYLES = [
   {
     id: 'tabular',
     label: 'Tabular',
+    question: 'detalhe/listagem para consulta, valor a valor',
+    breaks: [
+      { quando: 'a pergunta é comparação, não consulta — a tabela esconde a forma', use: 'graph.bar' },
+    ],
     queryCount: 1,
     requires: (vb) => need((vb.dims || []).length >= 1 && (vb.metrics || []).length >= 1, 'precisa de ≥1 dimensão e ≥1 métrica'),
     compile: (ctx) => oneQuery(ctx, (vb, qn) => dataTableBody(vb, qn)),
@@ -102,6 +113,12 @@ export const STYLES = [
   {
     id: 'graph.bar',
     label: 'Graph · barras',
+    question: 'ranking / comparação entre categorias',
+    breaks: [
+      { quando: 'há VÁRIAS observações por grupo — a barra, mesmo com barra de erro, esconde a dispersão', use: 'graph.range' },
+      { quando: 'passa de ~40 categorias', use: 'tabular' },
+    ],
+    fallback: 'tabular',
     queryCount: 1,
     requires: (vb) => need((vb.dims || []).length === 1 && (vb.metrics || []).length >= 1, 'precisa de exatamente 1 dimensão e ≥1 métrica'),
     compile: (ctx) => oneQuery(ctx, (vb, qn) => chartBody('BarChart', vb, qn)),
@@ -109,6 +126,11 @@ export const STYLES = [
   {
     id: 'graph.line',
     label: 'Graph · linha (tempo)',
+    question: 'evolução ao longo do tempo',
+    breaks: [
+      { quando: 'passa de ~5 séries — vira espaguete e nenhuma fica legível', use: 'nested' },
+    ],
+    fallback: 'tabular',
     queryCount: 1,
     requires: (vb, source) =>
       need(
@@ -136,6 +158,11 @@ export const STYLES = [
     //   dimensão 1 = rótulo do ponto · dimensão 2 (opcional) = série (cor)
     id: 'graph.bubble',
     label: 'Graph · bolhas (dispersão)',
+    question: 'posição em DUAS medidas (ex.: volume × eficiência)',
+    breaks: [
+      { quando: 'a 3ª métrica precisa ser LIDA com precisão — área é mal percebida, ela só ordena', use: 'tabular' },
+    ],
+    fallback: 'tabular',
     queryCount: 1,
     requires: (vb) =>
       need(
@@ -155,6 +182,8 @@ export const STYLES = [
   {
     id: 'group',
     label: 'Group (v1: tabela ordenada pelas dimensões)',
+    question: 'cruzamento de 2+ dimensões',
+    fallback: 'tabular',
     queryCount: 1,
     requires: (vb) => need((vb.dims || []).length >= 2, 'precisa de ≥2 dimensões'),
     compile: (ctx) => oneQuery(ctx, (vb, qn) => dataTableBody(vb, qn)),
@@ -162,6 +191,7 @@ export const STYLES = [
   {
     id: 'freeform',
     label: 'Freeform (BigValues)',
+    question: 'número de cabeçalho, sem recorte',
     queryCount: 1,
     requires: (vb) => need((vb.metrics || []).length >= 1, 'precisa de ≥1 métrica'),
     compile: (ctx) =>
@@ -179,6 +209,7 @@ export const STYLES = [
     // mapeadas (papel→coluna) direto da fonte.
     id: 'connectionmap',
     label: 'ConnectionMap (arcos geográficos)',
+    question: 'origem → destino geográfico',
     queryCount: 1,
     roles: [
       { key: 'fromName', label: 'origem — nome', accepts: 'string' },
@@ -207,6 +238,7 @@ export const STYLES = [
     // no contrato do componente (source_id/target_id/target_name[/weight]).
     id: 'collabgraph',
     label: 'CollaborationGraph (rede, 2 queries)',
+    question: 'rede de conexões entre nós',
     queryCount: 2,
     roles: [
       { key: 'source', label: 'aresta — origem (id)', accepts: 'string' },
@@ -243,6 +275,11 @@ export const STYLES = [
   {
     id: 'areamap',
     label: 'Mapa (Brasil por UF)',
+    question: 'distribuição geográfica por UF',
+    breaks: [
+      { quando: 'a métrica é CONTAGEM ABSOLUTA — o mapa colore população e tamanho da UF, não a taxa; use uma métrica normalizada (por habitante, por instituição, % do total)', use: 'graph.bar' },
+    ],
+    fallback: 'graph.bar',
     queryCount: 1,
     requires: (vb) => {
       const d = (vb.dims || [])[0];
@@ -253,12 +290,108 @@ export const STYLES = [
       oneQuery(ctx, (vb, qn) => `<AreaMap data={${qn}} areaCol=${dimAlias(vb.dims[0])} value=${metricAlias(vb.metrics[0])} geoId=sigla/>`),
   },
   {
+    // INTERVALO: a forma que consome a dispersão do catálogo (p25/mediana/p75).
+    // Convenção de ordem, como no graph.bubble — sem papéis a configurar:
+    //   métrica 1 = mínimo · métrica 2 = centro · métrica 3 = máximo
+    // Três barras lado a lado mostram três números; uma haste mostra a FAIXA.
+    id: 'graph.range',
+    label: 'Graph · intervalo (faixa + centro)',
+    question: 'a FAIXA onde os valores caem, não só a média',
+    breaks: [
+      { quando: 'a pergunta é a FORMA da distribuição (bimodal? cauda?) — três números não a mostram', use: 'graph.histogram' },
+    ],
+    fallback: 'tabular',
+    queryCount: 1,
+    requires: (vb) =>
+      need(
+        (vb.dims || []).length === 1 && (vb.metrics || []).length === 3,
+        'precisa de 1 dimensão e EXATAMENTE 3 métricas, na ordem mínimo · centro · máximo (ex.: p25, mediana, p75)'
+      ),
+    compile: (ctx) =>
+      oneQuery(ctx, (vb, qn) => {
+        const [lo, mid, hi] = (vb.metrics || []).map(metricAlias);
+        const fmt = (vb.metrics || [])[1]?.fmt;
+        return `<RangeChart data={${qn}} x=${dimAlias(vb.dims[0])} low=${lo} mid=${mid} high=${hi}${fmt ? ` yFmt=${fmt}` : ''}/>`;
+      }),
+  },
+  {
+    id: 'graph.bump',
+    label: 'Graph · posição no ranking (bump)',
+    question: 'quem SUBIU e quem CAIU no ranking entre períodos',
+    breaks: [
+      { quando: 'só há UM período no recorte — sem comparação não há movimento', use: 'graph.bar' },
+    ],
+    fallback: 'tabular',
+    planHint: '2 dimensões — uma TEMPORAL (eixo) e a entidade rankeada (uma linha cada) — e 1 métrica que seja uma POSIÇÃO declarada no catálogo (derivada posicao(m, nível)). Se o catálogo não tiver nenhuma, NÃO use este estilo e diga isso em warnings. Use bump: {top: 10} para cortar o topo.',
+    queryCount: 1,
+    // 2 dimensões: o tempo (eixo) e a entidade rankeada (uma linha cada).
+    // 1 métrica: a POSIÇÃO. Não é "faturamento ao longo do tempo" com outro
+    // eixo — é outra pergunta, e a métrica precisa ser uma posicao() do catálogo
+    // (quem verifica isso é quem tem o catálogo: reportPlan e o funil).
+    requires: (vb, source) => {
+      const ds = vb.dims || [];
+      const temporal = ds.filter((d) => isTemporalDim(d, source));
+      return need(
+        ds.length === 2 && temporal.length >= 1 && (vb.metrics || []).length === 1,
+        'precisa de 2 dimensões (uma TEMPORAL = eixo, outra = quem é rankeado) e 1 métrica de POSIÇÃO (posicao(...) do catálogo)'
+      );
+    },
+    compile: (ctx) => {
+      const vb = ctx.vb;
+      const name = vb.queries?.[0]?.name || vb.id;
+      const tempo = (vb.dims || []).find((d) => isTemporalDim(d, ctx.source)) || vb.dims[0];
+      const ent = (vb.dims || []).find((d) => d !== tempo);
+      const x = dimAlias(tempo);
+      const m = (vb.metrics || [])[0] || {};
+      // Mesma razão do graph.line: o SQL da fonte ordena por métrica desc, e num
+      // eixo de tempo isso embaralha a série. Reordena CRONOLOGICAMENTE por fora.
+      const sql = `select * from (\n${ctx.baseSql}\n) t\norder by ${q(x)}`;
+      return {
+        queries: [{ name, sql }],
+        body: `<LineChart data={${name}} x=${x} y=${metricAlias(m)} series=${dimAlias(ent)} yInverted=true yAxisTitle="${attrEsc(m.label || 'Posição')}"/>`,
+      };
+    },
+  },
+  {
+    id: 'graph.histogram',
+    label: 'Graph · distribuição (histograma)',
+    question: 'a FORMA da distribuição de uma medida (onde os valores se concentram)',
+    breaks: [
+      { quando: 'a comparação é ENTRE grupos — vários histogramas não cabem num eixo só', use: 'graph.range' },
+    ],
+    fallback: 'graph.range',
+    planHint: 'UMA única métrica. NÃO acrescente p25/mediana/p75 ao lado: a forma já mostra isso, e o bloco com 2+ métricas é RECUSADO. A métrica só NOMEIA A COLUNA a observar; a agregação dela não é aplicada — o histograma conta as LINHAS DO FATO uma a uma, pelo valor BRUTO da coluna, não por médias nem totais. Portanto NÃO escreva ressalvas dizendo que ele reflete valores agregados: ele não reflete. Use uma métrica sum/avg/min/max da medida (nunca contagem, nunca derivada) e distribution: {bins: N}, N de 5 a 100 (~24).',
+    queryCount: 1,
+    // 1 métrica: é o PONTEIRO para a coluna observada, não uma série.
+    // 0 dimensões: comparar distribuições entre grupos é pequenos múltiplos,
+    // não um eixo com grupo×faixa (5 regiões × 24 faixas = 120 barras ilegíveis).
+    requires: (vb) =>
+      need(
+        (vb.metrics || []).length === 1 && !(vb.dims || []).length,
+        'precisa de EXATAMENTE 1 métrica (a medida observada) e NENHUMA dimensão — as faixas já são o eixo'
+      ),
+    compile: (ctx) =>
+      oneQuery(ctx, (vb, qn) => {
+        const m = (vb.metrics || [])[0] || {};
+        const titulo = m.label ? ` xAxisTitle="${attrEsc(m.label)}"` : '';
+        // contiguous: as barras se encostam. É o que distingue, para quem lê,
+        // uma escala CONTÍNUA fatiada de categorias independentes.
+        return `<BarChart data={${qn}} x=faixa y=observacoes yFmt=num0 contiguous=true${titulo} seriesLabels={["Observações"]}/>`;
+      }),
+  },
+  {
     // NESTED (F3 §5): grão-pai × grão-filho numa ÚNICA query particionada —
     // nunca N+1. `limit por grupo` = row_number() over (partition by pai).
     // Compila para o container <Repeat>, que particiona no cliente nos 3
     // ambientes; trocar childStyle troca SÓ a tag (recompilação mais barata).
     id: 'nested',
     label: 'Nested (pai → filhos, 1 query)',
+    question: 'o MESMO recorte repetido para MUITOS grupos, lado a lado',
+    breaks: [
+      { quando: 'há menos de ~3 grupos — pequenos múltiplos não compensam', use: 'group' },
+    ],
+    fallback: 'group',
+    planHint: 'declare AS DUAS dimensões em "dims" e repita os nomes em nested.parent (o que separa os painéis) e nested.child (o eixo dentro de cada painel). childStyle: tabular | graph.bar | graph.line. Use limitPerGroup ~6 e maxGroups ~12. Os painéis dividem a MESMA escala, então servem para comparar grupos.',
     queryCount: 1,
     requires: (vb) => {
       const n = vb.nested;
@@ -301,6 +434,7 @@ export const STYLES = [
     // colunas (layout estável em qualquer publish). "Outros" agrega o resto.
     id: 'pivot',
     label: 'Pivot (linhas × colunas × métrica)',
+    question: 'matriz linhas × colunas com uma métrica',
     queryCount: 1,
     requires: (vb) => {
       const p = vb.pivot;
@@ -406,7 +540,13 @@ export function compileViewblock(vb, ctx) {
   const style = styleById(vb.style);
   if (!style) throw new Error(`Estilo desconhecido: ${vb.style}`);
   const r = style.requires(vb, ctx.source);
-  if (!r.ok) throw new Error(`Seleção não atende o contrato de "${vb.style}": ${r.reason}`);
+  // O erro aponta a SAÍDA, não só o que falta: `fallback` é o estilo mais
+  // simples que sempre serve para a mesma seleção.
+  if (!r.ok)
+    throw new Error(
+      `Seleção não atende o contrato de "${vb.style}": ${r.reason}` +
+        (style.fallback ? ` — para esta seleção, use "${style.fallback}"` : '')
+    );
 
   const paramSegments = compileParamInputs(vb, ctx.ctePrefix || '', ctx.optsSqlFor || null);
   const compiled = style.compile({ ...ctx, vb });
@@ -422,4 +562,73 @@ export function compileViewblock(vb, ctx) {
     '<!-- /viewblock -->',
   ];
   return segments.join('\n\n');
+}
+
+// ---------------------------------------------------------------------------
+// MENU DO AGENTE, GERADO DO REGISTRO.
+//
+// Antes, o prompt do planejador repetia à mão o que o registro já dizia em
+// código: a lista de estilos, o contrato de cada um e as instruções de config.
+// Toda frente nova (graph.range, graph.histogram, graph.bump) exigia editar os
+// dois — e um dos dois ia ficar para trás. Agora há uma fonte só.
+//
+// O texto do CONTRATO é o `reason` do próprio `requires()` — a mesma string que
+// o compilador devolve ao recusar. Não dá para o prompt prometer uma coisa e a
+// validação cobrar outra: é o mesmo objeto.
+//
+// `question` diz quando escolher; `breaks` diz o que INVALIDA o estilo mesmo
+// com o contrato atendido (condições que dependem do DADO, não da seleção, que
+// é justamente o que requires() não alcança); `fallback` diz para onde ir.
+export function styleMenuLines(ids) {
+  const sel = (ids || STYLES.map((s) => s.id)).map(styleById).filter(Boolean);
+  const vazio = { dims: [], metrics: [], params: [], roles: {}, source: { kind: 'semantic' } };
+  const fonte = { name: '', columns: [] };
+  const contratoDe = (s) => {
+    try {
+      const r = s.requires(vazio, fonte);
+      return r.ok ? 'sem exigência de aridade' : r.reason;
+    } catch {
+      return 'sem exigência de aridade';
+    }
+  };
+  // Quebra em ~105 colunas, indentando a continuação — um prompt com linhas de
+  // 190 colunas fica ilegível e o modelo perde o fim da frase.
+  // A PRIMEIRA linha fica rente à margem (é um marcador de primeiro nível);
+  // só as continuações são indentadas.
+  const envolve = (texto, indent) => {
+    const linhas = [];
+    let linha = '';
+    for (const p of String(texto).split(' ')) {
+      if (linha && (linha + ' ' + p).length > 105) {
+        linhas.push((linhas.length ? indent : '') + linha);
+        linha = '';
+      }
+      linha = linha ? linha + ' ' + p : p;
+    }
+    if (linha) linhas.push((linhas.length ? indent : '') + linha);
+    return linhas;
+  };
+  // TRÊS visões, não uma. Medido: colapsar tudo num bloco indentado por estilo
+  // — tudo no mesmo peso visual — fez o planejador violar contrato em 4 de 4
+  // execuções e parar de escolher graph.histogram. Cada visão tem um trabalho:
+  // o cardápio serve para ESCOLHER, os contratos para não violar aridade, os
+  // "não use" para não errar a premissa. A fonte continua sendo uma só.
+  const largura = 58;
+  const out = ['- ESCOLHA O ESTILO PELA PERGUNTA, não por hábito. Tabela e barra NÃO são o padrão:'];
+  for (const s of sel) {
+    const q = s.question || s.label;
+    out.push(`    · ${q} ${'.'.repeat(Math.max(1, largura - q.length))} ${s.id}`);
+  }
+  out.push(
+    ...envolve(
+      '- CONTRATOS (o compilador RECUSA o bloco que não atender): ' +
+        sel.map((s) => `${s.id} ${contratoDe(s).replace(/^precisa de /, 'precisa de ')}`).join('; ') +
+        '.',
+      '  '
+    )
+  );
+  const naoUse = sel.flatMap((s) => (s.breaks || []).map((b) => `${s.id} quando ${b.quando} → use ${b.use}`));
+  if (naoUse.length) out.push(...envolve('- NÃO use: ' + naoUse.join('; ') + '.', '  '));
+  for (const s of sel) if (s.planHint) out.push(...envolve(`- ${s.id}: ${s.planHint}`, '  '));
+  return out;
 }

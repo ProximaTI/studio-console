@@ -9,9 +9,11 @@ import { parseBlocks } from '../../shared/parser.js';
 import { paramNameFromFile, collectInputNames } from '../../shared/templating.js';
 import { resolveQueries, detectSources, listSchemaViews, itemsFromBlocks, collectParamPages } from './queries.js';
 import { mountSourceUrls } from '../materialize.js';
-import { getRuntimeBundle, readVendors, collectMaps, copyDuckdbRuntime, escapeHtml, publishCss } from './assets.js';
+import { getRuntimeBundle, readVendors, collectMaps, copyDuckdbRuntime, escapeHtml, publishCss, inlineBrandAssets } from './assets.js';
+import { themeFor } from '../projectConfig.js';
 
 export async function buildPublishedApp(projectName, fileName, mdSource, settings, baseUrl, outDir, queriesDir, pagesDir) {
+  mdSource = inlineBrandAssets(mdSource); // /brand/x.svg -> data URI (ver assets.js)
   const blocks = parseBlocks(mdSource);
   const queries = resolveQueries(blocks, queriesDir);
 
@@ -74,7 +76,8 @@ export async function buildPublishedApp(projectName, fileName, mdSource, setting
     paramName,
     paramPages: collectParamPages(pagesDir),
     maps: collectMaps(blocks),
-    theme: settings?.theme || {},
+    // Tema EFETIVO do projeto (project.yaml → settings global → default).
+    theme: themeFor(projectName),
     decimalSeparator: settings?.organization?.decimalSeparator || ',',
     generatedAt: new Date().toISOString(),
   };
@@ -113,6 +116,7 @@ function renderAppHtml(payload, echartsSrc, markdownitSrc, runtimeSrc) {
 import * as duckdb from './duckdb/duckdb-browser.mjs';
 const P = ${data};
 const md = window.markdownit ? window.markdownit({html:false,linkify:true}) : { render:function(s){return s;} };
+StudioRuntime.allowInlineSvg(md); // aceita ![x](data:image/svg+xml;base64,…) — ver shared/markdownPolicy.js
 const inputs = {};
 const params = {};
 const dataMap = {};

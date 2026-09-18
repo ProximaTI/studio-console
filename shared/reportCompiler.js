@@ -2,7 +2,7 @@
 // o web (vbState) delega para cá; o server compila planos multipágina com o
 // mesmo código. IA nunca gera SQL/Markdown: tudo sai daqui, determinístico.
 import { compileViewblock } from './viewStyles.js';
-import { compileCatalogSql, dimAliasOf, dimExprOf, metricInfo } from './semanticCompile.js';
+import { compileCatalogSql, compileDistributionSql, dimAliasOf, dimExprOf, isRankMetric, metricInfo } from './semanticCompile.js';
 
 function hash6(s) {
   let h = 5381;
@@ -32,6 +32,8 @@ export function compileSemanticBlock({
   roles,
   pivot,
   nested,
+  distribution,
+  bump,
   limit,
   vbId,
   ref,
@@ -45,7 +47,16 @@ export function compileSemanticBlock({
     source: { kind: 'semantic', name: catalog.model, ...(ref ? { ref } : {}) },
     catalogHash: hash,
     queries: [{ name: id, sql: null }],
-    dims: catSel.dims.map((s) => ({ dim: s.dim, ...(s.level ? { level: s.level } : {}), alias: dimAliasOf(catalog, s), column: dimAliasOf(catalog, s), table: catalog.fact })),
+    // `label` vem do catálogo: sem ele a tabela mostrava o nome CRU da coluna
+    // (country_name) no cabeçalho, enquanto as métricas já exibiam o rótulo.
+    dims: catSel.dims.map((s) => ({
+      dim: s.dim,
+      ...(s.level ? { level: s.level } : {}),
+      alias: dimAliasOf(catalog, s),
+      column: dimAliasOf(catalog, s),
+      table: catalog.fact,
+      ...((catalog.dimensions || {})[s.dim]?.label ? { label: catalog.dimensions[s.dim].label } : {}),
+    })),
     metrics: catSel.metrics.map((n) => metricInfo(catalog, n)),
     filters,
     limit: limit ?? 1000,
@@ -54,18 +65,44 @@ export function compileSemanticBlock({
     ...(roles && Object.keys(roles).length ? { roles } : {}),
     ...(pivot ? { pivot } : {}),
     ...(nested ? { nested } : {}),
+    ...(distribution ? { distribution } : {}),
+    ...(bump ? { bump } : {}),
     children: [],
   };
-  const baseSql = compileCatalogSql({
-    catalog,
-    hash,
-    metrics: catSel.metrics,
-    dims: catSel.dims,
-    filters,
-    params: [...params, ...quietParams],
-    factColumns: cols,
-    limit: limit ?? 1000,
-  });
+  // A bifurcação do produto vive AQUI, no funil, e em nenhum outro lugar: um
+  // histograma conta observações por faixa, o que precisa das linhas do fato
+  // antes do group by — não dá para embrulhar a base agregada. O registro de
+  // estilos segue puramente apresentacional, recebendo um SQL pronto.
+  // graph.bump consome uma métrica de POSIÇÃO. O contrato do estilo só vê
+  // aridade (o viewblock não carrega a definição da métrica); quem sabe o que
+  // ela É é o catálogo, e ele está aqui.
+  if (style === 'graph.bump' && !isRankMetric(catalog, catSel.metrics[0]))
+    throw new Error(
+      `graph.bump precisa de uma métrica de posição: declare no catálogo uma derivada ` +
+        `posicao(<métrica>, <nível>) — "${catSel.metrics[0]}" não é uma.`
+    );
+  const baseSql =
+    style === 'graph.histogram'
+      ? compileDistributionSql({
+          catalog,
+          hash,
+          metric: catSel.metrics[0],
+          bins: distribution?.bins,
+          filters,
+          params: [...params, ...quietParams],
+          factColumns: cols,
+        })
+      : compileCatalogSql({
+          catalog,
+          hash,
+          metrics: catSel.metrics,
+          dims: catSel.dims,
+          filters,
+          params: [...params, ...quietParams],
+          factColumns: cols,
+          limit: limit ?? 1000,
+          rankTop: bump?.top,
+        });
   // opts de param enum: expressão da DIMENSÃO sobre o fato (não coluna crua)
   const optsSqlFor = (p) => {
     const [dimName, level] = String(p.from).split('.');
@@ -120,7 +157,14 @@ export function compileReport(plan, { catalog, hash, factColumns }) {
       const filters = [...(b.filters || [])];
       // página parametrizada: o valor vem da rota (/nome/valor/) via templating —
       // '${params.x}' atravessa o compilador intacto e resolve no runtime.
-      if (pg.parameter) filters.push({ dim: pg.parameter.dimension, values: ['${params.' + pg.parameter.name + '}'] });
+      // O nível acompanha o filtro INJETADO: sem ele, uma página por ano
+      // compararia a coluna crua (uma data) com "2024".
+      if (pg.parameter)
+        filters.push({
+          dim: pg.parameter.dimension,
+          ...(pg.parameter.level ? { level: pg.parameter.level } : {}),
+          values: ['${params.' + pg.parameter.name + '}'],
+        });
       partes.push(
         compileSemanticBlock({
           catalog,
@@ -137,6 +181,8 @@ export function compileReport(plan, { catalog, hash, factColumns }) {
           roles: b.roles,
           pivot: b.pivot,
           nested: b.nested,
+          distribution: b.distribution,
+          bump: b.bump,
           limit: b.limit,
           vbId: b.id ? 'vb_' + b.id : undefined,
         })
@@ -147,8 +193,11 @@ export function compileReport(plan, { catalog, hash, factColumns }) {
     if (pg === indexHost) {
       for (const pp of paramPgs) {
         const nome = pp.parameter.name;
-        const expr = dimExprOf(catalog, { dim: pp.parameter.dimension }, factColumns || []);
-        const alias = dimAliasOf(catalog, { dim: pp.parameter.dimension });
+        // O índice tem de listar os MESMOS valores que a página filtra: se a
+        // página recorta por ano, o índice lista anos, não datas.
+        const pref = { dim: pp.parameter.dimension, ...(pp.parameter.level ? { level: pp.parameter.level } : {}) };
+        const expr = dimExprOf(catalog, pref, factColumns || []);
+        const alias = dimAliasOf(catalog, pref);
         const qn = 'nav_' + nome;
         partes.push(`## ${pp.title}`);
         partes.push(
@@ -157,7 +206,9 @@ export function compileReport(plan, { catalog, hash, factColumns }) {
             `from "${String(catalog.fact).replace(/"/g, '')}"\nwhere ${expr} is not null\norder by 1\n` +
             '```'
         );
-        partes.push(`<DataTable data={${qn}} link=link><Column id=${alias} title="${pp.title}"/></DataTable>`);
+        // search=true: o índice pode ter centenas de valores — busca client-side;
+        // a paginação (rows=N, padrão 50) é do próprio DataTable nos 3 ambientes.
+        partes.push(`<DataTable data={${qn}} link=link search=true><Column id=${alias} title="${pp.title}"/></DataTable>`);
       }
     }
     out.push({ path: outPathOf(pg), content: partes.join('\n\n') + '\n' });

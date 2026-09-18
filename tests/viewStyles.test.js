@@ -39,7 +39,7 @@ describe('registro de estilos', () => {
   it('todos os estilos registrados com contrato', () => {
     expect(STYLES.map((s) => s.id)).toEqual([
       'tabular', 'graph.bar', 'graph.line', 'graph.bubble', 'group', 'freeform',
-      'connectionmap', 'collabgraph', 'areamap', 'nested', 'pivot',
+      'connectionmap', 'collabgraph', 'areamap', 'graph.range', 'graph.bump', 'graph.histogram', 'nested', 'pivot',
     ]);
     for (const s of STYLES) {
       expect(typeof s.requires).toBe('function');
@@ -67,9 +67,9 @@ describe('registro de estilos', () => {
 
   it('cada estilo compila para a tag esperada', () => {
     expect(compile(vbBase({ style: 'tabular' }))).toContain('<DataTable data={vb_test01}>');
-    expect(compile(vbBase({ style: 'graph.bar' }))).toContain('<BarChart data={vb_test01} x=unidade y=count_distinct_atendimento_id/>');
+    expect(compile(vbBase({ style: 'graph.bar' }))).toContain('<BarChart data={vb_test01} x=unidade y=count_distinct_atendimento_id seriesLabels={["Atendimentos"]}/>');
     const line = vbBase({ style: 'graph.line', dims: [{ table: 'comissoes', column: 'ano' }] });
-    expect(compile(line)).toContain('<LineChart data={vb_test01} x=ano y=count_distinct_atendimento_id/>');
+    expect(compile(line)).toContain('<LineChart data={vb_test01} x=ano y=count_distinct_atendimento_id seriesLabels={["Atendimentos"]}/>');
     // série temporal sai CRONOLÓGICA, não pela métrica desc do SQL da fonte
     expect(compile(line)).toContain('order by "ano"');
     const grp = vbBase({ style: 'group', dims: [{ table: 'comissoes', column: 'uf' }, { table: 'comissoes', column: 'unidade' }] });
@@ -89,6 +89,27 @@ describe('registro de estilos', () => {
     const tab = compile({ ...multi, style: 'tabular' });
     expect(tab).toContain('<Column id=count_distinct_atendimento_id title="Atendimentos"/>');
     expect(tab).toContain('<Column id=sum_valor/>');
+  });
+
+  it('graph propaga fmt (yFmt, se único) e labels (seriesLabels) das métricas', () => {
+    const comFmt = vbBase({
+      metrics: [
+        { column: 'valor', agg: 'sum', label: 'Faturamento', fmt: 'brl' },
+        { column: 'atendimento_id', agg: 'count_distinct', fmt: 'brl' },
+      ],
+    });
+    const out = compile(comFmt);
+    expect(out).toContain(' yFmt=brl');
+    expect(out).toContain('seriesLabels={["Faturamento","count_distinct_atendimento_id"]}');
+    const misto = vbBase({
+      metrics: [
+        { column: 'valor', agg: 'sum', fmt: 'brl' },
+        { column: 'atendimento_id', agg: 'count_distinct', fmt: 'num0' },
+      ],
+    });
+    const out2 = compile(misto);
+    expect(out2).not.toContain('yFmt');
+    expect(out2).not.toContain('seriesLabels');
   });
 
   it('freeform propaga o fmt da métrica para o BigValue (paridade com <Column>)', () => {
@@ -188,5 +209,29 @@ describe('graph.bubble (dispersão)', () => {
       ],
     });
     expect(compile(completo)).toContain('<BubbleChart data={vb_test01} x=ie y=pct size=cresc label=unidade series=uf/>');
+  });
+});
+
+describe('rótulo da dimensão no cabeçalho da tabela', () => {
+  it('dimensão com label vira <Column title>, como já acontecia com métrica', () => {
+    const vb = vbBase({
+      style: 'tabular',
+      dims: [{ table: 'apc_base', column: 'country_name', alias: 'country_name', label: 'País' }],
+    });
+    expect(compile(vb)).toContain('<Column id=country_name title="País"/>');
+  });
+
+  it('dimensão sem label continua sem title (retrocompatível)', () => {
+    const vb = vbBase({ style: 'tabular', dims: [{ table: 'apc_base', column: 'editor' }] });
+    expect(compile(vb)).toContain('<Column id=editor/>');
+  });
+
+  it('só o label da dimensão já basta para a tabela sair com colunas', () => {
+    const vb = vbBase({
+      style: 'tabular',
+      dims: [{ table: 'apc_base', column: 'uf', alias: 'uf', label: 'UF' }],
+      metrics: [{ column: 'doi', agg: 'count_distinct' }],
+    });
+    expect(compile(vb)).toContain('<Column id=uf title="UF"/>');
   });
 });

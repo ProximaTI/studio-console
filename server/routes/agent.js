@@ -5,7 +5,7 @@
 import { Router } from 'express';
 import { loadCatalogs, factColumnsFor } from '../semantic.js';
 import { validateReportPlan, REPORT_LIMITS } from '../../shared/reportPlan.js';
-import { STYLES } from '../../shared/viewStyles.js';
+import { STYLES, styleMenuLines } from '../../shared/viewStyles.js';
 import { applyReport } from '../reportApply.js';
 import { callAgent } from './ai.js';
 
@@ -59,7 +59,7 @@ export const REPORT_PLAN_SCHEMA = {
           purpose: { type: 'string' },
           parameter: {
             type: 'object',
-            properties: { name: { type: 'string' }, dimension: { type: 'string' } },
+            properties: { name: { type: 'string' }, dimension: { type: 'string' }, level: { type: 'string' } },
             required: ['name', 'dimension'],
             additionalProperties: false,
           },
@@ -75,6 +75,37 @@ export const REPORT_PLAN_SCHEMA = {
                 filters: { type: 'array', items: FILTER },
                 style: { type: 'string' },
                 explanation: { type: 'string' },
+                // Config do estilo `nested` (pequenos múltiplos). Sem isto no
+                // schema o modelo poderia NOMEAR o estilo mas não configurá-lo,
+                // e todo bloco desses seria recusado na validação.
+                nested: {
+                  type: 'object',
+                  properties: {
+                    parent: { type: 'array', items: { type: 'string' } },
+                    child: { type: 'array', items: { type: 'string' } },
+                    childStyle: { enum: ['tabular', 'graph.bar', 'graph.line'] },
+                    limitPerGroup: { type: 'integer' },
+                    maxGroups: { type: 'integer' },
+                  },
+                  required: ['parent', 'child', 'childStyle'],
+                  additionalProperties: false,
+                },
+                // Config do estilo `graph.histogram`. O nº de faixas é do
+                // BLOCO, não do catálogo: é a escolha feita junto da pergunta.
+                distribution: {
+                  type: 'object',
+                  properties: { bins: { type: 'integer' } },
+                  required: ['bins'],
+                  additionalProperties: false,
+                },
+                // Config do estilo `graph.bump`: quantas posições do topo
+                // mostrar. Sem corte, um bump de centenas de entidades é um
+                // novelo ilegível.
+                bump: {
+                  type: 'object',
+                  properties: { top: { type: 'integer' } },
+                  additionalProperties: false,
+                },
               },
               required: ['metrics', 'dims', 'filters', 'style'],
               additionalProperties: false,
@@ -91,9 +122,16 @@ export const REPORT_PLAN_SCHEMA = {
   additionalProperties: false,
 };
 
-// Estilos que a IA pode propor na v1 (papéis/pivot/nested exigem configuração
-// que o plano ainda não transporta com segurança — ficam no wizard manual).
-const PLANNABLE = ['tabular', 'graph.bar', 'graph.line', 'group', 'freeform', 'areamap'];
+// Estilos que a IA pode propor. O critério é um só: o agente consegue preencher
+// o contrato do estilo SÓ com nomes do catálogo?
+//
+// Ficam de FORA, cada um por um motivo diferente:
+//   pivot        — `frozenCols` congela VALORES reais da dimensão-coluna; o
+//                  agente não vê dados, então chutaria o domínio.
+//   connectionmap/collabgraph — mapeiam PAPÉIS para colunas cruas da fonte
+//                  (lat/lon, origem/destino, nós/arestas), que não existem no
+//                  vocabulário do catálogo. Seguem no wizard manual.
+export const PLANNABLE = ['tabular', 'graph.bar', 'graph.line', 'graph.bubble', 'graph.range', 'graph.histogram', 'graph.bump', 'group', 'freeform', 'areamap', 'nested'];
 
 /** Resumo do catálogo p/ o prompt (labels + grounding F4 + hierarquias). */
 export function catalogSummary(catalog) {
@@ -119,18 +157,23 @@ export function catalogSummary(catalog) {
 }
 
 export function planSystemPrompt(catalog, { audience, visibility } = {}) {
-  const estilos = STYLES.filter((s) => PLANNABLE.includes(s.id)).map((s) => `${s.id} — ${s.label}`);
   return [
     'Você planeja um RELATÓRIO de dados multipágina a partir de um pedido em pt-BR.',
     'Você NÃO escreve SQL nem Markdown — apenas um PLANO com nomes do catálogo semântico abaixo.',
     'Regras:',
-    '- metrics/dims/filters: SOMENTE nomes do catálogo. Nunca invente. Dimensão com níveis usa {dim, level}.',
+    '- metrics/dims/filters: SOMENTE nomes do catálogo. Nunca invente.',
+    '- "level" SÓ quando a dimensão declarar "níveis" no catálogo, e o valor tem de ser UM desses níveis',
+    '  (ex.: {dim: tempo, level: mes}). Dimensão SEM níveis vai sozinha: {dim: regiao} — nunca {dim: regiao, level: regiao}.',
     '- filters: apenas valores EXPLÍCITOS no pedido (ex.: "em 2024" → {dim: tempo, level: ano, values: [2024]}).',
-    `- style de cada bloco: um de [${estilos.join(' · ')}]. KPIs/cards = freeform (só métricas). Mapa exige dimensão geográfica (uf).`,
-    '- graph.bar exige exatamente 1 dimensão; graph.line exige 1 dimensão TEMPORAL; tabular ≥1 dim + ≥1 métrica; group ≥2 dims.',
+    '- style de cada bloco: um dos ids listados abaixo.',
+    ...styleMenuLines(PLANNABLE),
     `- Máximo ${REPORT_LIMITS.pages} páginas e ${REPORT_LIMITS.blocksPerPage} blocos por página. Prefira 2–4 páginas enxutas.`,
     '- paths: minúsculas_com_underscore.md; página parametrizada usa [nome].md + parameter {name, dimension}.',
-    '- globalParams: filtros INTERATIVOS que o leitor muda (ex.: ano) — use type enum com from "dim.nivel" e default "%".',
+    '  Se a dimensão da página tiver níveis, acrescente parameter.level (ex.: uma página por ano →',
+    '  {name: "ano", dimension: "tempo", level: "ano"}); sem o nível a rota compararia a coluna crua.',
+    '- globalParams: filtros INTERATIVOS que o leitor muda (ex.: ano). Use type enum e default "%".',
+    '  "from" leva o NOME REAL da dimensão do catálogo — com nível se ela tiver (ex.: from: "tempo.ano"),',
+    '  ou só a dimensão se não tiver (ex.: from: "unidade"). NÃO escreva "dim.nivel" literalmente.',
     '- dimensões marcadas pii: NUNCA em relatório public.',
     '- "warnings": liste ambiguidades do pedido que você resolveu por conta própria ("" nenhum).',
     audience ? `- Público-alvo declarado: ${audience}.` : '',

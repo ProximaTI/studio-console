@@ -2,7 +2,27 @@
 // parseado (o YAML é parseado SÓ no server — aqui trafega JSON). Erros em PT
 // com caminho ("metrics.pct_apc.derived: ..."), no lugar de JSON Schema.
 
-export const AGGS = new Set(['sum', 'avg', 'min', 'max', 'count', 'count_distinct']);
+// As seis primeiras COLAPSAM o grupo num número central ou extremo. Enquanto
+// eram as únicas, o catálogo não tinha como expressar DISPERSÃO — toda média
+// publicada saía nua, sem dizer se o grupo é homogêneo ou se a média é a
+// mentira aritmética entre dois mundos. As quatro últimas descrevem a forma do
+// grupo; combinadas (p25/mediana/p75) dão o intervalo que a média esconde.
+export const AGGS = new Set([
+  'sum',
+  'avg',
+  'min',
+  'max',
+  'count',
+  'count_distinct',
+  'median',
+  'p25',
+  'p75',
+  'p90',
+  'stddev',
+]);
+
+/** Agregações que descrevem a DISTRIBUIÇÃO do grupo (não são aditivas). */
+export const DISTRIBUTION_AGGS = new Set(['median', 'p25', 'p75', 'p90', 'stddev']);
 
 const IDENT = /^[a-z_][a-z0-9_]*$/i;
 const TABLE_COL = /^[a-z_][a-z0-9_]*\.[a-z_][a-z0-9_]*$/i;
@@ -17,7 +37,7 @@ export function parseDerived(expr, metricNames) {
   const tokens = [];
   const src = String(expr || '');
   const re =
-    /\s*(?:(?<total>total\s*\(\s*(?<tname>\w+)\s*(?<tscope>,\s*scope\s*:\s*all\s*)?\))|(?<lag>lag\s*\(\s*(?<lname>\w+)\s*,\s*(?<ln>\d+)\s*,\s*(?<llevel>\w+)\s*\))|(?<acum>acum\s*\(\s*(?<aname>\w+)\s*,\s*(?<alevel>\w+)\s*\))|(?<movel>movel\s*\(\s*(?<mname>\w+)\s*,\s*(?<mn>\d+)\s*\))|(?<num>\d+(?:\.\d+)?)|(?<ident>[A-Za-z_]\w*)|(?<op>[+\-*/()]))/y;
+    /\s*(?:(?<total>total\s*\(\s*(?<tname>\w+)\s*(?<tscope>,\s*scope\s*:\s*all\s*)?\))|(?<lag>lag\s*\(\s*(?<lname>\w+)\s*,\s*(?<ln>\d+)\s*,\s*(?<llevel>\w+)\s*\))|(?<acum>acum\s*\(\s*(?<aname>\w+)\s*,\s*(?<alevel>\w+)\s*\))|(?<movel>movel\s*\(\s*(?<mname>\w+)\s*,\s*(?<mn>\d+)\s*\))|(?<vpos>variacao_posicao\s*\(\s*(?<vpname>\w+)\s*,\s*(?<vplevel>\w+)\s*\))|(?<pos>posicao\s*\(\s*(?<pname>\w+)\s*,\s*(?<plevel>\w+)\s*\))|(?<num>\d+(?:\.\d+)?)|(?<ident>[A-Za-z_]\w*)|(?<op>[+\-*/()]))/y;
   const known = (fn, name) => (metricNames.has(name) ? null : { ok: false, error: `${fn}(${name}): métrica desconhecida` });
   let i = 0;
   while (i < src.length) {
@@ -48,6 +68,14 @@ export function parseDerived(expr, metricNames) {
       const n = Number(g.mn);
       if (!(n >= 2)) return { ok: false, error: `movel(${g.mname}, ${g.mn}): n deve ser ≥ 2` };
       tokens.push({ type: 'movel', name: g.mname, n });
+    } else if (g.vpos) {
+      const bad = known('variacao_posicao', g.vpname);
+      if (bad) return bad;
+      tokens.push({ type: 'variacao_posicao', name: g.vpname, level: g.vplevel });
+    } else if (g.pos) {
+      const bad = known('posicao', g.pname);
+      if (bad) return bad;
+      tokens.push({ type: 'posicao', name: g.pname, level: g.plevel });
     } else if (g.num) {
       tokens.push({ type: 'num', value: g.num });
     } else if (g.ident) {

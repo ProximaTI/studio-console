@@ -14,15 +14,20 @@
 //   renderInline(text)         interpolação {expr} com o estado atual
 //   getInput(name)             valor atual de um input
 //   setInput(name, value)      async: re-executa/re-renderiza (papel do bootstrap)
-import { formatNumber } from './format.js';
-import { buildChartOption } from './chartOption.js';
+import { formatNumber, cmpCell } from './format.js';
+import { buildChartOption, buildRangeOption } from './chartOption.js';
 import { buildMapOption, buildAreaMapOption } from './mapOption.js';
+import { chartPaletteOf } from './designTokens.js';
+import { partitionBy, sharedDomain, isPanelChart, PANEL_HEIGHT } from './smallMultiples.js';
 
 export function createPublishRenderer(ctx) {
   const charts = [];
   const settingsLike = { organization: { decimalSeparator: ctx.decimalSeparator || ',' } };
   const dark = ctx.theme && ctx.theme.mode === 'dark';
-  const palette = (ctx.theme && ctx.theme.chartPalette) || undefined;
+  // Seletor por MODO (shared/designTokens.js): no escuro usa chartPaletteDark
+  // quando o tema declara uma. Ler ctx.theme.chartPalette cru fazia o publicado
+  // divergir do editor exatamente no ponto que este módulo existe para unificar.
+  const palette = chartPaletteOf(ctx.theme);
   let mapsRegistered = false;
 
   const fmt = (v, f) => formatNumber(v, f, settingsLike);
@@ -30,6 +35,17 @@ export function createPublishRenderer(ctx) {
     const e = document.createElement(tag);
     if (cls) e.className = cls;
     if (html != null) e.innerHTML = html;
+    return e;
+  };
+
+  /** <img src alt width height> — atributos de tamanho só quando declarados. */
+  const imgEl = (a) => {
+    const e = document.createElement('img');
+    e.src = a.src || '';
+    e.alt = a.alt || '';
+    if (a.width) e.setAttribute('width', a.width);
+    if (a.height) e.setAttribute('height', a.height);
+    e.style.maxWidth = '100%';
     return e;
   };
   const htmlesc = (s) =>
@@ -139,28 +155,24 @@ export function createPublishRenderer(ctx) {
     if (name === 'Repeat') {
       const by = String(a.by || '').split(',').map((s) => s.trim()).filter(Boolean);
       const maxGroups = Number(a.maxGroups) || 50;
-      const groups = [];
-      const gIdx = {};
-      (rows || []).forEach((r) => {
-        const key = by.map((c) => String(r[c])).join(' · ');
-        if (!(key in gIdx)) {
-          gIdx[key] = groups.length;
-          groups.push({ key, rows: [] });
-        }
-        groups[gIdx[key]].rows.push(r);
-      });
-      const wrap = el('div', 'repeat');
+      const childStyle = a.childStyle || 'tabular';
+      const painel = isPanelChart(childStyle);
+      // Partição e ESCALA vêm de shared/ — a mesma regra que o editor usa.
+      const part = partitionBy(rows, by, maxGroups);
+      const groups = part.groups;
+      const domain = painel ? sharedDomain(groups, a.y, childStyle === 'graph.line' ? 'line' : 'bar') : null;
+      const wrap = el('div', painel ? 'repeat repeat-grid' : 'repeat');
       app.appendChild(wrap); // no DOM antes dos filhos — echarts precisa medir
-      if (groups.length > maxGroups) {
-        wrap.appendChild(el('div', 'err', '⚠ ' + groups.length + ' grupos — mostrando os primeiros ' + maxGroups + ' (maxGroups).'));
+      if (part.total > maxGroups) {
+        wrap.appendChild(el('div', 'err', '⚠ ' + part.total + ' grupos — mostrando os primeiros ' + maxGroups + ' (maxGroups).'));
       }
       const hidden = {};
       by.concat(['_rn']).forEach((c) => (hidden[c] = true));
-      groups.slice(0, maxGroups).forEach((g) => {
+      groups.forEach((g) => {
         const box = el('div', 'repeat-group');
         wrap.appendChild(box);
         box.appendChild(el('div', 'repeat-title', htmlesc(g.key)));
-        if ((a.childStyle || 'tabular') === 'tabular') {
+        if (childStyle === 'tabular') {
           const cols = Object.keys(g.rows[0] || {}).filter((c) => !hidden[c]);
           let html = '<thead><tr>' + cols.map((c) => '<th>' + htmlesc(c) + '</th>').join('') + '</tr></thead><tbody>';
           g.rows.forEach((r) => {
@@ -168,13 +180,14 @@ export function createPublishRenderer(ctx) {
           });
           box.appendChild(el('table', 'grid', html + '</tbody>'));
         } else {
-          chart(box, 220).setOption(
+          chart(box, PANEL_HEIGHT).setOption(
             buildChartOption({
-              kind: a.childStyle === 'graph.line' ? 'line' : 'bar',
+              kind: childStyle === 'graph.line' ? 'line' : 'bar',
               rows: g.rows,
               attrs: { x: a.x, y: a.y },
-              palette: ctx.theme && ctx.theme.chartPalette,
+              palette,
               dark: ctx.theme && ctx.theme.mode === 'dark',
+              yDomain: domain,
             }),
             true
           );
@@ -312,6 +325,10 @@ export function createPublishRenderer(ctx) {
       return;
     }
 
+    if (name === 'RangeChart') {
+      chart(app).setOption(buildRangeOption({ rows, attrs: a, palette, dark: ctx.theme && ctx.theme.mode === 'dark' }), true);
+      return;
+    }
     if (name === 'BarChart' || name === 'LineChart' || name === 'BubbleChart') {
       const kind = name === 'BarChart' ? 'bar' : name === 'LineChart' ? 'line' : 'scatter';
       const attrs = Object.assign({}, a);
@@ -337,6 +354,14 @@ export function createPublishRenderer(ctx) {
     }
     if (name === 'AreaMap') {
       renderAreaMap(app, a, rows);
+      return;
+    }
+    // <img>: a tag já era aceita pelo dialeto (HTML_TAGS do lint) mas nenhum
+    // renderizador a desenhava. É o jeito PORTÁVEL de dimensionar uma imagem —
+    // o markdown `![alt](src)` não expressa tamanho, e um SVG só com viewBox
+    // (o logotipo da CAPES é assim) estica para a largura inteira da coluna.
+    if (name === 'img') {
+      app.appendChild(imgEl(a));
       return;
     }
 
@@ -375,27 +400,39 @@ export function createPublishRenderer(ctx) {
         scaleMax[c.id] = m;
       }
     });
-    const lim = a.rows ? Number(a.rows) : 50;
+    const lim = Math.max(1, a.rows ? Number(a.rows) : 50);
     let shown = rows;
+    let page = 0; // paginação client-side (rows=N por página, padrão 50)
+    // Ordenação client-side por clique no cabeçalho — mesmo contrato do
+    // editor (web/src/render/components/DataTable.tsx): null = ordem do SQL.
+    let sort = null;
 
     const tbl = (filterText) => {
-      const data = filterText
+      let data = filterText
         ? rows.filter((r) => {
             const t = filterText.toLowerCase();
             return Object.values(r).some((v) => String(v == null ? '' : v).toLowerCase().indexOf(t) >= 0);
           })
         : rows;
+      if (sort) data = data.slice().sort((x, y) => cmpCell(x[sort.col], y[sort.col], sort.dir));
       shown = data;
+      const pageCount = Math.max(1, Math.ceil(data.length / lim));
+      if (page > pageCount - 1) page = pageCount - 1;
       let html =
         '<table class="grid"><thead><tr>' +
         defs
           .map((c) => {
-            const cls = c.align === 'center' ? 'ctr' : c.align === 'right' || numCols[c.id] ? 'num' : '';
-            return '<th' + (cls ? ' class="' + cls + '"' : '') + '>' + htmlesc(c.title || c.id) + '</th>';
+            const ativa = sort && sort.col === c.id;
+            let cls = c.align === 'center' ? 'ctr' : c.align === 'right' || numCols[c.id] ? 'num' : '';
+            if (ativa) cls += (cls ? ' ' : '') + 'sorted';
+            const ind = ativa ? (sort.dir === -1 ? ' ▼' : ' ▲') : '';
+            return ('<th' + (cls ? ' class="' + cls + '"' : '') + ' data-sort="' + htmlesc(c.id) +
+              '" title="ordenar por esta coluna">' + htmlesc(c.title || c.id) +
+              '<span class="sort-ind">' + ind + '</span></th>');
           })
           .join('') +
         '</tr></thead><tbody>';
-      data.slice(0, lim).forEach((r) => {
+      data.slice(page * lim, page * lim + lim).forEach((r) => {
         let href = linkCol ? r[linkCol] : null;
         if (href) {
           const rh = appHref(String(href));
@@ -437,17 +474,47 @@ export function createPublishRenderer(ctx) {
             .join('') +
           '</tr>';
       });
-      return html + '</tbody></table>';
+      html += '</tbody></table>';
+      if (pageCount > 1) {
+        html +=
+          '<div class="dt-pager"><button data-pg="prev"' + (page === 0 ? ' disabled' : '') + ' title="página anterior">‹</button>' +
+          '<span class="muted small">página ' + (page + 1) + ' de ' + pageCount + ' · ' + data.length.toLocaleString('pt-BR') + ' linha(s), ' + lim + ' por página</span>' +
+          '<button data-pg="next"' + (page >= pageCount - 1 ? ' disabled' : '') + ' title="próxima página">›</button></div>';
+      }
+      return html;
     };
 
-    const tdiv = el('div', null, tbl(''));
+    let filterText = '';
+    const tdiv = el('div', null, '');
+    const render = () => {
+      tdiv.innerHTML = tbl(filterText);
+      tdiv.querySelectorAll('th[data-sort]').forEach((th) => {
+        th.onclick = () => {
+          const col = th.getAttribute('data-sort');
+          // 1º clique desc, 2º asc, 3º volta à ordem do SQL
+          sort = !sort || sort.col !== col ? { col, dir: -1 } : sort.dir === -1 ? { col, dir: 1 } : null;
+          page = 0;
+          render();
+        };
+      });
+      tdiv.querySelectorAll('button[data-pg]').forEach((bt) => {
+        bt.onclick = () => {
+          page += bt.getAttribute('data-pg') === 'next' ? 1 : -1;
+          if (page < 0) page = 0;
+          render();
+        };
+      });
+    };
+    render();
     if (a.search === 'true' || a.downloadable === 'true') {
       const bar = el('div', 'dt-toolbar');
       if (a.search === 'true') {
         const inp = document.createElement('input');
         inp.placeholder = 'buscar…';
         inp.oninput = () => {
-          tdiv.innerHTML = tbl(inp.value);
+          filterText = inp.value;
+          page = 0;
+          render();
         };
         bar.appendChild(inp);
       }
