@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { jget, jput } from '../api';
 import { alertDialog } from '../components/dialogs';
+import { PRESETS, PRESET_NAMES } from '../../../shared/designTokens.js';
 
 export default function Settings({ onSaved }: { onSaved: (s: any) => void }) {
   const [s, setS] = useState<any>(null);
@@ -53,6 +54,28 @@ export default function Settings({ onSaved }: { onSaved: (s: any) => void }) {
       </div>
       <div className="panel">
         <h3>Theme</h3>
+        {/* Preset EXPANDE os valores nos campos abaixo em vez de guardar o nome:
+            o settings global sempre carrega todos os tokens (mergeWithDefaults),
+            então um `preset` guardado aqui seria sempre vencido por eles. No
+            project.yaml, onde só existe o que o autor declara, `preset:` é
+            guardado como seletor e continua valendo. */}
+        <label>
+          Preset
+          <select
+            value=""
+            onChange={(e) => {
+              const p = (PRESETS as any)[e.target.value];
+              if (p) setS({ ...s, theme: { ...s.theme, ...p } });
+            }}
+          >
+            <option value="">aplicar preset…</option>
+            {PRESET_NAMES.map((n: string) => (
+              <option key={n} value={n}>
+                {n}
+              </option>
+            ))}
+          </select>
+        </label>
         <label>
           Modo
           <select value={t.mode} onChange={(e) => setTheme('mode', e.target.value)}>
@@ -69,23 +92,30 @@ export default function Settings({ onSaved }: { onSaved: (s: any) => void }) {
         <label>
           Primária <input type="color" value={t.primary} onChange={(e) => setTheme('primary', e.target.value)} />
         </label>
-        <div style={{ marginTop: 12 }}>
-          <div className="muted">Paleta de gráficos</div>
-          <div className="row">
-            {t.chartPalette.map((c: string, i: number) => (
-              <input
-                key={i}
-                type="color"
-                value={c}
-                onChange={(e) => {
-                  const p = [...t.chartPalette];
-                  p[i] = e.target.value;
-                  setTheme('chartPalette', p);
-                }}
-              />
-            ))}
-          </div>
-        </div>
+        {([
+          ['chartPalette', 'Paleta de gráficos (modo claro)'],
+          ['chartPaletteDark', 'Paleta de gráficos (modo escuro)'],
+        ] as const).map(([key, label]) =>
+          Array.isArray(t[key]) && t[key].length ? (
+            <div key={key} style={{ marginTop: 12 }}>
+              <div className="muted">{label}</div>
+              <div className="row">
+                {t[key].map((c: string, i: number) => (
+                  <input
+                    key={i}
+                    type="color"
+                    value={c}
+                    onChange={(e) => {
+                      const p = [...t[key]];
+                      p[i] = e.target.value;
+                      setTheme(key, p);
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : null
+        )}
       </div>
       <div className="panel">
         <h3>Agente (IA)</h3>

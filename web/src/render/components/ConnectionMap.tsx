@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import * as echarts from 'echarts';
 import { usePreview } from '../markdown';
 import { buildMapOption } from '../mapOption';
+import { chartPaletteOf } from '../../../../shared/designTokens.js';
 
 // Mapa de conexões geográficas (instituições/países) com arcos largura ∝ volume.
 // Uso no markdown:
@@ -52,7 +53,7 @@ export default function ConnectionMap(props: any) {
     const option = buildMapOption({
       rows,
       attrs: props,
-      palette: settings?.theme?.chartPalette,
+      palette: chartPaletteOf(settings?.theme),
       dark: settings?.theme?.mode === 'dark',
     });
     chartRef.current.setOption(option as any, true);

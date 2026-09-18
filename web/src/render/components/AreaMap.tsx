@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
 import { usePreview } from '../markdown';
 import { buildAreaMapOption } from '../../../../shared/mapOption.js';
+import { chartPaletteOf } from '../../../../shared/designTokens.js';
 
 // Mapa coroplético (Evidence <AreaMap/>). Suporte focado no caso Brasil-UF:
 // usa o GeoJSON local (/maps/brazil.geo.json) em vez de baixar o geoJsonUrl,
@@ -17,7 +18,7 @@ export default function AreaMap(props: any) {
   const nameProp = props.geoId || 'sigla';
   const err = errors[props.data];
   const dark = settings?.theme?.mode === 'dark';
-  const palette: string[] = settings?.theme?.chartPalette || ['#236aa4'];
+  const palette: string[] = chartPaletteOf(settings?.theme);
 
   useEffect(() => {
     if (!el.current || err || rows.length === 0) return;

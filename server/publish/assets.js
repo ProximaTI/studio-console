@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as esbuild from 'esbuild';
+import { themeVars } from '../../shared/designTokens.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..', '..');
@@ -105,18 +106,47 @@ export function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
 }
 
-/** CSS comum dos apps publicados (tema claro/escuro pelo settings). */
+// ---- Imagens locais (/brand/…): EMBUTIDAS no publish -----------------------
+// No editor o Vite serve web/public/ direto, então `/brand/capes.svg` funciona.
+// No publicado não: um caminho ABSOLUTO cai na raiz de quem serve o arquivo
+// (e o 📦 é um HTML solto, que nem servidor tem). Em vez de copiar arquivos e
+// reescrever caminhos por ambiente, a imagem entra como data URI — mesma
+// decisão já tomada para os GeoJSON, e o snapshot continua sendo UM arquivo.
+const BRAND_DIR = path.join(ROOT, 'web', 'public', 'brand');
+const MIME = { '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp' };
+
+/**
+ * Troca `](/brand/arquivo)` pelo data URI do arquivo, no FONTE markdown —
+ * assim vale para o 📦 (render no build) e para o ☁ (render no browser), que
+ * partem os dois do mesmo texto. Arquivo ausente fica como está: a página
+ * publica com a imagem quebrada em vez de falhar o publish inteiro, e o aviso
+ * sai no log de quem publicou.
+ */
+export function inlineBrandAssets(mdSource) {
+  // Duas formas de citar a imagem: markdown `![alt](/brand/x.svg)` e atributo
+  // `<img src="/brand/x.svg">` (a que permite width/height).
+  return String(mdSource).replace(/(?:\]\(|src=["']?)\/brand\/([A-Za-z0-9._-]+)(?=[)"'\s>])/g, (whole, file) => {
+    const full = path.join(BRAND_DIR, file);
+    const mime = MIME[path.extname(file).toLowerCase()];
+    if (!mime || !fs.existsSync(full)) {
+      console.warn(`[publish] /brand/${file} não encontrado — rode: node scripts/fetch_brand_assets.mjs`);
+      return whole;
+    }
+    const uri = `data:${mime};base64,${fs.readFileSync(full).toString('base64')}`;
+    return whole.replace(`/brand/${file}`, uri);
+  });
+}
+
+/** CSS comum dos apps publicados. Os VALORES vêm de shared/designTokens.js —
+ *  a mesma fonte do editor, para os 3 ambientes concordarem no visual como já
+ *  concordam no SQL. */
 export function publishCss(theme) {
-  const t = theme || {};
-  const dark = t.mode === 'dark';
+  const vars = Object.entries(themeVars(theme))
+    .map(([k, v]) => `    ${k}:${v};`)
+    .join('\n');
   return `
   :root{
-    --bg:${t.background || (dark ? '#1a1a1d' : '#f7f7f8')};
-    --card:${t.card || (dark ? '#26262b' : '#ffffff')};
-    --primary:${t.primary || '#236aa4'};
-    --text:${dark ? '#e7e7ea' : '#1d1d20'};
-    --muted:${dark ? '#9a9aa2' : '#6b7280'};
-    --border:${dark ? '#3a3a40' : '#e5e7eb'};
+${vars}
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif;font-size:14px}
@@ -137,9 +167,15 @@ export function publishCss(theme) {
   .grid th{background:var(--bg);font-weight:600}
   .grid th.num,.grid td.num{text-align:right;font-variant-numeric:tabular-nums}
   .grid th.ctr,.grid td.ctr{text-align:center}
+  .grid th[data-sort]{cursor:pointer;user-select:none}
+  .grid th[data-sort]:hover{color:var(--data)}
+  .grid th.sorted{color:var(--data)}
+  .grid th .sort-ind{font-size:10px;opacity:.85}
   .grid td.wrap{white-space:normal;min-width:220px}
   .dt-toolbar{display:flex;gap:10px;align-items:center;margin:10px 0 0}
   .dt-toolbar input{width:220px}
+  .dt-pager{display:flex;gap:10px;align-items:center;justify-content:flex-end;margin:6px 0 0}
+  .dt-pager button{min-width:28px;padding:2px 8px}
   .dt-toolbar button{cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text);padding:5px 12px;border-radius:6px}
   .ev-details{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin:12px 0}
   .ev-details summary{cursor:pointer;font-weight:600;font-size:13px;color:var(--primary)}
@@ -153,6 +189,10 @@ export function publishCss(theme) {
   .linkbtn{display:inline-block;margin:8px 8px 8px 0;padding:6px 14px;border:1px solid var(--primary);border-radius:6px;color:var(--primary);text-decoration:none}
   .muted{color:var(--muted)}
   .repeat{display:flex;flex-direction:column;gap:14px;margin:12px 0}
+  .repeat.repeat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+  .repeat.repeat-grid .repeat-group{padding:8px 10px}
+  .repeat.repeat-grid .repeat-title{font-size:12px;margin-bottom:4px}
+  .repeat.repeat-grid .err{grid-column:1 / -1}
   .repeat-group{border:1px solid var(--border);border-radius:10px;padding:10px 14px;background:var(--card)}
   .repeat-title{font-weight:600;font-size:13px;color:var(--primary);margin-bottom:8px}
   #status{padding:40px;text-align:center;color:var(--muted)}

@@ -1,6 +1,7 @@
 import ReactECharts from 'echarts-for-react';
 import { usePreview } from '../markdown';
 import { buildChartOption } from '../../../../shared/chartOption.js';
+import { chartPaletteOf } from '../../../../shared/designTokens.js';
 
 export default function BarChart(props: any) {
   const { dataMap, errors, settings } = usePreview();
@@ -10,7 +11,7 @@ export default function BarChart(props: any) {
     kind: 'bar',
     rows,
     attrs: props,
-    palette: settings?.theme?.chartPalette,
+    palette: chartPaletteOf(settings?.theme),
     dark: settings?.theme?.mode === 'dark',
   });
   // Barras horizontais com muitas categorias precisam de mais altura.

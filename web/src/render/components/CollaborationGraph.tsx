@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import cytoscape from 'cytoscape';
 import { usePreview } from '../markdown';
+import { chartPaletteOf } from '../../../../shared/designTokens.js';
 
 // Grafo de colaboração (Cytoscape.js) — espelho React do componente Svelte
 // customizado do Evidence (evidence-components/CollaborationGraph.svelte).
@@ -32,7 +33,7 @@ export default function CollaborationGraph(props: any) {
   const focus = props.focusNodeId;
   const linkBase = props.linkBase ?? '/instituicao/';
   const dark = settings?.theme?.mode === 'dark';
-  const palette: string[] = settings?.theme?.chartPalette || ['#236aa4', '#45a1bf', '#7b61ff', '#16a34a', '#f59e0b'];
+  const palette: string[] = chartPaletteOf(settings?.theme);
 
   useEffect(() => {
     if (!el.current || err) return;

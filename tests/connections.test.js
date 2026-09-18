@@ -79,3 +79,12 @@ describe('instância de extração com espaço para derramar', () => {
     }
   });
 });
+
+describe('instância de serviço com espaço para derramar', () => {
+  it('a instância que serve as páginas também usa temp_directory', async () => {
+    const { getConnection } = await import('../server/db.js');
+    const c = await getConnection('scratch');
+    const r = await c.runAndReadAll(`select current_setting('temp_directory') as t`);
+    expect(String(r.getRowObjects()[0].t)).toMatch(/studio-duckdb-spill/);
+  });
+});

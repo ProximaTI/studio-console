@@ -10,6 +10,7 @@ import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
 import { PROJECTS_DIR, ROOT } from './db.js';
 import { readSettings } from './settings.js';
 import { readConnections } from './connections.js';
+import { resolveTheme, validateTheme } from '../shared/designTokens.js';
 
 const CONFIG_FILE = 'project.yaml';
 const SECRETS_FILE = '.secrets.json';
@@ -62,6 +63,8 @@ export function validateProjectConfig(yamlText) {
   for (const [name, mt] of Object.entries(cfg.mounts || {})) {
     if (!mt?.base_url) errors.push({ path: `mounts.${name}.base_url`, message: 'obrigatório (http(s)://, s3:// ou caminho de rede)' });
   }
+  // Design system por projeto: conjunto FECHADO de tokens de marca (shared/designTokens.js).
+  errors.push(...validateTheme(cfg.theme));
   return { errors, config: cfg };
 }
 
@@ -133,6 +136,16 @@ export function listSecretRefs(project) {
   } catch {
     return [];
   }
+}
+
+/**
+ * Tema EFETIVO do projeto: default → settings global → `theme:` do project.yaml.
+ * Mesmo desenho do deployDirFor: um ÚNICO ponto de resolução, consumido pelos
+ * dois publishes e pelo preview do editor — senão o preview mente sobre o que
+ * vai ser publicado.
+ */
+export function themeFor(project) {
+  return resolveTheme(readSettings().theme, readProjectConfig(project).theme);
 }
 
 /** deploy.dir do projeto com fallback ao settings global (transição, spec §3). */

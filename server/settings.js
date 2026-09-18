@@ -4,19 +4,16 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { DEFAULT_THEME } from '../shared/designTokens.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const SETTINGS_FILE = path.join(path.resolve(__dirname, '..'), 'settings.json');
 
 export const DEFAULTS = {
   organization: { name: 'Meu Estúdio', decimalSeparator: ',' },
-  theme: {
-    mode: 'light',
-    background: '#ecefe8',
-    card: '#ffffff',
-    primary: '#2c8a4a',
-    chartPalette: ['#236aa4', '#45a1bf', '#a5cdee', '#7b61ff', '#16a34a', '#f59e0b', '#dc2626', '#0891b2'],
-  },
+  // Tema global = padrão da instalação. Os VALORES vivem em shared/designTokens.js;
+  // um projeto pode sobrescrever os tokens de MARCA no seu project.yaml (`theme:`).
+  theme: { ...DEFAULT_THEME },
   // Agente de IA (plugável): 'anthropic' ou 'openai' (LM Studio / vLLM / LiteLLM).
   // noThink: pede ao servidor local para desligar o raciocínio (reasoning) — economiza
   // tokens/latência em modelos tipo Qwen3/DeepSeek; servidores que não suportam ignoram.

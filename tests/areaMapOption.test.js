@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { buildAreaMapOption, parseColorList, areaLabelLayout } from '../shared/mapOption.js';
+import { DEFAULT_THEME } from '../shared/designTokens.js';
 
 const rows = [
   { uf: 'SP', qtd: 5891 },
@@ -42,9 +43,11 @@ describe('buildAreaMapOption', () => {
     expect(o.visualMap.inRange.color).toEqual(['#e6eef7', '#7fb0d8', '#236aa4']);
   });
 
-  it('colorPalette com 1 cor só é ignorada (volta ao default)', () => {
+  it('colorPalette com 1 cor só é ignorada — volta ao default, que é a cor de MARCA', () => {
     const o = buildAreaMapOption({ rows, attrs: { ...attrs, colorPalette: '#000' }, dark: true });
-    expect(o.visualMap.inRange.color).toEqual(['#1d2330', '#236aa4']);
+    // a asserção é a REGRA (cai na paleta dos tokens), não um literal — assim
+    // trocar a marca não quebra o teste.
+    expect(o.visualMap.inRange.color).toEqual(['#1d2330', DEFAULT_THEME.chartPalette[0]]);
   });
 
   it('showLabels=true imprime a quantidade formatada pt-BR dentro da área', () => {

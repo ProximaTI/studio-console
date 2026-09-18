@@ -4,6 +4,8 @@
 // rows: arestas com colunas de coordenadas (fromLat/fromLon/toLat/toLon, weight, nomes).
 // Os pontos são deduzidos das pontas; tamanho do ponto = soma dos pesos incidentes.
 
+import { chartPaletteOf } from './designTokens.js';
+
 export function buildMapOption({ rows, attrs, palette, dark }) {
   const a = attrs || {};
   const mapName = a.map === 'brazil' ? 'brazil' : 'world';
@@ -48,7 +50,7 @@ export function buildMapOption({ rows, attrs, palette, dark }) {
 
   const maxW = Math.max(1, ...edges.map((e) => e.w));
   const maxNode = Math.max(1, ...nodes.map((n) => n.value[2]));
-  const primary = (palette && palette[0]) || '#236aa4';
+  const primary = chartPaletteOf({ chartPalette: palette })[0];
   const accent = (palette && palette[3]) || '#7b61ff';
 
   return {
@@ -105,7 +107,7 @@ export function buildMapOption({ rows, attrs, palette, dark }) {
 // attrs: areaCol (coluna com o id da área), value (métrica), geoId (propriedade
 //   do GeoJSON casada com areaCol; default 'sigla'), title, height,
 //   colorPalette (lista de cores do degradê claro→escuro, sintaxe Evidence
-//   colorPalette={['#eee','#236aa4']} ou "#eee,#236aa4"; com 3+ cores os tons
+//   colorPalette={['#eee','#2c8a4a']} ou "#eee,#2c8a4a"; com 3+ cores os tons
 //   intermediários ficam sob controle da página), showLabels=true (imprime o
 //   valor formatado dentro de cada área — extensão da console, o Evidence só
 //   mostra no tooltip).
@@ -142,7 +144,7 @@ export function buildAreaMapOption({ rows, attrs, palette, dark, mapName }) {
     if (d.value > max) max = d.value;
   });
   const custom = parseColorList(a.colorPalette);
-  const colors = custom.length >= 2 ? custom : [dark ? '#1d2330' : '#eef2f7', (palette && palette[0]) || '#236aa4'];
+  const colors = custom.length >= 2 ? custom : [dark ? '#1d2330' : '#eef2f7', chartPaletteOf({ chartPalette: palette })[0]];
   const showLabels = a.showLabels === 'true' || a.showLabels === '' || a.showLabels === true;
   const textColor = dark ? '#e5e7eb' : '#1d1d20';
 
