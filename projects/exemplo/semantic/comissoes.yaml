@@ -41,6 +41,15 @@ metrics:
   comissoes:     { agg: sum, column: comissao, label: "Comissões", fmt: brl,
                    synonyms: [repasse, pagamento à equipe] }
   ticket_medio:  { agg: avg, column: valor, label: "Ticket médio", fmt: brl }
+
+  # Dispersão: a média sozinha não diz se o grupo é homogêneo. Com p25/mediana/p75
+  # o leitor vê o INTERVALO onde a maioria dos atendimentos cai, e a distância
+  # entre média e mediana denuncia a assimetria (poucos serviços caros puxando).
+  ticket_p25:     { agg: p25, column: valor, label: "Ticket P25", fmt: brl }
+  ticket_mediana: { agg: median, column: valor, label: "Ticket mediano", fmt: brl,
+                    description: "Metade dos atendimentos custa menos que isto" }
+  ticket_p75:     { agg: p75, column: valor, label: "Ticket P75", fmt: brl }
+  ticket_desvio:  { agg: stddev, column: valor, label: "Desvio do ticket", fmt: brl }
   qtd_clientes:  { agg: count_distinct, column: cliente, label: "Clientes atendidos", fmt: num0 }
 
   # Filtro embutido na métrica (referencia DIMENSÃO, nunca coluna crua).
@@ -55,6 +64,13 @@ metrics:
   faturamento_acum:  { derived: "acum(faturamento, ano)", label: "Faturamento acumulado", fmt: brl }
   faturamento_movel: { derived: "movel(faturamento, 3)", label: "Faturamento (média 3M)", fmt: brl }
   pct_faturamento:   { derived: "faturamento / total(faturamento)", label: "% do total", fmt: pct1 }
+  # posicao(m, nivel): posição DENTRO de cada período, por rank().
+  # variacao_posicao: quantas posições subiu (positivo) desde o período
+  # anterior. As duas juntas exigem DOIS estágios de janela — janela
+  # aninhada é ilegal em SQL, então o compilador materializa a posição antes.
+  posicao_unidade:   { derived: "posicao(faturamento, ano)", label: "Posição no ano", fmt: num0 }
+  subiu_caiu:        { derived: "variacao_posicao(faturamento, ano)",
+                       label: "Posições ganhas no ano", fmt: num0 }
 
 hierarchies:                       # grosso → fino (habilita o drill ⤵/⤴)
   geografia: [regiao, uf, unidade]

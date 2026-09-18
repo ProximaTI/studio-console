@@ -8,7 +8,7 @@ Desempenho da unidade no recorte. Volte para o [painel da rede](/painel_rede/).
 
 ## Números da unidade
 
-<!-- viewblock v1 {"v":1,"id":"vb_un_kpis","source":{"kind":"semantic","name":"comissoes"},"catalogHash":"b1e6c89e","queries":[{"name":"vb_un_kpis","sql":null}],"dims":[],"metrics":[{"name":"faturamento","alias":"faturamento","label":"Faturamento","fmt":"brl"},{"name":"comissoes","alias":"comissoes","label":"Comissões","fmt":"brl"},{"name":"atendimentos","alias":"atendimentos","label":"Atendimentos","fmt":"num0"},{"name":"ticket_medio","alias":"ticket_medio","label":"Ticket médio","fmt":"brl"}],"filters":[{"dim":"unidade","values":["${params.unidade}"]}],"limit":1000,"params":[{"name":"ano","type":"enum","from":"tempo.ano","default":"%","label":"Ano"}],"style":"freeform","children":[]} -->
+<!-- viewblock v1 {"v":1,"id":"vb_un_kpis","source":{"kind":"semantic","name":"comissoes"},"catalogHash":"d72794a6","queries":[{"name":"vb_un_kpis","sql":null}],"dims":[],"metrics":[{"name":"faturamento","alias":"faturamento","label":"Faturamento","fmt":"brl"},{"name":"comissoes","alias":"comissoes","label":"Comissões","fmt":"brl"},{"name":"atendimentos","alias":"atendimentos","label":"Atendimentos","fmt":"num0"},{"name":"ticket_medio","alias":"ticket_medio","label":"Ticket médio","fmt":"brl"}],"filters":[{"dim":"unidade","values":["${params.unidade}"]}],"limit":1000,"params":[{"name":"ano","type":"enum","from":"tempo.ano","default":"%","label":"Ano"}],"style":"freeform","children":[]} -->
 
 ```sql vb_un_kpis_ano_opts
 select distinct cast(year(cast("data" as date)) as varchar) as value
@@ -20,7 +20,7 @@ order by 1
 <Dropdown name=ano data={vb_un_kpis_ano_opts} value=value title="Ano"><DropdownOption value="%" valueLabel="Todos"/></Dropdown>
 
 ```sql vb_un_kpis
--- semantic: comissoes@b1e6c89e
+-- semantic: comissoes@d72794a6
 with base as (
   select count(distinct "atendimento_id") as "atendimentos", sum("valor") as "faturamento", sum("comissao") as "comissoes", avg("valor") as "ticket_medio"
   from "comissoes"
@@ -42,10 +42,10 @@ limit 1000
 
 ## Faturamento por serviço
 
-<!-- viewblock v1 {"v":1,"id":"vb_un_servico","source":{"kind":"semantic","name":"comissoes"},"catalogHash":"b1e6c89e","queries":[{"name":"vb_un_servico","sql":null}],"dims":[{"dim":"servico","alias":"servico","column":"servico","table":"comissoes"}],"metrics":[{"name":"faturamento","alias":"faturamento","label":"Faturamento","fmt":"brl"}],"filters":[{"dim":"unidade","values":["${params.unidade}"]}],"limit":1000,"params":[],"style":"graph.bar","children":[]} -->
+<!-- viewblock v1 {"v":1,"id":"vb_un_servico","source":{"kind":"semantic","name":"comissoes"},"catalogHash":"d72794a6","queries":[{"name":"vb_un_servico","sql":null}],"dims":[{"dim":"servico","alias":"servico","column":"servico","table":"comissoes","label":"Serviço"}],"metrics":[{"name":"faturamento","alias":"faturamento","label":"Faturamento","fmt":"brl"}],"filters":[{"dim":"unidade","values":["${params.unidade}"]}],"limit":1000,"params":[],"style":"graph.bar","children":[]} -->
 
 ```sql vb_un_servico
--- semantic: comissoes@b1e6c89e
+-- semantic: comissoes@d72794a6
 with base as (
   select "servico", sum("valor") as "faturamento"
   from "comissoes"
@@ -59,16 +59,16 @@ order by "faturamento" desc
 limit 1000
 ```
 
-<BarChart data={vb_un_servico} x=servico y=faturamento/>
+<BarChart data={vb_un_servico} x=servico y=faturamento yFmt=brl seriesLabels={["Faturamento"]}/>
 
 <!-- /viewblock -->
 
 ## Equipe da unidade
 
-<!-- viewblock v1 {"v":1,"id":"vb_un_equipe","source":{"kind":"semantic","name":"comissoes"},"catalogHash":"b1e6c89e","queries":[{"name":"vb_un_equipe","sql":null}],"dims":[{"dim":"profissional","alias":"profissional","column":"profissional","table":"comissoes"}],"metrics":[{"name":"comissoes","alias":"comissoes","label":"Comissões","fmt":"brl"},{"name":"atendimentos","alias":"atendimentos","label":"Atendimentos","fmt":"num0"}],"filters":[{"dim":"unidade","values":["${params.unidade}"]}],"limit":1000,"params":[],"style":"tabular","children":[]} -->
+<!-- viewblock v1 {"v":1,"id":"vb_un_equipe","source":{"kind":"semantic","name":"comissoes"},"catalogHash":"d72794a6","queries":[{"name":"vb_un_equipe","sql":null}],"dims":[{"dim":"profissional","alias":"profissional","column":"profissional","table":"comissoes","label":"Profissional"}],"metrics":[{"name":"comissoes","alias":"comissoes","label":"Comissões","fmt":"brl"},{"name":"atendimentos","alias":"atendimentos","label":"Atendimentos","fmt":"num0"}],"filters":[{"dim":"unidade","values":["${params.unidade}"]}],"limit":1000,"params":[],"style":"tabular","children":[]} -->
 
 ```sql vb_un_equipe
--- semantic: comissoes@b1e6c89e
+-- semantic: comissoes@d72794a6
 with base as (
   select "profissional", count(distinct "atendimento_id") as "atendimentos", sum("comissao") as "comissoes"
   from "comissoes"
@@ -83,7 +83,7 @@ limit 1000
 ```
 
 <DataTable data={vb_un_equipe}>
-  <Column id=profissional/>
+  <Column id=profissional title="Profissional"/>
   <Column id=comissoes title="Comissões" fmt=brl/>
   <Column id=atendimentos title="Atendimentos" fmt=num0/>
 </DataTable>

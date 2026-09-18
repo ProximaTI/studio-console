@@ -1,7 +1,11 @@
 {
   "painel_da_rede": {
-    "painel_rede.md": "4622d64bfa47d8379afd19eb2f205464c2fbf084",
-    "unidade/[unidade].md": "8e2b4706e56cded2331ca2be96627629c5ad35af",
-    "equipe.md": "90f09758b87e50d971f347771772fc5f23de1e4c"
+    "painel_rede.md": "36bbcb085b63490b16f1fc07ae79bd900c957355",
+    "unidade/[unidade].md": "58cd21f089b28ddf90719d3d954a12dcfae1a445",
+    "equipe.md": "31c9b4af0a3858097889b34f3918059ae381821f"
+  },
+  "ticket_medio_engana": {
+    "ticket_medio.md": "38250dd3015bfa28face231434890be63e2ea524",
+    "nao_e_artefato.md": "c7a6ffca5f8003b15162eeae7e4e5f3d08c0fe62"
   }
 }

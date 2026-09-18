@@ -15,4 +15,21 @@
 #     connection: dw
 #     query: select * from financeiro.pagamentos
 #     stale_after: 1d
-{}
+
+# Design system POR PROJETO: só os tokens de MARCA são sobrescrevíveis
+# (mode, background, card, primary, primaryDark, chartPalette, chartPaletteDark).
+# Raios, fontes e espaçamento são estruturais e ficam globais — é o que faz todo
+# projeto parecer o mesmo produto. Token fora do conjunto é erro de validação, e
+# um primário ilegível sobre o cartão é recusado pela guarda de contraste.
+#
+# `preset:` adota uma identidade inteira sem copiar hex — hoje há `govbr`
+# (Padrão Digital de Governo, valores do @govbr-ds/core 3.7.0). O preset é a
+# BASE: os tokens declarados ao lado dele ajustam o que se quiser. Ex.:
+#
+#   theme:
+#     preset: govbr
+#     primary: "#0c326f"   # só o primário difere do padrão gov.br
+theme:
+  primary: "#a63d5f"
+  primaryDark: "#e58aa6"
+  chartPalette: ["#a63d5f", "#45a1bf", "#e0a01f", "#6b4ef5", "#2c8a4a", "#0891b2"]
