@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { STYLES, styleById, styleMenuLines, compileViewblock } from '../shared/viewStyles.js';
-import { PLANNABLE, planSystemPrompt } from '../server/routes/agent.js';
+import { PLANNABLE, planSystemPrompt, REPORT_PLAN_SCHEMA } from '../server/routes/agent.js';
+import { BLOCK_OPTIONS } from '../shared/viewStyles.js';
 
 // O menu do prompt do agente repetia à mão o que o registro já dizia em código,
 // e toda frente nova exigia editar os dois. Estes testes existem para que a
@@ -102,6 +103,23 @@ describe('o prompt do planejador é derivado, não copiado', () => {
     expect(prompt).not.toContain('- graph.histogram (distribuição):');
     // e o menu aparece UMA vez só
     expect(prompt.split('- ESCOLHA O ESTILO PELA PERGUNTA').length - 1).toBe(1);
+  });
+});
+
+// O prompt ensinava cinco opções de bloco (order, orientation, reference, stack,
+// table) que o REPORT_PLAN_SCHEMA, com additionalProperties: false, tornava
+// impossíveis de emitir. O modelo lia "use reference: [...]" e o campo era
+// recusado na saída estruturada — duas partes do mesmo prompt se contradizendo.
+describe('o que o prompt ensina, o schema aceita', () => {
+  const props = REPORT_PLAN_SCHEMA.properties.pages.items.properties.blocks.items;
+
+  it('toda BLOCK_OPTIONS tem campo correspondente no schema do bloco', () => {
+    const ausentes = BLOCK_OPTIONS.map((o) => String(o.chave).split(':')[0].trim()).filter((k) => !props.properties[k]);
+    expect(ausentes, `ensinadas no prompt e proibidas no schema: ${ausentes.join(', ')}`).toEqual([]);
+  });
+
+  it('o bloco continua fechado — campo novo entra de propósito, não por acaso', () => {
+    expect(props.additionalProperties).toBe(false);
   });
 });
 

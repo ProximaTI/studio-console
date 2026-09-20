@@ -43,7 +43,7 @@ function isEnabled(cfg) {
 
 // Extrai um objeto JSON do texto (tolerante a modelos locais que ignoram
 // response_format e devolvem cercas markdown ou prosa em volta do JSON).
-function parseJsonLoose(text) {
+function parseJsonLoose(text, uso = {}) {
   let s = String(text || '').trim();
   const fence = s.match(/```(?:json)?\s*([\s\S]*?)```/i);
   if (fence) s = fence[1].trim();
@@ -51,8 +51,30 @@ function parseJsonLoose(text) {
     return JSON.parse(s);
   } catch {
     const m = s.match(/\{[\s\S]*\}/);
-    if (m) return JSON.parse(m[0]);
-    throw new Error('Resposta do modelo não é JSON válido.');
+    if (m) {
+      try {
+        return JSON.parse(m[0]);
+      } catch {
+        /* cai no diagnóstico abaixo */
+      }
+    }
+    // Diagnóstico, não "deu erro": o que chega aqui quase sempre é ORÇAMENTO.
+    // Modelos de raciocínio gastam tokens pensando antes de escrever, e alguns
+    // (qwen3 é um) IGNORAM `enable_thinking: false` e `reasoning_effort` — o
+    // JSON sai truncado no meio. Sem dizer isso, o usuário lê "não é JSON
+    // válido" e vai procurar defeito no prompt.
+    const pensou = Number(uso.reasoning_tokens || 0);
+    const gastou = Number(uso.completion_tokens || 0);
+    const truncou = uso.finish_reason === 'length';
+    const pistas = [];
+    if (truncou) pistas.push(`a resposta foi CORTADA no limite de tokens (${gastou} gerados)`);
+    if (pensou > 0)
+      pistas.push(
+        `o modelo gastou ${pensou} token(s) pensando${gastou ? ` de ${gastou}` : ''} — ` +
+          `se ele ignora "não pensar", suba o teto de tokens ou troque por um modelo sem raciocínio`
+      );
+    if (!pistas.length && s.length < 40) pistas.push(`a resposta veio quase vazia (${s.length} caracteres)`);
+    throw new Error('Resposta do modelo não é JSON válido' + (pistas.length ? ': ' + pistas.join('; ') + '.' : '.'));
   }
 }
 
@@ -116,8 +138,15 @@ export async function callAgent({ system, user, schema, schemaName = 'output', m
     throw new Error(`Erro do servidor de IA (${r.status}): ${t.slice(0, 200)}`);
   }
   const data = await r.json();
-  const content = data.choices?.[0]?.message?.content ?? '';
-  return parseJsonLoose(content);
+  const esc = data.choices?.[0] || {};
+  const content = esc.message?.content ?? '';
+  // O uso vai junto para o diagnóstico: sem ele "não é JSON válido" não diz se
+  // faltou orçamento, se o modelo pensou demais ou se veio vazio.
+  return parseJsonLoose(content, {
+    finish_reason: esc.finish_reason,
+    completion_tokens: data.usage?.completion_tokens,
+    reasoning_tokens: data.usage?.completion_tokens_details?.reasoning_tokens,
+  });
 }
 
 // Remove cercas markdown (```lang ... ```). Usa o ÚLTIMO bloco — modelos de

@@ -7,7 +7,8 @@
 //   series=<coluna> (agrupa em séries), size=<coluna> (bubble),
 //   yFmt=<fmt> (formato do eixo de valor e do tooltip: pct1, num0, brl…),
 //   seriesLabels={["A","B"]} (rótulos das séries de y, na ordem — a legenda
-//   deixa de mostrar o nome cru da coluna).
+//   deixa de mostrar o nome cru da coluna),
+//   refLine={[{axis,value|from,label}]} (linhas de corte — ver refsOf).
 import { formatNumber } from './format.js';
 
 function asArray(v) {
@@ -28,6 +29,103 @@ function labelsOf(v) {
   return [];
 }
 
+/**
+ * Linhas de referência do bloco. Cada item é {axis, label?} mais UMA origem do
+ * valor: `value` (literal — limiares que são constantes de verdade, como 0 ou
+ * 80%) ou `from` (coluna do resultado, lida na 1ª linha — é como uma mediana
+ * entra no gráfico sem ninguém digitá-la).
+ *   axis: 'y' = eixo de VALOR · 'x' = eixo de CATEGORIA.
+ * Valor ausente ou não numérico não vira linha: referência inventada é pior
+ * que referência ausente.
+ */
+function refsOf(raw, rows) {
+  let list = raw;
+  if (typeof raw === 'string') {
+    if (!raw.trim().startsWith('[')) return [];
+    try {
+      list = JSON.parse(raw);
+    } catch {
+      return [];
+    }
+  }
+  if (!Array.isArray(list)) return [];
+  const primeira = rows[0] || {};
+  // ARRAY de dois = FAIXA (markArea); escalar = linha (markLine). Sem chave
+  // nova: `from` já significa "ler de uma métrica" e reusá-la como "início do
+  // intervalo" seria ambíguo. As mesmas duas chaves cobrem os dois casos.
+  const num = (r, v) => Number(r && r.from !== undefined ? primeira[v] : v);
+  return list
+    .map((r) => {
+      const bruto = r && r.from !== undefined ? r.from : r && r.value;
+      const eixo = r && r.axis === 'x' ? 'x' : 'y';
+      if (Array.isArray(bruto)) {
+        if (bruto.length !== 2) return null;
+        const [a, b] = bruto.map((v) => num(r, v));
+        if (!Number.isFinite(a) || !Number.isFinite(b) || a === b) return null;
+        return { axis: eixo, de: Math.min(a, b), ate: Math.max(a, b), label: (r && r.label) || '', faixa: true };
+      }
+      const valor = num(r, bruto);
+      return Number.isFinite(valor) ? { axis: eixo, value: valor, label: (r && r.label) || '' } : null;
+    })
+    .filter(Boolean);
+}
+
+/** Eixo do ECharts para uma referência: 'y' é sempre o eixo de VALOR. */
+const eixoDe = (r, swap) => (r.axis === 'y' ? (swap ? 'xAxis' : 'yAxis') : swap ? 'yAxis' : 'xAxis');
+
+/**
+ * No eixo CATEGÓRICO o ECharts posiciona por índice, não por valor: o número
+ * declarado é a categoria (n_areas_80 = 7), não a sétima barra.
+ */
+const posDe = (r, valor, catData) => {
+  if (r.axis !== 'x') return valor;
+  const i = (catData || []).findIndex((v) => Number(v) === valor);
+  return i >= 0 ? i : valor;
+};
+
+/**
+ * markArea do ECharts a partir das referências de FAIXA.
+ *
+ * É o que `SPEC_narrativa_relatorios.md` §7.3 mandava contornar com "um bloco
+ * extra com `filters` no período": duas visões do mesmo dado no lugar de uma
+ * marca. A faixa é silenciosa e fica ATRÁS das séries — ela é contexto, não
+ * mais um dado competindo com o que o gráfico mostra.
+ */
+function markAreaOf(refs, { swap, catData, txt }) {
+  return {
+    silent: true,
+    itemStyle: { color: txt, opacity: 0.08 },
+    label: { show: true, position: 'insideTop', color: txt, opacity: 0.75, fontSize: 11 },
+    data: refs.map((r) => {
+      const chave = eixoDe(r, swap);
+      return [
+        { [chave]: posDe(r, r.de, catData), name: r.label || undefined },
+        { [chave]: posDe(r, r.ate, catData) },
+      ];
+    }),
+  };
+}
+
+/** markLine do ECharts a partir das referências já resolvidas. */
+function markLineOf(refs, { swap, catData, txt, fmtVal }) {
+  const data = refs.map((r) => {
+    const chave = eixoDe(r, swap);
+    return {
+      [chave]: posDe(r, r.value, catData),
+      name: r.label || undefined,
+      label: { show: !!r.label, formatter: r.label, color: txt, position: r.axis === 'y' ? 'insideEndTop' : 'insideEndTop' },
+    };
+  });
+  return {
+    silent: true,
+    symbol: 'none',
+    lineStyle: { type: 'dashed', width: 1.5, color: txt, opacity: 0.85 },
+    label: { color: txt },
+    tooltip: { formatter: (p) => (p.name ? p.name + ': ' : '') + fmtVal(p.value) },
+    data,
+  };
+}
+
 function axisLabelColor(dark) {
   return dark ? '#cfd3dc' : '#4b5563';
 }
@@ -46,7 +144,11 @@ export function buildChartOption({ kind, rows, attrs, palette, dark, yDomain }) 
   const swap = String(a.swapXY) === 'true';
   const txt = axisLabelColor(dark);
   const yFmt = a.yFmt ? String(a.yFmt) : '';
-  const fmtVal = (v) => (yFmt ? formatNumber(Number(v), yFmt) : v);
+  // Empilhado em 100%: to100 já devolve 0–100, então o número NÃO passa por
+  // formatNumber (dividiria de novo) — leva o sinal de % direto. Sem isto o
+  // eixo mostrava "80" sem dizer 80 de quê.
+  const fmtVal = pct100 ? (v) => String(Number(v)).replace('.', ',') + '%' : (v) => (yFmt ? formatNumber(Number(v), yFmt) : v);
+  const temFmt = pct100 || !!yFmt;
   const labels = labelsOf(a.seriesLabels);
 
   // Histograma: as barras se encostam porque o eixo é uma escala CONTÍNUA
@@ -56,7 +158,10 @@ export function buildChartOption({ kind, rows, attrs, palette, dark, yDomain }) 
     type: 'category',
     name: a.xAxisTitle || undefined,
     nameLocation: a.xAxisTitle ? 'middle' : undefined,
-    nameGap: a.xAxisTitle ? 30 : undefined,
+    // Deitado o eixo de categoria vira o Y e o nome fica DO LADO dos rótulos,
+    // que num histograma são intervalos formatados e longos: 30px encostaria o
+    // nome neles. A folga grande vale só nesse caso.
+    nameGap: a.xAxisTitle ? (swap ? 96 : 30) : undefined,
     data: rows.map((r) => r[x]),
     axisLabel: { color: txt, rotate: !swap && !contiguous && rows.length > 8 ? 30 : 0 },
     axisTick: contiguous ? { alignWithLabel: true } : undefined,
@@ -75,7 +180,7 @@ export function buildChartOption({ kind, rows, attrs, palette, dark, yDomain }) 
     interval: rankAxis && rankMax <= 12 ? 1 : undefined,
     minInterval: rankAxis ? 1 : undefined,
     name: a.yAxisTitle || undefined,
-    axisLabel: { color: txt, formatter: yFmt ? (v) => fmtVal(v) : undefined },
+    axisLabel: { color: txt, formatter: temFmt ? (v) => fmtVal(v) : undefined },
     // pct100 já tem domínio próprio (0–100) e vence o compartilhado.
     // Num eixo de posição o piso é 1: não existe "lugar zero".
     min: rankAxis ? 1 : !pct100 && yDomain ? yDomain.min : undefined,
@@ -138,6 +243,18 @@ export function buildChartOption({ kind, rows, attrs, palette, dark, yDomain }) 
     if (pct100) to100(series, rows.length);
   }
 
+  // Referências vão na PRIMEIRA série: o markLine é desenhado uma vez, sobre a
+  // grade inteira, e não uma por série.
+  const refs = refsOf(a.refLine, rows);
+  const linhas = refs.filter((r) => !r.faixa);
+  const faixas = refs.filter((r) => r.faixa);
+  if (refs.length && series.length)
+    series[0] = {
+      ...series[0],
+      ...(linhas.length ? { markLine: markLineOf(linhas, { swap, catData: catAxis.data, txt, fmtVal }) } : {}),
+      ...(faixas.length ? { markArea: markAreaOf(faixas, { swap, catData: catAxis.data, txt }) } : {}),
+    };
+
   const xAxis = kind === 'scatter' ? { type: 'value', axisLabel: { color: txt } } : swap ? valAxis : catAxis;
   const yAxis = kind === 'scatter' ? { ...valAxis, max: undefined } : swap ? catAxis : valAxis;
   const showLegend = series.length > 1;
@@ -148,13 +265,15 @@ export function buildChartOption({ kind, rows, attrs, palette, dark, yDomain }) 
     title: a.title
       ? { text: a.title, textStyle: { fontSize: 14, fontWeight: 600, color: dark ? '#e5e7eb' : '#1d1d20' } }
       : undefined,
-    tooltip: { trigger: kind === 'scatter' ? 'item' : 'axis', valueFormatter: yFmt ? (v) => fmtVal(v) : undefined },
+    tooltip: { trigger: kind === 'scatter' ? 'item' : 'axis', valueFormatter: temFmt ? (v) => fmtVal(v) : undefined },
     legend: showLegend ? { top: a.title ? 28 : 4, textStyle: { color: txt } } : undefined,
     grid: {
-      left: swap ? 140 : 56,
+      // Deitado, o espaço que o título do eixo pede é à ESQUERDA (junto dos
+      // rótulos de categoria), não embaixo.
+      left: swap ? (a.xAxisTitle ? 168 : 140) : 56,
       right: 16,
       top: (a.title ? 44 : 16) + (showLegend ? 24 : 0),
-      bottom: a.xAxisTitle ? 64 : 48,
+      bottom: !swap && a.xAxisTitle ? 64 : 48,
       containLabel: swap,
     },
     xAxis,
@@ -227,6 +346,15 @@ export function buildRangeOption({ rows, attrs, palette, dark }) {
         type: 'custom',
         encode: { x: 0, y: [1, 2, 3] },
         data,
+        // mesma semântica do BarChart/LineChart: 'y' = eixo de valor
+        markLine: (() => {
+          const refs = refsOf(a.refLine, rows || []).filter((r) => !r.faixa);
+          return refs.length ? markLineOf(refs, { swap: false, catData: data.map((d) => d[0]), txt, fmtVal }) : undefined;
+        })(),
+        markArea: (() => {
+          const refs = refsOf(a.refLine, rows || []).filter((r) => r.faixa);
+          return refs.length ? markAreaOf(refs, { swap: false, catData: data.map((d) => d[0]), txt }) : undefined;
+        })(),
         renderItem: (params, api) => {
           const i = api.value(0);
           const pLo = api.coord([i, api.value(1)]);

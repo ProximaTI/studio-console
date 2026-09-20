@@ -4,7 +4,14 @@
 // compilador determinístico. Plano inválido volta com erros para revisão —
 // nunca é "consertado" em silêncio.
 import { internalDims, hierarchyOf } from './semanticCatalog.js';
-import { styleById } from './viewStyles.js';
+import {
+  styleById,
+  TABLE_STYLES,
+  ORDER_IGNORED_STYLES,
+  REFERENCE_STYLES,
+  REFERENCE_FROM_STYLES,
+  ORIENTATION_STYLES,
+} from './viewStyles.js';
 import { dimAliasOf, isRankMetric, MIN_BINS, MAX_BINS } from './semanticCompile.js';
 
 export const REPORT_LIMITS = { pages: 8, blocksPerPage: 8 };
@@ -180,6 +187,97 @@ export function validateReportPlan(plan, { catalog, factColumns } = {}) {
           err(bp + '.metrics[0]', `"${metrics[0]}" é derivada e não tem coluna — o histograma observa uma COLUNA do fato`);
         else if (m && (m.agg === 'count' || m.agg === 'count_distinct'))
           err(bp + '.metrics[0]', `"${metrics[0]}" conta ocorrências — aponte uma métrica sum/avg/min/max sobre a medida a observar`);
+      }
+      // `table`: configuração de LEITURA (busca, tamanho de página). Conjunto
+      // FECHADO de chaves e restrito a quem desenha uma tabela — declarar busca
+      // num gráfico não faria nada, e silêncio aqui viraria bug de leitura.
+      if (b.table !== undefined) {
+        const tp = bp + '.table';
+        if (!b.table || typeof b.table !== 'object' || Array.isArray(b.table)) err(tp, 'objeto {search?: true, rows?: N}');
+        else if (!TABLE_STYLES.includes(b.style))
+          err(tp, `"table" configura a tabela e só vale em ${TABLE_STYLES.join(' | ')} — "${b.style}" não desenha uma`);
+        else {
+          for (const k of Object.keys(b.table)) if (k !== 'search' && k !== 'rows') err(tp + '.' + k, 'chave desconhecida — use search e/ou rows');
+          if (b.table.search !== undefined && typeof b.table.search !== 'boolean') err(tp + '.search', 'true ou false');
+          if (b.table.rows !== undefined && (!Number.isInteger(b.table.rows) || b.table.rows < 1))
+            err(tp + '.rows', 'linhas por página: inteiro ≥ 1');
+        }
+      }
+      // `order`: sem ela o SQL sai pela 1ª métrica desc. Só pode apontar para o
+      // que ESTÁ na seleção do bloco — ordenar por coluna ausente seria SQL
+      // inválido descoberto só na hora de rodar.
+      if (b.order !== undefined) {
+        const op = bp + '.order';
+        if (!Array.isArray(b.order) || !b.order.length) err(op, 'lista não-vazia de {by, dir?}');
+        else if (ORDER_IGNORED_STYLES.includes(b.style))
+          err(op, `"${b.style}" define a própria ordem e ignoraria "order" — remova a chave`);
+        else
+          b.order.forEach((o, oi) => {
+            const alvo = `${op}[${oi}]`;
+            const naSelecao = metrics.includes(o?.by) || bdims.some((d) => d.dim === o?.by);
+            if (!naSelecao) err(alvo + '.by', `"${o?.by}" não está na seleção do bloco — use uma métrica ou dimensão dele`);
+            if (o?.dir !== undefined && !['asc', 'desc'].includes(String(o.dir))) err(alvo + '.dir', 'asc ou desc');
+          });
+      }
+      // `reference`: linha de corte no gráfico. O valor é um literal (limiar que
+      // é constante — 0, 1,0, 80%) ou vem de uma métrica do bloco (`from`), que
+      // é como uma mediana entra no gráfico sem ninguém digitá-la.
+      if (b.reference !== undefined) {
+        const rp = bp + '.reference';
+        if (!Array.isArray(b.reference) || !b.reference.length) err(rp, 'lista não-vazia de {value|from, axis?, label?}');
+        else if (!REFERENCE_STYLES.includes(b.style))
+          err(rp, `"${b.style}" não desenha linha de referência — vale em ${REFERENCE_STYLES.join(' | ')}`);
+        else
+          b.reference.forEach((r, ri) => {
+            const alvo = `${rp}[${ri}]`;
+            const temValor = r && r.value !== undefined;
+            const temFrom = r && r.from !== undefined;
+            if (temValor === temFrom) err(alvo, 'declare exatamente um: value (literal) ou from (métrica do bloco)');
+            // ARRAY de dois = FAIXA (markArea); escalar = linha. Mesmas chaves:
+            // `from` já quer dizer "ler de uma métrica", e reusá-la como início
+            // do intervalo seria ambíguo.
+            const faixaDe = (v) => (Array.isArray(v) ? v : null);
+            if (temValor) {
+              const par = faixaDe(r.value);
+              if (par && (par.length !== 2 || par.some((v) => typeof v !== 'number')))
+                err(alvo + '.value', 'faixa: exatamente dois números [início, fim]');
+              else if (par && par[0] === par[1]) err(alvo + '.value', 'faixa com início igual ao fim não marca nada');
+              else if (!par && typeof r.value !== 'number') err(alvo + '.value', 'número, ou [início, fim] para marcar uma faixa');
+            }
+            if (temFrom) {
+              const par = faixaDe(r.from);
+              const nomes = par || [r.from];
+              if (par && par.length !== 2) err(alvo + '.from', 'faixa: exatamente duas métricas [início, fim]');
+              for (const n of nomes) if (!metrics.includes(n)) err(alvo + '.from', `"${n}" não é métrica deste bloco`);
+              if (!REFERENCE_FROM_STYLES.includes(b.style))
+                err(
+                  alvo + '.from',
+                  `em "${b.style}" a posição da métrica na lista é o papel dela — use value (literal). ` +
+                    `"from" vale em ${REFERENCE_FROM_STYLES.join(' | ')}`
+                );
+            }
+            if (r?.axis !== undefined && !['x', 'y'].includes(String(r.axis))) err(alvo + '.axis', "x (categoria) ou y (valor)");
+            if (r?.label !== undefined && typeof r.label !== 'string') err(alvo + '.label', 'texto');
+          });
+      }
+      // `stack`: como a barra empilhada do `group` divide a coluna. Só existe
+      // onde há pilha — e só no cruzamento que vira gráfico (2 dimensões, 1
+      // métrica); nos demais o `group` é tabela e a chave não faria nada.
+      if (b.stack !== undefined) {
+        const sp = bp + '.stack';
+        if (!['total', 'percent'].includes(String(b.stack))) err(sp, 'total (valor absoluto) ou percent (composição 100%)');
+        else if (b.style !== 'group') err(sp, `"stack" empilha a barra do group — "${b.style}" não tem pilha`);
+        else if (bdims.length !== 2 || metrics.length !== 1)
+          err(sp, 'a pilha só existe no cruzamento de 2 dimensões com 1 métrica; fora disso o group é tabela');
+      }
+      // `orientation`: deita a marca. Só onde o eixo de categoria é o que sofre
+      // com rótulo longo ou muita categoria — e só onde o motor monta o eixo
+      // trocado, que é barra e histograma (ORIENTATION_STYLES).
+      if (b.orientation !== undefined) {
+        const op = bp + '.orientation';
+        if (!['vertical', 'horizontal'].includes(String(b.orientation))) err(op, 'vertical (padrão) ou horizontal');
+        else if (!ORIENTATION_STYLES.includes(b.style))
+          err(op, `"${b.style}" não deita — "orientation" vale em ${ORIENTATION_STYLES.join(' | ')}`);
       }
       // mesmo vbDraft do Wizard (shapes com alias — contrato dos estilos igual)
       const vbDraft = {

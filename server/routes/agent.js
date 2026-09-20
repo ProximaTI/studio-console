@@ -106,6 +106,43 @@ export const REPORT_PLAN_SCHEMA = {
                   properties: { top: { type: 'integer' } },
                   additionalProperties: false,
                 },
+                // OPÇÕES QUE ATRAVESSAM ESTILOS (BLOCK_OPTIONS em viewStyles.js).
+                // O prompt as ensina e o validador as aceita — mas sem elas aqui,
+                // com additionalProperties: false, o modelo era estruturalmente
+                // incapaz de emiti-las. O prompt mandava usar o que o schema
+                // proibia; a validação de cada uma continua em reportPlan.js.
+                order: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: { by: { type: 'string' }, dir: { enum: ['asc', 'desc'] } },
+                    required: ['by'],
+                    additionalProperties: false,
+                  },
+                },
+                orientation: { enum: ['horizontal'] },
+                stack: { enum: ['total', 'percent'] },
+                table: {
+                  type: 'object',
+                  properties: { search: { type: 'boolean' }, rows: { type: 'integer' } },
+                  additionalProperties: false,
+                },
+                // `value`/`from` aceitam escalar (linha) ou par (faixa) — ver
+                // refsOf em chartOption.js. O schema não distingue os dois: o
+                // erro educativo é do validador, que diz por que recusou.
+                reference: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      value: {},
+                      from: {},
+                      axis: { enum: ['x', 'y'] },
+                      label: { type: 'string' },
+                    },
+                    additionalProperties: false,
+                  },
+                },
               },
               required: ['metrics', 'dims', 'filters', 'style'],
               additionalProperties: false,

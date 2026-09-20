@@ -4,17 +4,19 @@
 
 Verificar se a dispersão existe dentro de cada unidade.
 
-**Observado.** As nove unidades têm faixas do meio parecidas: em todas, o intervalo
-entre o primeiro e o terceiro quartil atravessa o vazio da página anterior. Nenhuma
-unidade tem um ticket concentrado.
+**Observado.** O primeiro quartil das nove unidades é quase idêntico: entre R$ 69 e
+R$ 75. O terceiro varia mais, de R$ 125 a R$ 161 — cinco das nove entram na faixa
+vazia de R$ 140 a R$ 200, e **nenhuma a atravessa**. Em unidade nenhuma o meio do
+ticket alcança a segunda região, acima de R$ 200.
 
-**Implicação.** O vale não é efeito de somar unidades com perfis diferentes — ele
-existe dentro de cada uma, porque cada uma vende os mesmos seis serviços. Portanto
-a meta por serviço vale para a rede inteira, não só no agregado.
+**Implicação.** O vale não é efeito de somar unidades com perfis diferentes: ele
+existe dentro de cada uma. E a segunda região não é especialidade de ninguém — é
+cauda em todas, porque todas vendem os mesmos seis serviços. Portanto a meta por
+serviço vale para a rede inteira, não só no agregado.
 
-## Todas as nove unidades têm a mesma dispersão larga
+## O meio do ticket não alcança a segunda região em unidade nenhuma
 
-<!-- viewblock v1 {"v":1,"id":"vb_faixa_unidade","source":{"kind":"semantic","name":"comissoes"},"catalogHash":"d72794a6","queries":[{"name":"vb_faixa_unidade","sql":null}],"dims":[{"dim":"unidade","alias":"unidade","column":"unidade","table":"comissoes","label":"Unidade"}],"metrics":[{"name":"ticket_p25","alias":"ticket_p25","label":"Ticket P25","fmt":"brl"},{"name":"ticket_mediana","alias":"ticket_mediana","label":"Ticket mediano","fmt":"brl"},{"name":"ticket_p75","alias":"ticket_p75","label":"Ticket P75","fmt":"brl"}],"filters":[],"limit":1000,"params":[],"style":"graph.range","children":[]} -->
+<!-- viewblock v1 {"v":1,"id":"vb_faixa_unidade","source":{"kind":"semantic","name":"comissoes"},"catalogHash":"d72794a6","queries":[{"name":"vb_faixa_unidade","sql":null}],"dims":[{"dim":"unidade","alias":"unidade","column":"unidade","table":"comissoes","label":"Unidade"}],"metrics":[{"name":"ticket_p25","alias":"ticket_p25","label":"Ticket P25","fmt":"brl"},{"name":"ticket_mediana","alias":"ticket_mediana","label":"Ticket mediano","fmt":"brl"},{"name":"ticket_p75","alias":"ticket_p75","label":"Ticket P75","fmt":"brl"}],"filters":[],"limit":1000,"params":[],"style":"graph.range","reference":[{"axis":"y","value":[140,200],"label":"o vazio — 5 das 9 entram, nenhuma atravessa"}],"children":[]} -->
 
 ```sql vb_faixa_unidade
 -- semantic: comissoes@d72794a6
@@ -29,7 +31,7 @@ order by "ticket_p25" desc
 limit 1000
 ```
 
-<RangeChart data={vb_faixa_unidade} x=unidade low=ticket_p25 mid=ticket_mediana high=ticket_p75 yFmt=brl/>
+<RangeChart data={vb_faixa_unidade} x=unidade low=ticket_p25 mid=ticket_mediana high=ticket_p75 yFmt=brl refLine={[{"axis":"y","value":[140,200],"label":"o vazio — 5 das 9 entram, nenhuma atravessa"}]}/>
 
 <!-- /viewblock -->
 
@@ -50,10 +52,6 @@ order by "pct_faturamento" desc
 limit 1000
 ```
 
-<DataTable data={vb_mix}>
-  <Column id=unidade title="Unidade"/>
-  <Column id=servico title="Serviço"/>
-  <Column id=pct_faturamento title="% do total" fmt=pct1/>
-</DataTable>
+<BarChart data={vb_mix} x=unidade y=pct_faturamento series=servico type=stacked yFmt=pct1/>
 
 <!-- /viewblock -->

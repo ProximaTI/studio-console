@@ -52,8 +52,12 @@ export function paramPredicate(p, colExpr) {
 function paramPreds(vb) {
   return (vb.params || []).map((p) => paramPredicate(p, q(p.from)));
 }
-const whereOf = (vb) => {
-  const preds = paramPreds(vb);
+// Os FILTROS do bloco chegam já compilados em ctx.filterPreds: no marcador eles
+// são referência semântica ({dim, level?, values[]}) e só o catálogo sabe virar
+// coluna. Sem isso, um estilo que monta o próprio SQL exibia linhas que o bloco
+// declarou excluir — filtro declarado e não aplicado.
+const whereOf = (vb, ctx) => {
+  const preds = [...paramPreds(vb), ...((ctx && ctx.filterPreds) || [])];
   return preds.length ? '\nwhere ' + preds.join('\n  and ') : '';
 };
 
@@ -71,20 +75,144 @@ function checkRoles(vb, source, required, optional = []) {
 // body helpers -------------------------------------------------------------
 
 function dataTableBody(vb, qname) {
+  // `table` (opcional) é a configuração de LEITURA da tabela — busca e tamanho
+  // de página. O renderer já honra os dois atributos nos 3 ambientes; sem a
+  // chave, a saída é byte-idêntica à de antes.
+  const t = vb.table || {};
+  const attrs = [`data={${qname}}`];
+  if (t.search) attrs.push('search=true');
+  if (t.rows) attrs.push(`rows=${t.rows}`);
+  const abre = `<DataTable ${attrs.join(' ')}`;
   const hasMeta = (vb.metrics || []).some((m) => m.label || m.fmt) || (vb.dims || []).some((d) => d.label);
-  if (!hasMeta) return `<DataTable data={${qname}}/>`;
+  if (!hasMeta) return `${abre}/>`;
   const cols = [
     ...(vb.dims || []).map((d) => `  <Column id=${dimAlias(d)}${d.label ? ` title="${attrEsc(d.label)}"` : ''}/>`),
     ...(vb.metrics || []).map(
       (m) => `  <Column id=${metricAlias(m)}${m.label ? ` title="${attrEsc(m.label)}"` : ''}${m.fmt ? ` fmt=${m.fmt}` : ''}/>`
     ),
   ];
-  return `<DataTable data={${qname}}>\n${cols.join('\n')}\n</DataTable>`;
+  return `${abre}>\n${cols.join('\n')}\n</DataTable>`;
+}
+
+/** Estilos que desenham uma <DataTable> e por isso aceitam `table`. */
+export const TABLE_STYLES = ['tabular', 'group'];
+
+/**
+ * Estilos que IGNORAM `order`: pivot e graph.histogram montam o próprio SQL, e
+ * graph.line reordena por fora (o eixo de tempo tem de sair cronológico). Aceitar
+ * `order` neles seria silêncio — o autor declara uma ordem que não acontece.
+ */
+export const ORDER_IGNORED_STYLES = ['pivot', 'graph.histogram', 'graph.line'];
+
+/** Estilos que desenham linha de referência (`reference`). */
+export const REFERENCE_STYLES = ['graph.bar', 'graph.line', 'graph.bubble', 'graph.range'];
+/**
+ * Onde `from` (ler o valor de uma coluna) é aceito: só nos estilos cujo corpo
+ * filtra a métrica de referência para fora das séries. Em bubble e range a
+ * posição da métrica na lista É o papel dela (x, y, tamanho; mín, centro, máx),
+ * então uma métrica a mais mudaria o gráfico — ali a referência é literal.
+ */
+export const REFERENCE_FROM_STYLES = ['graph.bar', 'graph.line'];
+
+/**
+ * Estilos que aceitam `orientation`. A marca deitada só faz sentido onde o eixo
+ * de categoria carrega RÓTULO LONGO ou MUITAS categorias: barra e histograma.
+ * Fora dali a horizontal atrapalha — numa série temporal o tempo lê da esquerda
+ * para a direita, e em bolha/intervalo a posição da métrica na lista é o papel
+ * dela. `buildRangeOption` sequer monta eixo trocado (swap fixo em false).
+ */
+export const ORIENTATION_STYLES = ['graph.bar', 'graph.histogram'];
+
+/**
+ * Opções de bloco que ATRAVESSAM estilos. Ficam aqui, e não no prompt, pelo
+ * mesmo motivo de `question`/`breaks`/`planHint`: escritas à mão no prompt elas
+ * drifitam, e quem planeja um relatório sem vê-las produz sempre a mesma página.
+ * `onde(ids)` recebe os ids QUE ESTÃO NO CARDÁPIO e é derivado das listas
+ * fechadas acima — uma fonte só, e nunca cita estilo que o agente não pode propor.
+ */
+export const BLOCK_OPTIONS = [
+  {
+    chave: 'order: [{by, dir}]',
+    onde: (ids) => ids.filter((i) => !ORDER_IGNORED_STYLES.includes(i)).join(' | '),
+    oQue: 'o padrão é ordenar pela 1ª métrica DESC (top-N). "by" é uma métrica OU dimensão do próprio bloco. É o que faz um ranking sair crescente e um eixo categórico sair na ordem natural em vez da ordem da contagem.',
+  },
+  {
+    chave: 'orientation: horizontal',
+    onde: (ids) => ids.filter((i) => ORIENTATION_STYLES.includes(i)).join(' | '),
+    oQue: 'deita a marca. Use com rótulo de categoria LONGO (nome de instituição, periódico, editora, área) ou mais de ~12 categorias; num histograma, com mais de ~15 faixas.',
+  },
+  {
+    chave: 'reference: [{value|from, axis?, label?}]',
+    onde: (ids) => ids.filter((i) => REFERENCE_STYLES.includes(i)).join(' | '),
+    oQue:
+      'linha de corte ou FAIXA. Escalar vira linha; PAR vira faixa sombreada — value: [início, fim] ' +
+      'ou from: [métrica, métrica]. O par são DOIS VALORES DIFERENTES que delimitam um trecho do eixo: ' +
+      '[2024, 2026] marca três anos, [2025, 2025] não marca nada e é recusado. Para destacar UM ponto ' +
+      'use o escalar. E o par só existe no eixo que o bloco realmente tem: num eixo mensal, 2025 não é ' +
+      'uma posição. É assim que se marca um período (axis: x, value: [2024, 2026]) ou ' +
+      'uma banda de normalidade. "value" é literal; "from" nomeia DUAS métricas do bloco e lê o valor na 1ª ' +
+      'linha, que é como uma mediana vira marca sem ninguém digitá-la ("from" só em ' +
+      REFERENCE_FROM_STYLES.join(' | ') +
+      '). NUNCA INVENTE O VALOR: um literal só vale se for constante conhecida e verificável — 0, 1,0 ' +
+      '(média mundial de FWCI), 80%, o teto legal. Meta, orçamento ou limiar que não está no dado nem ' +
+      'foi dito no pedido NÃO vira linha: vai para warnings dizendo que não há meta declarada. ' +
+      'E toda referência precisa de "label": linha tracejada sem dono é pior que referência ausente.',
+  },
+  {
+    chave: 'stack: total | percent',
+    onde: (ids) => (ids.includes('group') ? 'group (com 2 dimensões e 1 métrica)' : ''),
+    oQue: 'como a pilha divide a coluna. "percent" normaliza cada coluna a 100%: é a forma da COMPOSIÇÃO, quando os totais das categorias são incomparáveis e o título afirma uma proporção. O padrão "total" preserva a magnitude.',
+  },
+  {
+    chave: 'table: {search?, rows?}',
+    onde: (ids) => ids.filter((i) => TABLE_STYLES.includes(i)).join(' | '),
+    oQue: 'busca client-side e tamanho da página. Obrigatório em tabela longa que o leitor vai consultar por nome.',
+  },
+];
+
+/** Atributo `swapXY` a partir de `vb.orientation` (vertical é o padrão). */
+const swapAttr = (vb) => (vb.orientation === 'horizontal' ? ' swapXY=true' : '');
+
+/**
+ * Atributo `refLine` a partir de `vb.reference`. As referências que leem uma
+ * coluna (`from`) exigem a métrica na query — mas ela NÃO vira série: seria uma
+ * barra a mais no gráfico, no lugar de uma linha de corte.
+ */
+function refAttr(vb) {
+  const refs = vb.reference || [];
+  return refs.length ? ` refLine={${JSON.stringify(refs)}}` : '';
+}
+// `from` pode ser uma métrica (linha) ou DUAS (faixa) — nos dois casos elas
+// entram na query mas NÃO viram série: seriam barras a mais no lugar da marca.
+const refMetricNames = (vb) =>
+  new Set((vb.reference || []).flatMap((r) => (Array.isArray(r.from) ? r.from : [r.from])).filter(Boolean));
+
+/**
+ * O cruzamento que uma barra empilhada carrega: 2 dimensões, 1 métrica. Com 3
+ * dimensões ou 2 métricas não há eixo para tudo, e o `group` volta a ser tabela.
+ */
+function ehCruzamentoSimples(vb) {
+  return (vb.dims || []).length === 2 && (vb.metrics || []).length === 1;
+}
+
+/**
+ * Barra empilhada do `group`. Convenção de ordem, como no bubble e no range:
+ *   dimensão 1 = eixo · dimensão 2 = séries (a pilha) · métrica = altura.
+ * `stack: percent` normaliza cada coluna a 100% — a forma da COMPOSIÇÃO, quando
+ * os totais das categorias são incomparáveis (há 100 federais e 8 municipais).
+ */
+function grupoEmpilhado(vb, qname) {
+  const m = (vb.metrics || [])[0];
+  const tipo = vb.stack === 'percent' ? 'stacked100' : 'stacked';
+  // Em 100% o eixo é porcentagem calculada no cliente, não a unidade da métrica.
+  const yFmt = vb.stack !== 'percent' && m.fmt ? ` yFmt=${m.fmt}` : '';
+  return `<BarChart data={${qname}} x=${dimAlias(vb.dims[0])} y=${metricAlias(m)} series=${dimAlias(vb.dims[1])} type=${tipo}${yFmt}/>`;
 }
 
 function chartBody(tag, vb, qname) {
   const x = dimAlias(vb.dims[0]);
-  const ms = vb.metrics || [];
+  const soRef = refMetricNames(vb);
+  const ms = (vb.metrics || []).filter((m) => !soRef.has(metricAlias(m)));
   const ys = ms.map(metricAlias);
   const y = ys.length === 1 ? ys[0] : `{${JSON.stringify(ys)}}`;
   // Paridade com <Column>/<BigValue>: fmt e label da métrica chegam ao gráfico.
@@ -93,7 +221,7 @@ function chartBody(tag, vb, qname) {
   const fmts = [...new Set(ms.map((m) => m.fmt || ''))];
   const yFmt = fmts.length === 1 && fmts[0] ? ` yFmt=${fmts[0]}` : '';
   const labels = ms.some((m) => m.label) ? ` seriesLabels={${JSON.stringify(ms.map((m) => m.label || metricAlias(m)))}}` : '';
-  return `<${tag} data={${qname}} x=${x} y=${y}${yFmt}${labels}/>`;
+  return `<${tag} data={${qname}} x=${x} y=${y}${yFmt}${labels}${swapAttr(vb)}${refAttr(vb)}/>`;
 }
 
 // registro ------------------------------------------------------------------
@@ -119,6 +247,8 @@ export const STYLES = [
       { quando: 'passa de ~40 categorias', use: 'tabular' },
     ],
     fallback: 'tabular',
+    planHint:
+      'orientation: horizontal quando o rótulo da categoria é TEXTO LONGO (nome de instituição, periódico, editora, área) ou passa de ~12 categorias — em pé o rótulo inclina 30° e o eixo corta. Vertical (padrão) para poucas categorias curtas e para qualquer coisa ordenada no tempo.',
     queryCount: 1,
     requires: (vb) => need((vb.dims || []).length === 1 && (vb.metrics || []).length >= 1, 'precisa de exatamente 1 dimensão e ≥1 métrica'),
     compile: (ctx) => oneQuery(ctx, (vb, qn) => chartBody('BarChart', vb, qn)),
@@ -176,17 +306,26 @@ export const STYLES = [
         if (ms[2]) attrs.push(`size=${ms[2]}`);
         attrs.push(`label=${dimAlias(vb.dims[0])}`);
         if (vb.dims[1]) attrs.push(`series=${dimAlias(vb.dims[1])}`);
-        return `<BubbleChart ${attrs.join(' ')}/>`;
+        return `<BubbleChart ${attrs.join(' ')}${refAttr(vb)}/>`;
       }),
   },
   {
     id: 'group',
-    label: 'Group (v1: tabela ordenada pelas dimensões)',
+    label: 'Group (cruzamento de 2 dimensões: barra empilhada; tabela acima disso)',
     question: 'cruzamento de 2+ dimensões',
+    // O caso EXATO de 2 dimensões e 1 métrica é uma barra empilhada: a 1ª
+    // dimensão no eixo, a 2ª nas séries, a métrica na altura. Fora dele — 3+
+    // dimensões ou 2+ métricas — nenhuma barra carrega a seleção, e o estilo
+    // continua sendo a tabela ordenada que sempre foi.
+    breaks: [
+      { quando: 'passa de ~8 categorias na 2ª dimensão — a pilha vira faixa ilegível', use: 'tabular' },
+      { quando: 'a pergunta é a magnitude de UMA série, não a composição', use: 'graph.bar' },
+    ],
     fallback: 'tabular',
     queryCount: 1,
     requires: (vb) => need((vb.dims || []).length >= 2, 'precisa de ≥2 dimensões'),
-    compile: (ctx) => oneQuery(ctx, (vb, qn) => dataTableBody(vb, qn)),
+    compile: (ctx) =>
+      oneQuery(ctx, (vb, qn) => (ehCruzamentoSimples(vb) ? grupoEmpilhado(vb, qn) : dataTableBody(vb, qn))),
   },
   {
     id: 'freeform',
@@ -227,7 +366,7 @@ export const STYLES = [
       const name = vb.queries?.[0]?.name || vb.id;
       const keys = ['fromName', 'fromLat', 'fromLon', 'toName', 'toLat', 'toLon', ...(r.weight ? ['weight'] : [])];
       const cols = [...new Set(keys.map((k) => r[k]))];
-      const sql = (ctx.ctePrefix || '') + 'select ' + cols.map(q).join(', ') + '\nfrom ' + q(vb.source.name) + whereOf(vb);
+      const sql = (ctx.ctePrefix || '') + 'select ' + cols.map(q).join(', ') + '\nfrom ' + q(vb.source.name) + whereOf(vb, ctx);
       const attrs = keys.map((k) => `${k}=${r[k]}`).join(' ');
       const map = r.map === 'brazil' ? 'brazil' : 'world';
       return { queries: [{ name, sql }], body: `<ConnectionMap data={${name}} map=${map} ${attrs}/>` };
@@ -252,7 +391,7 @@ export const STYLES = [
       const r = vb.roles || {};
       const pre = ctx.ctePrefix || '';
       const src = q(vb.source.name);
-      const W = whereOf(vb);
+      const W = whereOf(vb, ctx);
       const lbl = q(r.label || r.target);
       const nodesName = vb.id + '_nodes';
       const edgesName = vb.id + '_edges';
@@ -287,7 +426,12 @@ export const STYLES = [
       return need((vb.dims || []).length === 1 && (vb.metrics || []).length >= 1 && !!geo, 'precisa de 1 dimensão geográfica (uf/sigla) e ≥1 métrica');
     },
     compile: (ctx) =>
-      oneQuery(ctx, (vb, qn) => `<AreaMap data={${qn}} areaCol=${dimAlias(vb.dims[0])} value=${metricAlias(vb.metrics[0])} geoId=sigla/>`),
+      oneQuery(ctx, (vb, qn) => {
+        // fmt da métrica, como o yFmt dos gráficos: sem ele o mapa mostra a
+        // taxa crua ("0,539") no rótulo, na legenda e no tooltip.
+        const fmt = (vb.metrics || [])[0]?.fmt;
+        return `<AreaMap data={${qn}} areaCol=${dimAlias(vb.dims[0])} value=${metricAlias(vb.metrics[0])} geoId=sigla${fmt ? ` fmt=${fmt}` : ''}/>`;
+      }),
   },
   {
     // INTERVALO: a forma que consome a dispersão do catálogo (p25/mediana/p75).
@@ -311,7 +455,7 @@ export const STYLES = [
       oneQuery(ctx, (vb, qn) => {
         const [lo, mid, hi] = (vb.metrics || []).map(metricAlias);
         const fmt = (vb.metrics || [])[1]?.fmt;
-        return `<RangeChart data={${qn}} x=${dimAlias(vb.dims[0])} low=${lo} mid=${mid} high=${hi}${fmt ? ` yFmt=${fmt}` : ''}/>`;
+        return `<RangeChart data={${qn}} x=${dimAlias(vb.dims[0])} low=${lo} mid=${mid} high=${hi}${fmt ? ` yFmt=${fmt}` : ''}${refAttr(vb)}/>`;
       }),
   },
   {
@@ -360,7 +504,7 @@ export const STYLES = [
       { quando: 'a comparação é ENTRE grupos — vários histogramas não cabem num eixo só', use: 'graph.range' },
     ],
     fallback: 'graph.range',
-    planHint: 'UMA única métrica. NÃO acrescente p25/mediana/p75 ao lado: a forma já mostra isso, e o bloco com 2+ métricas é RECUSADO. A métrica só NOMEIA A COLUNA a observar; a agregação dela não é aplicada — o histograma conta as LINHAS DO FATO uma a uma, pelo valor BRUTO da coluna, não por médias nem totais. Portanto NÃO escreva ressalvas dizendo que ele reflete valores agregados: ele não reflete. Use uma métrica sum/avg/min/max da medida (nunca contagem, nunca derivada) e distribution: {bins: N}, N de 5 a 100 (~24).',
+    planHint: 'UMA única métrica. NÃO acrescente p25/mediana/p75 ao lado: a forma já mostra isso, e o bloco com 2+ métricas é RECUSADO. A métrica só NOMEIA A COLUNA a observar; a agregação dela não é aplicada — o histograma conta as LINHAS DO FATO uma a uma, pelo valor BRUTO da coluna, não por médias nem totais. Portanto NÃO escreva ressalvas dizendo que ele reflete valores agregados: ele não reflete. Use uma métrica sum/avg/min/max da medida (nunca contagem, nunca derivada) e distribution: {bins: N}, N de 5 a 100 (~24). Com mais de ~15 faixas use orientation: horizontal — o eixo contíguo NÃO inclina rótulo (inclinar sugeriria categorias independentes), então em pé o ECharts começa a pular rótulo sim, rótulo não.',
     queryCount: 1,
     // 1 métrica: é o PONTEIRO para a coluna observada, não uma série.
     // 0 dimensões: comparar distribuições entre grupos é pequenos múltiplos,
@@ -376,7 +520,7 @@ export const STYLES = [
         const titulo = m.label ? ` xAxisTitle="${attrEsc(m.label)}"` : '';
         // contiguous: as barras se encostam. É o que distingue, para quem lê,
         // uma escala CONTÍNUA fatiada de categorias independentes.
-        return `<BarChart data={${qn}} x=faixa y=observacoes yFmt=num0 contiguous=true${titulo} seriesLabels={["Observações"]}/>`;
+        return `<BarChart data={${qn}} x=faixa y=observacoes yFmt=num0 contiguous=true${titulo}${swapAttr(vb)} seriesLabels={["Observações"]}/>`;
       }),
   },
   {
@@ -467,7 +611,7 @@ export const STYLES = [
         (ctx.ctePrefix || '') +
         'select ' + selects.join(',\n       ') +
         '\nfrom ' + q(vb.source.name) +
-        whereOf(vb) +
+        whereOf(vb, ctx) +
         '\ngroup by ' + p.rows.map((_, i) => i + 1).join(', ') +
         '\norder by ' + p.rows.map((_, i) => i + 1).join(', ');
       const cols = [
@@ -630,5 +774,17 @@ export function styleMenuLines(ids) {
   const naoUse = sel.flatMap((s) => (s.breaks || []).map((b) => `${s.id} quando ${b.quando} → use ${b.use}`));
   if (naoUse.length) out.push(...envolve('- NÃO use: ' + naoUse.join('; ') + '.', '  '));
   for (const s of sel) if (s.planHint) out.push(...envolve(`- ${s.id}: ${s.planHint}`, '  '));
+  // As opções de bloco fecham o cardápio: sem elas o planejador só escolhe
+  // ENTRE estilos, e toda página sai com a ordem, a orientação e a escala
+  // padrão — que é como um relatório fica previsível.
+  out.push('- OPÇÕES DE BLOCO (valem junto de qualquer estilo compatível; omitidas, a saída é a padrão):');
+  // `ids` (o argumento) pode vir vazio; quem manda é a seleção resolvida.
+  const idsDoMenu = sel.map((s) => s.id);
+  for (const o of BLOCK_OPTIONS) {
+    const onde = o.onde(idsDoMenu);
+    // Opção sem nenhum estilo compatível NO CARDÁPIO não entra: seria convite
+    // a usar um estilo que o agente não pode propor.
+    if (onde) out.push(...envolve(`    · ${o.chave} [${onde}] — ${o.oQue}`, '      '));
+  }
   return out;
 }

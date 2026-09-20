@@ -70,20 +70,28 @@ pages:
     title: O vale não vem de misturar unidades
     purpose: Verificar se a dispersão existe dentro de cada unidade.
     prose: |
-      **Observado.** As nove unidades têm faixas do meio parecidas: em todas, o intervalo
-      entre o primeiro e o terceiro quartil atravessa o vazio da página anterior. Nenhuma
-      unidade tem um ticket concentrado.
+      **Observado.** O primeiro quartil das nove unidades é quase idêntico: entre R$ 69 e
+      R$ 75. O terceiro varia mais, de R$ 125 a R$ 161 — cinco das nove entram na faixa
+      vazia de R$ 140 a R$ 200, e **nenhuma a atravessa**. Em unidade nenhuma o meio do
+      ticket alcança a segunda região, acima de R$ 200.
 
-      **Implicação.** O vale não é efeito de somar unidades com perfis diferentes — ele
-      existe dentro de cada uma, porque cada uma vende os mesmos seis serviços. Portanto
-      a meta por serviço vale para a rede inteira, não só no agregado.
+      **Implicação.** O vale não é efeito de somar unidades com perfis diferentes: ele
+      existe dentro de cada uma. E a segunda região não é especialidade de ninguém — é
+      cauda em todas, porque todas vendem os mesmos seis serviços. Portanto a meta por
+      serviço vale para a rede inteira, não só no agregado.
     blocks:
       - id: faixa_unidade
-        title: Todas as nove unidades têm a mesma dispersão larga
+        title: O meio do ticket não alcança a segunda região em unidade nenhuma
         metrics: [ticket_p25, ticket_mediana, ticket_p75]
         dims: [{ dim: unidade }]
         filters: []
         style: graph.range
+        # O par vira faixa sombreada. Os dois números não são escolha de
+        # apresentação: saem da contagem da página anterior — 88 atendimentos
+        # somando três faixas de R$20 entre 140 e 200, contra 111 na faixa única
+        # imediatamente anterior. A prosa afirmava isso; agora o gráfico mostra.
+        reference:
+          - { axis: y, value: [140, 200], label: "o vazio — 5 das 9 entram, nenhuma atravessa" }
       - id: mix
         title: O mix de serviços é parecido entre as unidades
         metrics: [pct_faturamento]
