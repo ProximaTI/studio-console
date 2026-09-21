@@ -48,9 +48,9 @@ limit 1000
 
 <!-- /viewblock -->
 
-## Faturamento por UF
+## Onde está o volume — o círculo é a receita, não o tamanho do estado
 
-<!-- viewblock v1 {"v":1,"id":"vb_mapa_uf","source":{"kind":"semantic","name":"comissoes"},"catalogHash":"d72794a6","queries":[{"name":"vb_mapa_uf","sql":null}],"dims":[{"dim":"uf","alias":"uf","column":"uf","table":"comissoes","label":"UF"}],"metrics":[{"name":"faturamento","alias":"faturamento","label":"Faturamento","fmt":"brl"}],"filters":[],"limit":1000,"params":[],"style":"areamap","children":[]} -->
+<!-- viewblock v1 {"v":1,"id":"vb_mapa_uf","source":{"kind":"semantic","name":"comissoes"},"catalogHash":"d72794a6","queries":[{"name":"vb_mapa_uf","sql":null}],"dims":[{"dim":"uf","alias":"uf","column":"uf","table":"comissoes","label":"UF"}],"metrics":[{"name":"faturamento","alias":"faturamento","label":"Faturamento","fmt":"brl"}],"filters":[],"limit":1000,"params":[],"style":"pointmap","children":[]} -->
 
 ```sql vb_mapa_uf
 -- semantic: comissoes@d72794a6
@@ -66,7 +66,7 @@ order by "faturamento" desc
 limit 1000
 ```
 
-<AreaMap data={vb_mapa_uf} areaCol=uf value=faturamento geoId=sigla/>
+<PointMap data={vb_mapa_uf} areaCol=uf value=faturamento fmt=brl showLabels=true/>
 
 <!-- /viewblock -->
 

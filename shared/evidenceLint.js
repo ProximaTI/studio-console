@@ -19,7 +19,7 @@ const CONSOLE_COMPONENTS = new Set([
   'Dropdown', 'DropdownOption', 'ConnectionMap', 'CollaborationGraph',
   'Note', 'LinkButton', 'Grid', 'Card', 'CardTitle', 'CardBody',
   'Tabs', 'Tab', 'Details', 'Value', 'AreaMap', 'div',
-  'TextInput', 'Slider', 'DateRange', 'Repeat', 'RangeChart',
+  'TextInput', 'Slider', 'DateRange', 'Repeat', 'RangeChart', 'PointMap',
 ]);
 
 // Componentes do Evidence core (docs.evidence.dev). Lista curada.
@@ -55,6 +55,8 @@ const NOT_IN_EVIDENCE = {
 
 // Renderizam DIFERENTE na console (funcionam nos dois lados).
 const RENDER_DIFF = {
+  PointMap:
+    'o <PointMap> do Evidence espera LATITUDE e LONGITUDE por linha; o da console recebe a SIGLA da UF e resolve o centróide internamente. Mesmo nome, contrato diferente — a página não migra sem trocar as colunas',
   Tabs: 'a console empilha os painéis um abaixo do outro; no Evidence viram abas reais',
 };
 

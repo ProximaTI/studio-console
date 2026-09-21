@@ -52,6 +52,22 @@ export function paramPredicate(p, colExpr) {
 function paramPreds(vb) {
   return (vb.params || []).map((p) => paramPredicate(p, q(p.from)));
 }
+/**
+ * Tabela do FROM para os estilos que montam o PRÓPRIO SQL (pivot,
+ * connectionmap, collabgraph).
+ *
+ * `vb.source.name` é o nome da FONTE — e num bloco SEMÂNTICO isso é o MODELO
+ * (`catalog.model`), não a tabela. Onde os dois diferem (`producao` vs
+ * `producao_ies_2021_2025`) o SQL saía apontando para uma tabela que não
+ * existe; no `exemplo` model e fact coincidem, o que mascarava o defeito.
+ *
+ * Fora do caminho semântico o nome da fonte continua valendo — é ele que nomeia
+ * a CTE quando a fonte é query/model (`ctePrefix`), e trocá-lo ali quebraria a
+ * referência.
+ */
+const fromTable = (vb, ctx) =>
+  vb.source && vb.source.kind === 'semantic' && ctx && ctx.source && ctx.source.name ? ctx.source.name : vb.source.name;
+
 // Os FILTROS do bloco chegam já compilados em ctx.filterPreds: no marcador eles
 // são referência semântica ({dim, level?, values[]}) e só o catálogo sabe virar
 // coluna. Sem isso, um estilo que monta o próprio SQL exibia linhas que o bloco
@@ -377,7 +393,7 @@ export const STYLES = [
       const name = vb.queries?.[0]?.name || vb.id;
       const keys = ['fromName', 'fromLat', 'fromLon', 'toName', 'toLat', 'toLon', ...(r.weight ? ['weight'] : [])];
       const cols = [...new Set(keys.map((k) => r[k]))];
-      const sql = (ctx.ctePrefix || '') + 'select ' + cols.map(q).join(', ') + '\nfrom ' + q(vb.source.name) + whereOf(vb, ctx);
+      const sql = (ctx.ctePrefix || '') + 'select ' + cols.map(q).join(', ') + '\nfrom ' + q(fromTable(vb, ctx)) + whereOf(vb, ctx);
       const attrs = keys.map((k) => `${k}=${r[k]}`).join(' ');
       const map = r.map === 'brazil' ? 'brazil' : 'world';
       return { queries: [{ name, sql }], body: `<ConnectionMap data={${name}} map=${map} ${attrs}/>` };
@@ -401,7 +417,7 @@ export const STYLES = [
       const vb = ctx.vb;
       const r = vb.roles || {};
       const pre = ctx.ctePrefix || '';
-      const src = q(vb.source.name);
+      const src = q(fromTable(vb, ctx));
       const W = whereOf(vb, ctx);
       const lbl = q(r.label || r.target);
       const nodesName = vb.id + '_nodes';
@@ -427,7 +443,7 @@ export const STYLES = [
     label: 'Mapa (Brasil por UF)',
     question: 'distribuição geográfica por UF',
     breaks: [
-      { quando: 'a métrica é CONTAGEM ABSOLUTA — o mapa colore população e tamanho da UF, não a taxa; use uma métrica normalizada (por habitante, por instituição, % do total)', use: 'graph.bar' },
+      { quando: 'a métrica é CONTAGEM ABSOLUTA — o coroplético colore população e tamanho da UF, não a taxa', use: 'pointmap' },
     ],
     fallback: 'graph.bar',
     queryCount: 1,
@@ -449,6 +465,30 @@ export const STYLES = [
     // Convenção de ordem, como no graph.bubble — sem papéis a configurar:
     //   métrica 1 = mínimo · métrica 2 = centro · métrica 3 = máximo
     // Três barras lado a lado mostram três números; uma haste mostra a FAIXA.
+    id: 'pointmap',
+    label: 'Mapa de símbolo (Brasil por UF)',
+    question: 'onde está o VOLUME — contagem absoluta no mapa',
+    breaks: [
+      { quando: 'a métrica é taxa ou percentual — aí a cor da área lê melhor que o tamanho', use: 'areamap' },
+      { quando: 'são poucos lugares e a comparação precisa ser precisa', use: 'graph.bar' },
+    ],
+    fallback: 'graph.bar',
+    queryCount: 1,
+    // Mesmo contrato geográfico do areamap: a regex da coluna é a mesma, para
+    // que trocar de um para o outro seja só trocar o `style`.
+    requires: (vb) => {
+      const d = (vb.dims || [])[0];
+      const geo = d && /(^|_)(uf|sigla)$/i.test(d.column);
+      return need((vb.dims || []).length === 1 && (vb.metrics || []).length >= 1 && !!geo, 'precisa de 1 dimensão geográfica (uf/sigla) e ≥1 métrica');
+    },
+    compile: (ctx) =>
+      oneQuery(ctx, (vb, qn) => {
+        const m = (vb.metrics || [])[0];
+        const fmt = m.fmt ? ` fmt=${m.fmt}` : '';
+        return `<PointMap data={${qn}} areaCol=${dimAlias(vb.dims[0])} value=${metricAlias(m)}${fmt} showLabels=true/>`;
+      }),
+  },
+  {
     id: 'graph.range',
     label: 'Graph · intervalo (faixa + centro)',
     question: 'a FAIXA onde os valores caem, não só a média',
@@ -621,7 +661,7 @@ export const STYLES = [
       const sql =
         (ctx.ctePrefix || '') +
         'select ' + selects.join(',\n       ') +
-        '\nfrom ' + q(vb.source.name) +
+        '\nfrom ' + q(fromTable(vb, ctx)) +
         whereOf(vb, ctx) +
         '\ngroup by ' + p.rows.map((_, i) => i + 1).join(', ') +
         '\norder by ' + p.rows.map((_, i) => i + 1).join(', ');
@@ -664,7 +704,7 @@ export function compileParamInputs(vb, ctePrefix = '', optsSqlFor = null) {
       const optsSql = optsSqlFor
         ? optsSqlFor(p)
         : ctePrefix +
-          `select distinct cast(${q(p.from)} as varchar) as value\nfrom ${q(vb.source.name)}\nwhere ${q(p.from)} is not null\norder by 1`;
+          `select distinct cast(${q(p.from)} as varchar) as value\nfrom ${q(fromTable(vb, null))}\nwhere ${q(p.from)} is not null\norder by 1`;
       segments.push('```sql ' + optsName + '\n' + optsSql + '\n```');
       const todos = (p.default ?? '%') === '%' ? '<DropdownOption value="%" valueLabel="Todos"/>' : '';
       segments.push(`<Dropdown name=${p.name} data={${optsName}} value=value title="${title}">${todos}</Dropdown>`);

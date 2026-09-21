@@ -53,11 +53,14 @@ pages:
         filters: []
         style: freeform
       - id: mapa_uf
-        title: Faturamento por UF
+        title: Onde está o volume — o círculo é a receita, não o tamanho do estado
         metrics: [faturamento]
         dims: [{ dim: uf }]
         filters: []
-        style: areamap
+        # Contagem absoluta num coroplético colore a ÁREA: o Amazonas com um
+        # salão ficaria mais visível que o Distrito Federal com um. O símbolo
+        # proporcional codifica a magnitude no círculo e não herda a fronteira.
+        style: pointmap
       - id: evolucao
         title: Evolução mensal
         metrics: [faturamento]

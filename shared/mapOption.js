@@ -198,3 +198,92 @@ export function buildAreaMapOption({ rows, attrs, palette, dark, mapName }) {
     ],
   };
 }
+
+// ---------------------------------------------------------------------------
+// PointMap (símbolo proporcional por UF) — a resposta ao viés do coroplético.
+//
+// O `areamap` colore a ÁREA, então uma contagem absoluta vira um mapa do
+// tamanho dos estados e da população: "artigos por UF" acende São Paulo porque
+// São Paulo é grande e populoso, não porque a taxa é alta. A saída registrada
+// no `breaks` do areamap era "use uma métrica normalizada" — um conselho, não
+// um destino. O símbolo proporcional é o destino: a ÁREA DO CÍRCULO codifica a
+// magnitude e não herda a distorção da fronteira.
+//
+// attrs: areaCol (coluna com a sigla), value (métrica), fmt, title,
+//   colorPalette (a 1ª cor pinta os símbolos), showLabels=true (sigla + valor).
+
+/**
+ * Centróide de cada UF, por ÁREA do maior anel do GeoJSON já embutido.
+ *
+ * Fica no código, e não numa tabela que o usuário teria de juntar na query,
+ * porque é GEOGRAFIA DE REFERÊNCIA — do mesmo tipo que o GeoJSON: não muda com
+ * o projeto, e exigir preparo de dado para desenhar um mapa afastaria o estilo
+ * de quem tem só uma coluna de sigla. Média de vértices enviesaria onde o
+ * litoral é recortado (PA, AM, RJ), que é justamente onde o rótulo importa.
+ */
+export const UF_CENTROIDS = {
+  AC: [-70.45, -9.31], AL: [-36.62, -9.51], AM: [-64.7, -4.18], AP: [-51.96, 1.44],
+  BA: [-41.72, -12.47], CE: [-39.62, -5.09], DF: [-47.8, -15.78], ES: [-40.67, -19.57],
+  GO: [-49.62, -16.04], MA: [-45.28, -5.06], MG: [-44.67, -18.46], MS: [-54.85, -20.33],
+  MT: [-55.91, -12.95], PA: [-53.07, -3.97], PB: [-36.83, -7.12], PE: [-38, -8.33],
+  PI: [-42.97, -7.39], PR: [-51.62, -24.64], RJ: [-42.65, -22.19], RN: [-36.67, -5.84],
+  RO: [-62.84, -10.91], RR: [-61.4, 2.08], RS: [-53.32, -29.71], SC: [-50.49, -27.24],
+  SE: [-37.44, -10.58], SP: [-48.73, -22.26], TO: [-48.33, -10.15],
+};
+
+export function buildPointMapOption({ rows, attrs, palette, dark, mapName }) {
+  const a = attrs || {};
+  const txt = dark ? '#cfd3dc' : '#4b5563';
+  const textColor = dark ? '#e5e7eb' : '#1d1d20';
+  const fmtInt = (v) => (v == null || isNaN(v) ? '—' : a.fmt ? formatNumber(Number(v), a.fmt) : Number(v).toLocaleString('pt-BR'));
+  const custom = parseColorList(a.colorPalette);
+  const cor = custom.length ? custom[custom.length - 1] : chartPaletteOf({ chartPalette: palette })[0];
+
+  // Sigla sem centróide conhecido NÃO vira ponto em (0,0) no meio do Atlântico:
+  // some do mapa, e o tooltip do que sobrou continua verdadeiro.
+  const pontos = (rows || [])
+    .map((r) => {
+      const sigla = String(r[a.areaCol] ?? '').trim().toUpperCase();
+      const c = UF_CENTROIDS[sigla];
+      const v = Number(r[a.value]);
+      return c && Number.isFinite(v) ? { name: sigla, value: [c[0], c[1], v] } : null;
+    })
+    .filter(Boolean);
+  const max = pontos.length ? Math.max(...pontos.map((p) => p.value[2])) : 1;
+
+  return {
+    backgroundColor: 'transparent',
+    title: a.title ? { text: a.title, textStyle: { fontSize: 14, fontWeight: 600, color: textColor } } : undefined,
+    tooltip: { trigger: 'item', formatter: (p) => `${p.name}: ${fmtInt(p.value[2])}` },
+    geo: {
+      map: mapName || 'brazil',
+      roam: true,
+      itemStyle: { areaColor: dark ? '#1d2330' : '#eef2f7', borderColor: dark ? '#39404d' : '#cbd5e1' },
+      emphasis: { itemStyle: { areaColor: dark ? '#252c3a' : '#e2e8f0' }, label: { show: false } },
+    },
+    series: [
+      {
+        type: 'scatter',
+        coordinateSystem: 'geo',
+        itemStyle: { color: cor, opacity: 0.8 },
+        emphasis: { scale: 1.2 },
+        // ÁREA ∝ valor, então o RAIO vai com a RAIZ — e sem somar um piso.
+        // Um `base + k·√v` parece inofensivo e destrói a proporção: com base 6 e
+        // k 30, um valor 25× maior desenha uma área só 9× maior. Escalar o raio
+        // LINEARMENTE com o valor é o erro oposto e mais comum, e exagera a
+        // diferença ao quadrado.
+        // Consequência aceita: valor perto de zero desenha quase nada. É o que
+        // deve acontecer — um piso faria o irrelevante parecer presente.
+        symbolSize: (val) => 34 * Math.sqrt(Math.max(0, val[2]) / (max || 1)),
+        label: {
+          show: a.showLabels === 'true' || a.showLabels === '' || a.showLabels === true,
+          formatter: (p) => `${p.name}\n${fmtInt(p.value[2])}`,
+          position: 'right',
+          color: txt,
+          fontSize: 10,
+        },
+        data: pontos,
+      },
+    ],
+  };
+}

@@ -68,11 +68,7 @@ order by "faturamento" desc
 limit 1000
 ```
 
-<DataTable data={vb_eq_regiao_servico}>
-  <Column id=regiao title="Região"/>
-  <Column id=servico title="Serviço"/>
-  <Column id=faturamento title="Faturamento" fmt=brl/>
-</DataTable>
+<BarChart data={vb_eq_regiao_servico} x=regiao y=faturamento series=servico type=stacked yFmt=brl/>
 
 <!-- /viewblock -->
 
@@ -118,7 +114,7 @@ with obs as (
     lim.lo + f.i * (lim.hi - lim.lo) / 24 as ini,
     case when f.i = 23 then lim.vmax else lim.lo + (f.i + 1) * (lim.hi - lim.lo) / 24 end as fim,
     case when lim.hi - lim.lo >= 100 then cast(cast(round(ini, 0) as bigint) as varchar)
-         else cast(round(ini, 2) as varchar) end
+         else replace(cast(round(ini, 2) as varchar), '.', ',') end
       || case when f.i = 23 and lim.vmax > lim.hi then '+' else '' end as faixa
   from (select unnest(range(0, 24)) as i) f, lim
   where lim.n > 0 and (f.i = 0 or lim.hi > lim.lo)

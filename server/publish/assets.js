@@ -63,6 +63,8 @@ export function collectMaps(blocks) {
       if (b.type === 'component') {
         if (b.name === 'ConnectionMap') used.add(b.attrs.map === 'brazil' ? 'brazil' : 'world');
         if (b.name === 'AreaMap') used.add('brazil');
+    // Sem esta linha o app publicado desenha os pontos SEM o mapa embaixo.
+    if (b.name === 'PointMap') used.add('brazil');
         if (b.children) walk(b.children);
       }
     }

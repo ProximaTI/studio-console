@@ -16,7 +16,7 @@
 //   setInput(name, value)      async: re-executa/re-renderiza (papel do bootstrap)
 import { formatNumber, cmpCell } from './format.js';
 import { buildChartOption, buildRangeOption } from './chartOption.js';
-import { buildMapOption, buildAreaMapOption } from './mapOption.js';
+import { buildMapOption, buildAreaMapOption, buildPointMapOption } from './mapOption.js';
 import { chartPaletteOf } from './designTokens.js';
 import { partitionBy, sharedDomain, isPanelChart, PANEL_HEIGHT } from './smallMultiples.js';
 
@@ -354,6 +354,18 @@ export function createPublishRenderer(ctx) {
     }
     if (name === 'AreaMap') {
       renderAreaMap(app, a, rows);
+      return;
+    }
+    if (name === 'PointMap') {
+      ensureMaps();
+      if (!(ctx.maps && ctx.maps.brazil)) {
+        app.appendChild(el('div', 'err', 'Mapa indisponível.'));
+        return;
+      }
+      chart(app, a.height ? Number(a.height) : 460).setOption(
+        buildPointMapOption({ rows, attrs: a, palette, dark, mapName: 'brazil' }),
+        true
+      );
       return;
     }
     // <img>: a tag já era aceita pelo dialeto (HTML_TAGS do lint) mas nenhum
