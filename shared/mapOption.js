@@ -1,3 +1,4 @@
+import { formatNumber } from './format.js';
 // Opção ECharts do ConnectionMap (geo + arcos + pontos) — código ÚNICO.
 // Consumido pelo componente React (editor) e, via bundle StudioRuntime, pelos apps publicados.
 //
@@ -137,12 +138,18 @@ export function areaLabelLayout(p) {
 
 export function buildAreaMapOption({ rows, attrs, palette, dark, mapName }) {
   const a = attrs || {};
-  const fmtInt = (v) => (v == null || isNaN(v) ? '—' : Number(v).toLocaleString('pt-BR'));
+  // O `fmt` da métrica chega até aqui: sem ele uma taxa saía crua ("0,539")
+  // no rótulo, na legenda e no tooltip, em vez de "53,9%".
+  const fmtInt = (v) => (v == null || isNaN(v) ? '—' : a.fmt ? formatNumber(Number(v), a.fmt) : Number(v).toLocaleString('pt-BR'));
   const data = (rows || []).map((r) => ({ name: String(r[a.areaCol]), value: Number(r[a.value]) || 0 }));
-  let max = 1;
-  data.forEach((d) => {
-    if (d.value > max) max = d.value;
-  });
+  // Domínio da cor = faixa REAL do dado. Ancorar em zero quando nenhuma área
+  // chega perto de zero gasta a escala inteira e achata o mapa — era o que
+  // acontecia com toda métrica normalizada (as taxas por UF ficam entre 0,45 e
+  // 0,66, e o mapa saía de uma cor só).
+  const vals = data.map((d) => d.value);
+  let min = vals.length ? Math.min(...vals) : 0;
+  let max = vals.length ? Math.max(...vals) : 1;
+  if (min === max) { min = Math.min(0, min); max = max || 1; }
   const custom = parseColorList(a.colorPalette);
   const colors = custom.length >= 2 ? custom : [dark ? '#1d2330' : '#eef2f7', chartPaletteOf({ chartPalette: palette })[0]];
   const showLabels = a.showLabels === 'true' || a.showLabels === '' || a.showLabels === true;
@@ -153,8 +160,9 @@ export function buildAreaMapOption({ rows, attrs, palette, dark, mapName }) {
     title: a.title ? { text: a.title, textStyle: { fontSize: 14, fontWeight: 600, color: textColor } } : undefined,
     tooltip: { trigger: 'item', formatter: (p) => `${p.name}: ${fmtInt(p.value)}` },
     visualMap: {
-      min: 0,
+      min,
       max,
+      formatter: (v) => fmtInt(v),
       left: 8,
       bottom: 8,
       calculable: true,

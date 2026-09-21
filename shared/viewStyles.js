@@ -301,11 +301,22 @@ export const STYLES = [
       ),
     compile: (ctx) =>
       oneQuery(ctx, (vb, qn) => {
-        const ms = (vb.metrics || []).map(metricAlias);
+        const mets = vb.metrics || [];
+        const ms = mets.map(metricAlias);
         const attrs = [`data={${qn}}`, `x=${ms[0]}`, `y=${ms[1]}`];
         if (ms[2]) attrs.push(`size=${ms[2]}`);
         attrs.push(`label=${dimAlias(vb.dims[0])}`);
         if (vb.dims[1]) attrs.push(`series=${dimAlias(vb.dims[1])}`);
+        // Paridade com as barras: fmt e label de CADA métrica chegam ao eixo
+        // que ela ocupa (x, y) e ao tooltip do tamanho. Sem isso os eixos saíam
+        // crus (0,1…0,7, sem nome) enquanto a legenda já trazia o rótulo.
+        const [mx, my, mz] = mets;
+        if (mx?.fmt) attrs.push(`xFmt=${mx.fmt}`);
+        if (my?.fmt) attrs.push(`yFmt=${my.fmt}`);
+        if (mx?.label) attrs.push(`xAxisTitle="${attrEsc(mx.label)}"`);
+        if (my?.label) attrs.push(`yAxisTitle="${attrEsc(my.label)}"`);
+        if (mz?.fmt) attrs.push(`sizeFmt=${mz.fmt}`);
+        if (mz?.label) attrs.push(`sizeLabel="${attrEsc(mz.label)}"`);
         return `<BubbleChart ${attrs.join(' ')}${refAttr(vb)}/>`;
       }),
   },

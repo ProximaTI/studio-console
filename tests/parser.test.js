@@ -14,6 +14,11 @@ describe('parseAttrs', () => {
     expect(parseAttrs('y={["a", "b"]}').y).toBe('["a", "b"]');
   });
 
+  it('JSON de OBJETOS dentro de chaves não é cortado no primeiro }', () => {
+    const json = '[{"axis":"y","value":0.8,"label":"corte"},{"axis":"x","from":"mediana"}]';
+    expect(parseAttrs(`refLine={${json}} x=uf`)).toEqual({ refLine: json, x: 'uf' });
+  });
+
   it('url com chaves dentro de aspas não é cortada', () => {
     expect(parseAttrs('url="https://ror.org/{inst[0].ror_id}"').url).toBe('https://ror.org/{inst[0].ror_id}');
   });

@@ -74,3 +74,37 @@ describe('areaLabelLayout', () => {
     expect(areaLabelLayout({})).toEqual({});
   });
 });
+
+// Domínio da cor e formato — o que fazia um mapa de taxa sair de uma cor só.
+describe('buildAreaMapOption: faixa real e fmt da métrica', () => {
+  const taxas = [
+    { uf: 'AM', pct: 0.452 },
+    { uf: 'SP', pct: 0.539 },
+    { uf: 'PB', pct: 0.661 },
+  ];
+  const attrsPct = { areaCol: 'uf', value: 'pct', geoId: 'sigla', fmt: 'pct1' };
+
+  it('ancora o degradê na faixa observada, não em zero', () => {
+    const o = buildAreaMapOption({ rows: taxas, attrs: attrsPct, palette: ['#1351b4'], dark: false, mapName: 'brazil' });
+    expect(o.visualMap.min).toBe(0.452);
+    expect(o.visualMap.max).toBe(0.661);
+  });
+
+  it('legenda, rótulo e tooltip usam o fmt da métrica', () => {
+    const o = buildAreaMapOption({ rows: taxas, attrs: { ...attrsPct, showLabels: true }, palette: ['#1351b4'], dark: false, mapName: 'brazil' });
+    expect(o.visualMap.formatter(0.539)).toBe('53,9%');
+    expect(o.series[0].label.formatter({ name: 'SP', value: 0.539 })).toContain('53,9%');
+    expect(o.tooltip.formatter({ name: 'SP', value: 0.539 })).toContain('53,9%');
+  });
+
+  it('sem fmt continua em inteiro com separador de milhar', () => {
+    const o = buildAreaMapOption({ rows, attrs, palette: ['#123456'], dark: false, mapName: 'brazil' });
+    expect(o.visualMap.formatter(5891)).toBe('5.891');
+  });
+
+  it('valor único não colapsa a escala', () => {
+    const o = buildAreaMapOption({ rows: [{ uf: 'SP', qtd: 7 }], attrs, palette: ['#123456'], dark: false, mapName: 'brazil' });
+    expect(o.visualMap.min).toBe(0);
+    expect(o.visualMap.max).toBe(7);
+  });
+});

@@ -13,7 +13,10 @@
 /** Extrai atributos de uma tag: name=valor, name="valor", name={expr}. */
 export function parseAttrs(s) {
   const attrs = {};
-  const re = /(\w+)=(\{[^}]*\}|"[^"]*"|'[^']*'|\S+)/g;
+  // `{...}` aceita UM nível de chaves aninhadas: sem isso um atributo com JSON
+  // de objetos (refLine={[{"axis":"y","value":0.8}]}) era cortado no primeiro
+  // `}` e chegava truncado ao componente.
+  const re = /(\w+)=(\{(?:[^{}]|\{[^{}]*\})*\}|"[^"]*"|'[^']*'|\S+)/g;
   let m;
   while ((m = re.exec(s))) {
     let v = m[2];

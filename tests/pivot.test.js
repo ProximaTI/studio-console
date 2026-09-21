@@ -43,6 +43,28 @@ describe('estilo pivot — colunas congeladas', () => {
     expect(semFreeze.reason).toContain('congele');
   });
 
+  // O pivot monta o próprio SQL e por isso não herda o `where` do baseSql: os
+  // filtros do bloco chegam já compilados pelo catálogo, em ctx.filterPreds.
+  // Sem eles, a tabela mostrava linhas que o bloco declarou excluir.
+  it('aplica os filtros do bloco; sem filtro a saída é byte-idêntica', () => {
+    const vb = vbOf(PIVOT);
+    const semFiltro = compileViewblock(vb, { vb, source: SRC, baseSql: '' });
+    expect(semFiltro).not.toContain('where');
+    // ctx sem a chave e ctx com lista vazia não podem divergir
+    expect(compileViewblock(vb, { vb, source: SRC, baseSql: '', filterPreds: [] })).toBe(semFiltro);
+
+    const comFiltro = compileViewblock(vb, {
+      vb,
+      source: SRC,
+      baseSql: '',
+      filterPreds: [`"uf" = 'SP'`, `"ano" in (2024, 2025)`],
+    });
+    expect(comFiltro).toContain(`where "uf" = 'SP'`);
+    expect(comFiltro).toContain(`and "ano" in (2024, 2025)`);
+    // o filtro entra ANTES do group by, não depois
+    expect(comFiltro.indexOf(`where "uf" = 'SP'`)).toBeLessThan(comFiltro.indexOf('group by'));
+  });
+
   it('compila agregação condicional determinística com quoting correto', () => {
     const vb = vbOf(PIVOT);
     const block = compileViewblock(vb, { vb, source: SRC, baseSql: '' });

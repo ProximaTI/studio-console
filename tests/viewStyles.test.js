@@ -72,8 +72,9 @@ describe('registro de estilos', () => {
     expect(compile(line)).toContain('<LineChart data={vb_test01} x=ano y=count_distinct_atendimento_id seriesLabels={["Atendimentos"]}/>');
     // série temporal sai CRONOLÓGICA, não pela métrica desc do SQL da fonte
     expect(compile(line)).toContain('order by "ano"');
+    // group no cruzamento simples (2 dims, 1 métrica) É a barra empilhada
     const grp = vbBase({ style: 'group', dims: [{ table: 'comissoes', column: 'uf' }, { table: 'comissoes', column: 'unidade' }] });
-    expect(compile(grp)).toContain('<DataTable data={vb_test01}>');
+    expect(compile(grp)).toContain('<BarChart data={vb_test01} x=uf y=count_distinct_atendimento_id series=unidade type=stacked/>');
     const free = vbBase({ style: 'freeform', dims: [] });
     expect(compile(free)).toContain('<BigValue data={vb_test01} value=count_distinct_atendimento_id title="Atendimentos"/>');
   });
@@ -110,6 +111,60 @@ describe('registro de estilos', () => {
     const out2 = compile(misto);
     expect(out2).not.toContain('yFmt');
     expect(out2).not.toContain('seriesLabels');
+  });
+
+  it('reference vira refLine; a métrica lida por `from` não vira série', () => {
+    const semRef = compile(vbBase({ style: 'graph.bar' }));
+    expect(semRef).not.toContain('refLine');
+
+    const comLiteral = compile(vbBase({ style: 'graph.bar', reference: [{ axis: 'y', value: 0, label: 'equilíbrio' }] }));
+    expect(comLiteral).toContain('refLine={[{"axis":"y","value":0,"label":"equilíbrio"}]}');
+
+    // `mediana` entra na query (para o valor existir) mas sai das séries
+    const comFrom = compile(
+      vbBase({
+        style: 'graph.bar',
+        metrics: [
+          { column: 'atendimento_id', agg: 'count_distinct', label: 'Atendimentos' },
+          { column: 'mediana', agg: 'max', alias: 'mediana' },
+        ],
+        reference: [{ axis: 'x', from: 'mediana' }],
+      })
+    );
+    expect(comFrom).toContain('y=count_distinct_atendimento_id');
+    expect(comFrom).not.toContain('y={[');
+    expect(comFrom).toContain('refLine={[{"axis":"x","from":"mediana"}]}');
+  });
+
+  it('table: {search, rows} vira atributo da DataTable; sem a chave a saída não muda', () => {
+    const semTable = compile(vbBase({ style: 'tabular' }));
+    expect(semTable).toContain('<DataTable data={vb_test01}>');
+    expect(semTable).not.toContain('search=');
+    expect(semTable).not.toContain('rows=');
+
+    const comBusca = compile(vbBase({ style: 'tabular', table: { search: true, rows: 25 } }));
+    expect(comBusca).toContain('<DataTable data={vb_test01} search=true rows=25>');
+
+    // vale nos dois estilos que desenham tabela — no group, fora do cruzamento
+    // simples, que é onde ele volta a ser tabela (3 dimensões)
+    const grupo = compile(
+      vbBase({
+        style: 'group',
+        dims: [
+          { table: 'comissoes', column: 'uf' },
+          { table: 'comissoes', column: 'unidade' },
+          { table: 'comissoes', column: 'ano' },
+        ],
+        table: { search: true },
+      })
+    );
+    expect(grupo).toContain('<DataTable data={vb_test01} search=true>');
+
+    // tabela sem rótulo nenhum continua self-closing, agora com os atributos
+    const semRotulo = compile(
+      vbBase({ style: 'tabular', metrics: [{ column: 'atendimento_id', agg: 'count_distinct' }], table: { rows: 10 } })
+    );
+    expect(semRotulo).toContain('<DataTable data={vb_test01} rows=10/>');
   });
 
   it('freeform propaga o fmt da métrica para o BigValue (paridade com <Column>)', () => {
@@ -233,5 +288,30 @@ describe('rótulo da dimensão no cabeçalho da tabela', () => {
       metrics: [{ column: 'doi', agg: 'count_distinct' }],
     });
     expect(compile(vb)).toContain('<Column id=uf title="UF"/>');
+  });
+});
+
+describe('graph.bubble: fmt e label das métricas chegam aos eixos e ao tamanho', () => {
+  const vb = vbBase({
+    style: 'graph.bubble',
+    dims: [{ table: 'comissoes', column: 'unidade' }],
+    metrics: [
+      { column: 'intl', agg: 'max', alias: 'pct_intl', fmt: 'pct1', label: '% internacional' },
+      { column: 'cit', agg: 'max', alias: 'cited_per_work', fmt: 'num1', label: 'Citações por work' },
+      { column: 'sh', agg: 'sum', alias: 'share', fmt: 'num0', label: 'Share' },
+    ],
+  });
+  it('x recebe xFmt/xAxisTitle, y recebe yFmt/yAxisTitle, tamanho recebe sizeFmt/sizeLabel', () => {
+    const out = compile(vb);
+    expect(out).toContain('x=pct_intl y=cited_per_work size=share label=unidade');
+    expect(out).toContain('xFmt=pct1 yFmt=num1 xAxisTitle="% internacional" yAxisTitle="Citações por work" sizeFmt=num0 sizeLabel="Share"');
+  });
+  it('métrica sem fmt/label não emite o atributo (saída byte-idêntica à anterior)', () => {
+    const cru = vbBase({
+      style: 'graph.bubble',
+      dims: [{ table: 'comissoes', column: 'unidade' }],
+      metrics: [{ column: 'ie', agg: 'max', alias: 'ie' }, { column: 'pct', agg: 'max', alias: 'pct' }],
+    });
+    expect(compile(cru)).toContain('<BubbleChart data={vb_test01} x=ie y=pct label=unidade/>');
   });
 });

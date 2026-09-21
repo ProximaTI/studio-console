@@ -51,6 +51,16 @@ function joinFor(catalog, table) {
 }
 
 /** Predicados de uma lista de filtros {dim, level?, values[]} (seleção OU métrica). */
+/**
+ * Predicados SQL dos filtros semânticos de um bloco. Exportado porque o estilo
+ * `pivot` monta o próprio SQL e precisa dos MESMOS predicados: os filtros vivem
+ * no marcador como referência semântica ({dim, level?, values[]}) e só o
+ * catálogo sabe traduzi-los em coluna.
+ */
+export function compileFilterPreds(catalog, filters, factColumns) {
+  return predsOfWith(catalog, factColumns, filters, null);
+}
+
 function predsOfWith(catalog, factColumns, flist, joinTables) {
   const conds = [];
   for (const f of flist || []) {
@@ -245,12 +255,18 @@ export function compileCatalogSql(input) {
   }
   // 2) semi-aditiva: colapsar a dimensão `over` (ex.: somar saldo ao longo do
   //    tempo) é erro; incluir o nível temporal na seleção resolve.
+  //    FIXAR a dimensão num único valor também resolve, e é o caso das páginas
+  //    parametrizadas: `/sede/USP/` injeta um filtro de um valor só, a seleção
+  //    fica dentro de UMA sede e não há o que colapsar. Filtro com vários
+  //    valores continua sendo colapso — ali a soma atravessa a dimensão.
+  const fixadaPorFiltro = new Set(filters.filter((f) => (f?.values || []).length === 1).map((f) => f.dim));
   for (const n of neededOrdered) {
     const sa = metricOf(catalog, n).semi_additive;
-    if (sa && !dims.some((s) => s.dim === sa.over))
+    if (sa && !dims.some((s) => s.dim === sa.over) && !fixadaPorFiltro.has(sa.over))
       fail(
         `"${n}" não soma ao longo de "${sa.over}" (medida semi-aditiva) — ` +
-          `inclua "${sa.over}" (ou um nível dela) na seleção; take: ${sa.take} compilado é P2`
+          `inclua "${sa.over}" (ou um nível dela) na seleção, ou fixe-a num único valor por filtro; ` +
+          `take: ${sa.take} compilado é P2`
       );
   }
 
@@ -400,7 +416,24 @@ export function compileCatalogSql(input) {
     const tupla = ent.map(q).join(', ');
     lines.push(`where (${tupla}) in (select ${tupla} from posicoes where ${q(posAlias(t))} <= ${topo})`);
   }
-  if (metrics.length) lines.push(`order by ${q(metrics[0])} desc`);
+  // Ordenação: o padrão é a 1ª métrica desc (top-N, o caso comum). `order`
+  // declara outra — é o que permite um RANKING crescente, ou um eixo categórico
+  // em ordem natural em vez de ordem de contagem.
+  const order = input.order || [];
+  if (order.length) {
+    const alvos = order.map((o) => {
+      const dir = String(o?.dir || 'asc').toLowerCase() === 'desc' ? 'desc' : 'asc';
+      if (metrics.includes(o?.by)) return `${q(o.by)} ${dir}`;
+      const sel = dims.find((s) => s.dim === o?.by);
+      if (!sel)
+        fail(
+          `order.by "${o?.by}" não está na seleção do bloco — ordene por uma das métricas ` +
+            `(${metrics.join(', ') || 'nenhuma'}) ou dimensões (${dims.map((s) => s.dim).join(', ') || 'nenhuma'})`
+        );
+      return `${q(dimAliasOf(catalog, sel))} ${dir}`;
+    });
+    lines.push('order by ' + alvos.join(', '));
+  } else if (metrics.length) lines.push(`order by ${q(metrics[0])} desc`);
   else lines.push('order by 1');
   const lim = Math.max(1, Number(input.limit) || 1000);
   lines.push(`limit ${lim}`);
@@ -496,7 +529,7 @@ export function compileDistributionSql(input) {
     `    ${ini} as ini,`,
     `    case when f.i = ${last} then lim.vmax else lim.lo + (f.i + 1) * (lim.hi - lim.lo) / ${N} end as fim,`,
     '    case when lim.hi - lim.lo >= 100 then cast(cast(round(ini, 0) as bigint) as varchar)',
-    '         else cast(round(ini, 2) as varchar) end',
+    "         else replace(cast(round(ini, 2) as varchar), '.', ',') end",
     `      || case when f.i = ${last} and lim.vmax > lim.hi then '+' else '' end as faixa`,
     `  from (select unnest(range(0, ${N})) as i) f, lim`,
     // n = 0 ⇒ nenhuma faixa (o bloco renderiza o vazio normal);

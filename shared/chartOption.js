@@ -199,6 +199,9 @@ export function buildChartOption({ kind, rows, attrs, palette, dark, yDomain }) 
         value: [Number(r[x]), Number(r[ys[0]])],
         name: a.label ? r[a.label] : undefined,
         symbolSize: sizeCol ? 8 + 32 * Math.sqrt((Number(r[sizeCol]) || 0) / maxS) : 12,
+        // O valor bruto do tamanho fica no ponto para o tooltip nomeá-lo —
+        // a área da bolha só ordena, o número é que se lê.
+        size: sizeCol ? Number(r[sizeCol]) : undefined,
       })),
     });
     if (a.series) {
@@ -248,14 +251,33 @@ export function buildChartOption({ kind, rows, attrs, palette, dark, yDomain }) 
   const refs = refsOf(a.refLine, rows);
   const linhas = refs.filter((r) => !r.faixa);
   const faixas = refs.filter((r) => r.faixa);
+  // Na bolha o X é eixo de VALOR: a referência se posiciona pelo número (IE = 1),
+  // nunca pelo índice de uma categoria — sem catData, posDe devolve o valor.
+  const catData = kind === 'scatter' ? undefined : catAxis.data;
   if (refs.length && series.length)
     series[0] = {
       ...series[0],
-      ...(linhas.length ? { markLine: markLineOf(linhas, { swap, catData: catAxis.data, txt, fmtVal }) } : {}),
-      ...(faixas.length ? { markArea: markAreaOf(faixas, { swap, catData: catAxis.data, txt }) } : {}),
+      ...(linhas.length ? { markLine: markLineOf(linhas, { swap, catData, txt, fmtVal }) } : {}),
+      ...(faixas.length ? { markArea: markAreaOf(faixas, { swap, catData, txt }) } : {}),
     };
 
-  const xAxis = kind === 'scatter' ? { type: 'value', axisLabel: { color: txt } } : swap ? valAxis : catAxis;
+  // Bolha: o X também é eixo de VALOR e recebe fmt e título próprios (xFmt,
+  // xAxisTitle), como o Y recebe yFmt/yAxisTitle. Sem isso os eixos saíam crus
+  // (0,1…0,7, sem nome) enquanto a legenda já trazia o rótulo do país.
+  const xFmt = a.xFmt ? String(a.xFmt) : '';
+  const fmtX = (v) => (xFmt ? formatNumber(Number(v), xFmt) : v);
+  const xAxis =
+    kind === 'scatter'
+      ? {
+          type: 'value',
+          name: a.xAxisTitle || undefined,
+          nameLocation: a.xAxisTitle ? 'middle' : undefined,
+          nameGap: a.xAxisTitle ? 30 : undefined,
+          axisLabel: { color: txt, formatter: xFmt ? (v) => fmtX(v) : undefined },
+        }
+      : swap
+        ? valAxis
+        : catAxis;
   const yAxis = kind === 'scatter' ? { ...valAxis, max: undefined } : swap ? catAxis : valAxis;
   const showLegend = series.length > 1;
 
@@ -265,7 +287,10 @@ export function buildChartOption({ kind, rows, attrs, palette, dark, yDomain }) 
     title: a.title
       ? { text: a.title, textStyle: { fontSize: 14, fontWeight: 600, color: dark ? '#e5e7eb' : '#1d1d20' } }
       : undefined,
-    tooltip: { trigger: kind === 'scatter' ? 'item' : 'axis', valueFormatter: temFmt ? (v) => fmtVal(v) : undefined },
+    tooltip:
+      kind === 'scatter'
+        ? { trigger: 'item', formatter: (p) => bubbleTip(p, a, fmtX, fmtVal) }
+        : { trigger: 'axis', valueFormatter: temFmt ? (v) => fmtVal(v) : undefined },
     legend: showLegend ? { top: a.title ? 28 : 4, textStyle: { color: txt } } : undefined,
     grid: {
       // Deitado, o espaço que o título do eixo pede é à ESQUERDA (junto dos
@@ -280,6 +305,19 @@ export function buildChartOption({ kind, rows, attrs, palette, dark, yDomain }) 
     yAxis,
     series,
   };
+}
+
+// Tooltip da bolha: cada eixo com o próprio rótulo e formato, e o tamanho
+// nomeado. O valueFormatter genérico receberia o par [x, y] e imprimiria NaN.
+export function bubbleTip(p, a, fmtX, fmtY) {
+  const [vx, vy] = Array.isArray(p.value) ? p.value : [p.value, undefined];
+  const linhas = [`${a.xAxisTitle || a.x}: ${fmtX(vx)}`, `${a.yAxisTitle || a.y}: ${fmtY(vy)}`];
+  if (a.size && p.data && p.data.size !== undefined) {
+    const s = a.sizeFmt ? formatNumber(Number(p.data.size), String(a.sizeFmt)) : p.data.size;
+    linhas.push(`${a.sizeLabel || a.size}: ${s}`);
+  }
+  const nome = p.name || p.seriesName || '';
+  return (nome ? `<b>${nome}</b><br/>` : '') + linhas.join('<br/>');
 }
 
 // Converte séries empilhadas em percentual (cada categoria soma 100).

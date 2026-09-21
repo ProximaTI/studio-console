@@ -69,6 +69,10 @@ Bloco reeditável entre `<!-- viewblock v1 {json} -->` … `<!-- /viewblock -->`
   nunca edite a lista de estilos à mão em `server/routes/agent.js`. Medido: o formato do menu
   importa tanto quanto o conteúdo (`SPEC_escolha_de_grafico.md` §3b).
 - Semântico: `compileCatalogSql(...)` de `shared/semanticCompile.js` + `compileViewblock` — ou, no web, `compileSemanticFromState`/`recompileSemanticVb` de `web/src/wizard/vbState.ts`.
+- Os estilos que montam o PRÓPRIO SQL (`pivot`, `connectionmap`, `collabgraph`) não embrulham
+  o `baseSql` e por isso não herdam o `where` dos `filters`: recebem os predicados já traduzidos
+  pelo catálogo em `ctx.filterPreds` (`compileFilterPreds`). Ao escrever um estilo novo desse
+  tipo, use `whereOf(vb, ctx)` — sem o `ctx`, o bloco mostra linhas que a spec declarou excluir.
 - Reedição: `spliceViewblock(md, vbId, novoBloco)` de `shared/viewblock.js` — troca só o bloco, byte-preservando o resto.
 
 Script node para compilar fora do web (rodar com cwd = `studio-console/` para resolver `yaml`):
@@ -103,6 +107,66 @@ const sql = compileCatalogSql({ catalog, hash: 'dev', metrics: ['faturamento'], 
 
 Config de bloco por estilo: `pivot`, `nested`, `distribution`, `bump` — atravessam
 `compileSemanticBlock` → marcador → absorção F6, todos pelo mesmo padrão.
+
+## Cinco opções de bloco que valem em qualquer relatório
+
+Todas opcionais; omitir mantém a saída byte-idêntica. Validadas em `shared/reportPlan.js`
+contra a seleção do bloco — apontar para o que não está lá é erro, não silêncio.
+
+- **`order: [{by, dir}]`** — o padrão é `order by <1ª métrica> desc` (top-N). `by` é uma
+  métrica OU dimensão **do próprio bloco** (o SQL sai pelo alias dela); `dir` é `asc|desc`.
+  É o que faz um ranking sair crescente e um eixo categórico sair na ordem natural em vez
+  da ordem da contagem. Recusado em `pivot`, `graph.histogram` e `graph.line`, que definem
+  a própria ordem (`ORDER_IGNORED_STYLES`).
+- **`table: {search?: true, rows?: N}`** — só em `tabular` e `group` (`TABLE_STYLES`).
+  `search` liga a busca client-side; `rows` é o TAMANHO DA PÁGINA (o DataTable pagina nos
+  3 ambientes, padrão 50). Conjunto fechado de chaves.
+- **`reference: [{value|from, axis?, label?}]`** — linha de corte em `graph.bar`, `graph.line`,
+  `graph.bubble` e `graph.range` (`REFERENCE_STYLES`). `value` é um literal (limiares que são
+  constantes de verdade: 0, 1,0, 80%); `from` nomeia uma **métrica do bloco** e o valor é lido
+  na 1ª linha do resultado — é assim que uma mediana vira linha sem ninguém digitá-la.
+  **Um PAR vira FAIXA** (`markArea`), não linha: `value: [início, fim]` ou
+  `from: [métrica, métrica]`. Sem chave nova, porque `from` já significa "ler de uma métrica" —
+  reusá-la como início do intervalo seria ambíguo. Os dois valores têm de ser DIFERENTES e
+  delimitar um trecho do eixo que o bloco realmente tem (`[2025, 2025]` é recusado; num eixo
+  mensal, 2025 não é posição). Ordem invertida é normalizada.
+  `axis: y` (padrão) é o eixo de VALOR, `axis: x` é o de CATEGORIA (posiciona pelo índice da
+  categoria, não pela n-ésima barra). `from` só vale em `graph.bar`/`graph.line`, onde o corpo
+  filtra a métrica de referência para fora das séries; em bubble e range a POSIÇÃO da métrica
+  na lista é o papel dela, então ali a referência é literal.
+  **Não invente o valor**: um literal só vale se for constante conhecida e verificável. Meta,
+  orçamento ou limiar que não está no dado nem foi dito no pedido vai para `warnings`, não
+  para o eixo — e toda referência precisa de `label`, senão é tracejado sem dono.
+- **`stack: total|percent`** — só em `group`, e só no cruzamento que vira gráfico. `percent`
+  normaliza cada coluna a 100%: é a forma da COMPOSIÇÃO, para quando os totais das categorias
+  são incomparáveis (533 mil artigos nas federais contra 6 mil nas municipais) e a comparação
+  que o título faz é proporcional. O padrão `total` empilha o valor absoluto e preserva a
+  magnitude — prefira-o, e passe a `percent` só quando o título afirmar uma proporção. Em
+  `percent` o eixo e o tooltip saem em %, não no `fmt` da métrica.
+- **`orientation: vertical|horizontal`** — só em `graph.bar` e `graph.histogram`
+  (`ORIENTATION_STYLES`); é o único lugar do produto que emite `swapXY`. Deite quando o
+  rótulo da categoria for texto longo (instituição, periódico, editora, área) ou passar de
+  ~12 categorias: em pé o rótulo inclina 30° e o eixo corta. No histograma o gatilho é
+  ~15 faixas, porque o eixo contíguo **não inclina rótulo** — inclinar sugeriria categorias
+  independentes — e o ECharts começa a pular rótulo sim, rótulo não. Deitado, o título do
+  eixo troca de lado e a altura do gráfico cresce com o nº de categorias.
+
+As cinco vivem em `BLOCK_OPTIONS` (`shared/viewStyles.js`) e entram no cardápio do agente
+a partir dali. **Opção nova se declara lá**, não no prompt: é a mesma regra de fonte única
+que vale para `question`, `breaks` e `planHint`.
+
+## `group`: cruzamento de 2 dimensões é BARRA EMPILHADA, não tabela
+
+Com **exatamente 2 dimensões e 1 métrica**, `group` compila para
+`<BarChart … series=<2ª dimensão> type=stacked>`: dimensão 1 no eixo, dimensão 2 nas séries,
+métrica na altura — mesma convenção de ORDEM do `graph.bubble` e do `graph.range`. Com 3+
+dimensões ou 2+ métricas nenhuma barra carrega a seleção e o estilo volta a ser a tabela
+ordenada. Duas consequências ao montar:
+
+- não acrescente uma métrica "só para conferir" a um `group` de 2 dimensões: isso o derruba
+  de gráfico para tabela sem avisar. Ponha a conferência num bloco `tabular` ao lado.
+- a 2ª dimensão são as séries, então mantenha-a curta (~8 categorias). Acima disso a pilha
+  vira faixa ilegível e a tabela informa mais.
 
 ## Nível obrigatório onde o valor é COMPARADO
 

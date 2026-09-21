@@ -2,7 +2,15 @@
 // o web (vbState) delega para cá; o server compila planos multipágina com o
 // mesmo código. IA nunca gera SQL/Markdown: tudo sai daqui, determinístico.
 import { compileViewblock } from './viewStyles.js';
-import { compileCatalogSql, compileDistributionSql, dimAliasOf, dimExprOf, isRankMetric, metricInfo } from './semanticCompile.js';
+import {
+  compileCatalogSql,
+  compileDistributionSql,
+  compileFilterPreds,
+  dimAliasOf,
+  dimExprOf,
+  isRankMetric,
+  metricInfo,
+} from './semanticCompile.js';
 
 function hash6(s) {
   let h = 5381;
@@ -34,6 +42,11 @@ export function compileSemanticBlock({
   nested,
   distribution,
   bump,
+  table,
+  order,
+  reference,
+  stack,
+  orientation,
   limit,
   vbId,
   ref,
@@ -67,6 +80,11 @@ export function compileSemanticBlock({
     ...(nested ? { nested } : {}),
     ...(distribution ? { distribution } : {}),
     ...(bump ? { bump } : {}),
+    ...(table ? { table } : {}),
+    ...(order && order.length ? { order } : {}),
+    ...(reference && reference.length ? { reference } : {}),
+    ...(stack ? { stack } : {}),
+    ...(orientation ? { orientation } : {}),
     children: [],
   };
   // A bifurcação do produto vive AQUI, no funil, e em nenhum outro lugar: um
@@ -102,6 +120,7 @@ export function compileSemanticBlock({
           factColumns: cols,
           limit: limit ?? 1000,
           rankTop: bump?.top,
+          order,
         });
   // opts de param enum: expressão da DIMENSÃO sobre o fato (não coluna crua)
   const optsSqlFor = (p) => {
@@ -109,7 +128,10 @@ export function compileSemanticBlock({
     const expr = dimExprOf(catalog, { dim: dimName, level }, cols);
     return `select distinct cast(${expr} as varchar) as value\nfrom "${String(catalog.fact).replace(/"/g, '')}"\nwhere ${expr} is not null\norder by 1`;
   };
-  return compileViewblock(vb, { vb, source: src, baseSql, optsSqlFor });
+  // `filterPreds`: os estilos que montam o próprio SQL (pivot, connectionmap,
+  // collabgraph) não embrulham o baseSql e por isso não herdam o `where` dos
+  // filtros — recebem os predicados já traduzidos pelo catálogo.
+  return compileViewblock(vb, { vb, source: src, baseSql, optsSqlFor, filterPreds: compileFilterPreds(catalog, filters, cols) });
 }
 
 /** Caminho REAL gravado (D29): parametrizada normaliza p/ subpasta canônica. */
@@ -183,6 +205,11 @@ export function compileReport(plan, { catalog, hash, factColumns }) {
           nested: b.nested,
           distribution: b.distribution,
           bump: b.bump,
+          table: b.table,
+          order: b.order,
+          reference: b.reference,
+          stack: b.stack,
+          orientation: b.orientation,
           limit: b.limit,
           vbId: b.id ? 'vb_' + b.id : undefined,
         })
