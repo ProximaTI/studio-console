@@ -1,0 +1,84 @@
+# Catálogo semântico do treinamento — cole em Dados › Semântica › ＋ Novo modelo
+# (arquivo gravado em projects/<seu_projeto>/semantic/producao.yaml).
+#
+# Ele traduz as colunas do CSV em MÉTRICAS e DIMENSÕES com rótulo, formato e
+# descrição prontos. A partir daqui o analista escolhe do catálogo: o SQL sai do
+# compilador, nunca da mão (nem da IA).
+
+model: producao
+label: "Produção científica das IES brasileiras (2021–2025)"
+description: >-
+  Artigos publicados em periódico por instituições brasileiras entre 2021 e 2025,
+  agregados por instituição, ano e campo do conhecimento. Uma linha = uma
+  combinação (IES, ano, campo). Origem: banco `aderencia` (OpenAlex + CAPES),
+  extraído em CSV para o treinamento.
+
+fact: producao_ies_2021_2025
+grain: [ies, ano, campo]
+
+dimensions:
+  ies:
+    column: ies
+    label: "Instituição"
+    synonyms: [IES, universidade, sigla]
+    description: "Sigla da IES sede. Barras viraram hífen na extração (UVA-RJ) para a rota /ies/<sigla>/ funcionar."
+  uf:      { column: uf, label: "UF", geo: brazil-states }
+  regiao:  { column: regiao, label: "Região" }
+  natureza:
+    column: status_juridico
+    label: "Natureza jurídica"
+    synonyms: [dependência administrativa, pública ou privada]
+    description: "Federal, Estadual, Municipal ou Privada."
+  ano:     { column: ano, label: "Ano de publicação" }
+  dominio: { column: dominio, label: "Domínio", description: "Grande área do OpenAlex — rótulo em inglês." }
+  campo:   { column: campo, label: "Campo", description: "Campo de maior score do artigo; um artigo toca 2,28 subáreas em média." }
+
+metrics:
+  artigos:
+    agg: sum
+    column: artigos
+    label: "Artigos"
+    fmt: num0
+    synonyms: [produção, publicações]
+    description: >-
+      Conta VÍNCULOS IES–artigo: um artigo em coautoria entre duas IES conta nas
+      duas. Total do arquivo = 1.313.043 vínculos para 812.189 artigos distintos.
+      Serve para comparar recortes; não é "o número de artigos do Brasil".
+  artigos_fwci1:
+    agg: sum
+    column: artigos_fwci1
+    label: "Artigos com FWCI ≥ 1"
+    fmt: num0
+    description: "FWCI 1,0 = média mundial de citações da área e do ano."
+  artigos_nacionais: { agg: sum, column: artigos_nacionais, label: "Artigos em periódico nacional", fmt: num0 }
+  artigos_abertos:
+    agg: sum
+    column: artigos_abertos
+    label: "Artigos em acesso aberto"
+    fmt: num0
+    description: "Qualquer via de acesso aberto, inclusive repositório (green) e bronze — por isso o percentual é alto."
+  citacoes:
+    agg: sum
+    column: citacoes
+    label: "Citações feitas"
+    fmt: num0
+    synonyms: [referências, consumo bibliográfico]
+    description: "Referências que os artigos FAZEM (consumo), não as que recebem. Mesmo denominador por vínculo da métrica artigos."
+  citacoes_nacionais: { agg: sum, column: citacoes_nacionais, label: "Citações a periódicos nacionais", fmt: num0 }
+
+  pct_fwci1:
+    derived: "artigos_fwci1 / artigos"
+    label: "% de artigos com FWCI ≥ 1"
+    fmt: pct1
+    synonyms: [impacto, acima da média mundial]
+    description: "Denominador: artigos do recorte exibido."
+  pct_nacional: { derived: "artigos_nacionais / artigos", label: "% em periódico nacional", fmt: pct1 }
+  pct_oa:       { derived: "artigos_abertos / artigos", label: "% em acesso aberto", fmt: pct1 }
+  pct_citacoes_nacionais: { derived: "citacoes_nacionais / citacoes", label: "% das citações a periódicos nacionais", fmt: pct1 }
+  pct_artigos:  { derived: "artigos / total(artigos)", label: "% do total exibido", fmt: pct1 }
+
+hierarchies:
+  geografia: [regiao, uf, ies]
+  area: [dominio, campo]
+
+policies: {}
