@@ -40,6 +40,8 @@ const FIXTURES = {
   freeform: { dims: [], metrics: [m('v')] },
   areamap: { dims: [d('uf')], metrics: [m('v')] },
   pointmap: { dims: [d('uf')], metrics: [m('v')] },
+  'graph.treemap': { dims: [d('unidade'), d('servico')], metrics: [m('v')] },
+  'graph.sankey': { dims: [d('unidade'), d('servico')], metrics: [m('v')] },
   'graph.range': { dims: [d('unidade')], metrics: [m('lo'), m('mid'), m('hi')] },
   'graph.bump': { dims: [d('ano'), d('unidade')], metrics: [m('pos')] },
   'graph.histogram': { dims: [], metrics: [m('v')] },

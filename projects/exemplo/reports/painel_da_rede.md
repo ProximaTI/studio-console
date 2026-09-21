@@ -108,11 +108,23 @@ pages:
         filters: []
         style: tabular
       - id: eq_regiao_servico
-        title: Região × serviço
+        title: Do que o faturamento é feito, região a região
         metrics: [faturamento]
         dims: [{ dim: regiao }, { dim: servico }]
         filters: []
-        style: group
+        # A pergunta aqui é composição: quanto cada serviço pesa dentro da
+        # região. A tabela cruzada responde "qual o valor"; a área responde
+        # "qual a fatia", que é o que o título afirma.
+        style: graph.treemap
+
+      - id: eq_fluxo
+        title: Para onde o dinheiro de cada região vai, em serviço
+        metrics: [faturamento]
+        dims: [{ dim: regiao }, { dim: servico }]
+        filters: []
+        # ORIGEM · DESTINO é a ordem das dimensões — sem papéis. O mesmo par do
+        # bloco acima, respondendo outra pergunta: ali a fatia, aqui o caminho.
+        style: graph.sankey
       - id: eq_faixa
         title: Atendimentos por faixa de ticket
         metrics: [atendimentos]

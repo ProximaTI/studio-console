@@ -50,9 +50,9 @@ limit 1000
 
 <!-- /viewblock -->
 
-## Região × serviço
+## Do que o faturamento é feito, região a região
 
-<!-- viewblock v1 {"v":1,"id":"vb_eq_regiao_servico","source":{"kind":"semantic","name":"comissoes"},"catalogHash":"d72794a6","queries":[{"name":"vb_eq_regiao_servico","sql":null}],"dims":[{"dim":"regiao","alias":"regiao","column":"regiao","table":"comissoes","label":"Região"},{"dim":"servico","alias":"servico","column":"servico","table":"comissoes","label":"Serviço"}],"metrics":[{"name":"faturamento","alias":"faturamento","label":"Faturamento","fmt":"brl"}],"filters":[],"limit":1000,"params":[],"style":"group","children":[]} -->
+<!-- viewblock v1 {"v":1,"id":"vb_eq_regiao_servico","source":{"kind":"semantic","name":"comissoes"},"catalogHash":"d72794a6","queries":[{"name":"vb_eq_regiao_servico","sql":null}],"dims":[{"dim":"regiao","alias":"regiao","column":"regiao","table":"comissoes","label":"Região"},{"dim":"servico","alias":"servico","column":"servico","table":"comissoes","label":"Serviço"}],"metrics":[{"name":"faturamento","alias":"faturamento","label":"Faturamento","fmt":"brl"}],"filters":[],"limit":1000,"params":[],"style":"graph.treemap","children":[]} -->
 
 ```sql vb_eq_regiao_servico
 -- semantic: comissoes@d72794a6
@@ -68,7 +68,29 @@ order by "faturamento" desc
 limit 1000
 ```
 
-<BarChart data={vb_eq_regiao_servico} x=regiao y=faturamento series=servico type=stacked yFmt=brl/>
+<Treemap data={vb_eq_regiao_servico} x=regiao inner=servico y=faturamento yFmt=brl/>
+
+<!-- /viewblock -->
+
+## Para onde o dinheiro de cada região vai, em serviço
+
+<!-- viewblock v1 {"v":1,"id":"vb_eq_fluxo","source":{"kind":"semantic","name":"comissoes"},"catalogHash":"d72794a6","queries":[{"name":"vb_eq_fluxo","sql":null}],"dims":[{"dim":"regiao","alias":"regiao","column":"regiao","table":"comissoes","label":"Região"},{"dim":"servico","alias":"servico","column":"servico","table":"comissoes","label":"Serviço"}],"metrics":[{"name":"faturamento","alias":"faturamento","label":"Faturamento","fmt":"brl"}],"filters":[],"limit":1000,"params":[],"style":"graph.sankey","children":[]} -->
+
+```sql vb_eq_fluxo
+-- semantic: comissoes@d72794a6
+with base as (
+  select "regiao", "servico", sum("valor") as "faturamento"
+  from "comissoes"
+  where cast(year(cast("data" as date)) as varchar) like '${inputs.ano.value}'
+  group by 1, 2
+)
+select "regiao", "servico", "faturamento"
+from base
+order by "faturamento" desc
+limit 1000
+```
+
+<SankeyDiagram data={vb_eq_fluxo} x=regiao inner=servico y=faturamento yFmt=brl/>
 
 <!-- /viewblock -->
 

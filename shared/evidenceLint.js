@@ -19,7 +19,7 @@ const CONSOLE_COMPONENTS = new Set([
   'Dropdown', 'DropdownOption', 'ConnectionMap', 'CollaborationGraph',
   'Note', 'LinkButton', 'Grid', 'Card', 'CardTitle', 'CardBody',
   'Tabs', 'Tab', 'Details', 'Value', 'AreaMap', 'div',
-  'TextInput', 'Slider', 'DateRange', 'Repeat', 'RangeChart', 'PointMap',
+  'TextInput', 'Slider', 'DateRange', 'Repeat', 'RangeChart', 'PointMap', 'Treemap', 'SankeyDiagram',
 ]);
 
 // Componentes do Evidence core (docs.evidence.dev). Lista curada.
@@ -42,6 +42,8 @@ const CUSTOM_NEEDS_PORT = {
     'componente custom da console — não existe no Evidence core; será preciso criar um componente Svelte no projeto Evidence',
   Repeat:
     'container Nested (F3) — pleno no runtime próprio e nos dois Publish; deploy Evidence exige Repeat.svelte (P2 sob demanda)',
+  Treemap:
+    'composição hierárquica — não existe no Evidence core (o core tem apenas a família de barras para parte-de-um-todo); no deploy Evidence, crie um Treemap.svelte',
   RangeChart:
     'marca de intervalo (faixa + centro) da console — o equivalente mais próximo no Evidence core é <BoxPlot>, que tem outra premissa de entrada (linhas cruas, não p25/mediana/p75 já agregados); no deploy Evidence, crie um RangeChart.svelte',
 };
@@ -55,6 +57,8 @@ const NOT_IN_EVIDENCE = {
 
 // Renderizam DIFERENTE na console (funcionam nos dois lados).
 const RENDER_DIFF = {
+  SankeyDiagram:
+    'o <SankeyDiagram> do Evidence nomeia as colunas por sourceCol/targetCol/valueCol; o da console usa x (origem), inner (destino) e y (métrica), a mesma convenção dos outros gráficos. Mesmo nome e mesma marca, atributos diferentes — a página migra trocando os nomes',
   PointMap:
     'o <PointMap> do Evidence espera LATITUDE e LONGITUDE por linha; o da console recebe a SIGLA da UF e resolve o centróide internamente. Mesmo nome, contrato diferente — a página não migra sem trocar as colunas',
   Tabs: 'a console empilha os painéis um abaixo do outro; no Evidence viram abas reais',

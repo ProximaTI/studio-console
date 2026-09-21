@@ -260,7 +260,8 @@ export const STYLES = [
     question: 'ranking / comparação entre categorias',
     breaks: [
       { quando: 'há VÁRIAS observações por grupo — a barra, mesmo com barra de erro, esconde a dispersão', use: 'graph.range' },
-      { quando: 'passa de ~40 categorias', use: 'tabular' },
+      { quando: 'passa de ~40 categorias E a pergunta é composição (quanto cada parte é do todo)', use: 'graph.treemap' },
+      { quando: 'passa de ~40 categorias e a comparação precisa ser precisa', use: 'tabular' },
     ],
     fallback: 'tabular',
     planHint:
@@ -465,6 +466,57 @@ export const STYLES = [
     // Convenção de ordem, como no graph.bubble — sem papéis a configurar:
     //   métrica 1 = mínimo · métrica 2 = centro · métrica 3 = máximo
     // Três barras lado a lado mostram três números; uma haste mostra a FAIXA.
+    id: 'graph.treemap',
+    label: 'Graph · treemap (composição)',
+    question: 'composição: quanto cada parte representa do todo',
+    breaks: [
+      { quando: 'a métrica pode ser NEGATIVA — área não representa sinal, e o valor some do gráfico', use: 'graph.bar' },
+      { quando: 'a comparação entre partes precisa ser lida com precisão — área é mal percebida', use: 'tabular' },
+    ],
+    fallback: 'graph.bar',
+    queryCount: 1,
+    // 2ª dimensão = aninhamento. Mais de dois níveis exigiria navegação por
+    // clique, que num relatório é estado escondido: quem lê o snapshot impresso
+    // não vê o mesmo que quem clicou.
+    requires: (vb) =>
+      need(
+        (vb.dims || []).length >= 1 && (vb.dims || []).length <= 2 && (vb.metrics || []).length === 1,
+        'precisa de 1 ou 2 dimensões (a 2ª aninha dentro da 1ª) e EXATAMENTE 1 métrica'
+      ),
+    compile: (ctx) =>
+      oneQuery(ctx, (vb, qn) => {
+        const m = (vb.metrics || [])[0];
+        const dentro = (vb.dims || [])[1] ? ` inner=${dimAlias(vb.dims[1])}` : '';
+        const fmt = m.fmt ? ` yFmt=${m.fmt}` : '';
+        return `<Treemap data={${qn}} x=${dimAlias(vb.dims[0])}${dentro} y=${metricAlias(m)}${fmt}/>`;
+      }),
+  },
+  {
+    id: 'graph.sankey',
+    label: 'Graph · sankey (fluxo)',
+    question: 'para onde vai / de onde vem — fluxo entre dois conjuntos',
+    breaks: [
+      { quando: 'origem e destino são o MESMO conjunto e o fluxo volta — o sankey empilha o nó nos dois lados e a leitura se perde', use: 'tabular' },
+      { quando: 'passa de ~15 nós de cada lado', use: 'tabular' },
+    ],
+    fallback: 'tabular',
+    queryCount: 1,
+    // SEM papéis: a ORDEM das dimensões é o papel delas, como em graph.range
+    // (mínimo · centro · máximo). Papéis validam contra COLUNAS CRUAS, que não
+    // existem no vocabulário do catálogo, e prenderiam o estilo ao wizard.
+    requires: (vb) =>
+      need(
+        (vb.dims || []).length === 2 && (vb.metrics || []).length === 1,
+        'precisa de EXATAMENTE 2 dimensões, na ordem ORIGEM · DESTINO, e 1 métrica (a largura do fluxo)'
+      ),
+    compile: (ctx) =>
+      oneQuery(ctx, (vb, qn) => {
+        const m = (vb.metrics || [])[0];
+        const fmt = m.fmt ? ` yFmt=${m.fmt}` : '';
+        return `<SankeyDiagram data={${qn}} x=${dimAlias(vb.dims[0])} inner=${dimAlias(vb.dims[1])} y=${metricAlias(m)}${fmt}/>`;
+      }),
+  },
+  {
     id: 'pointmap',
     label: 'Mapa de símbolo (Brasil por UF)',
     question: 'onde está o VOLUME — contagem absoluta no mapa',

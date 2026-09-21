@@ -39,7 +39,7 @@ describe('registro de estilos', () => {
   it('todos os estilos registrados com contrato', () => {
     expect(STYLES.map((s) => s.id)).toEqual([
       'tabular', 'graph.bar', 'graph.line', 'graph.bubble', 'group', 'freeform',
-      'connectionmap', 'collabgraph', 'areamap', 'pointmap', 'graph.range', 'graph.bump', 'graph.histogram', 'nested', 'pivot',
+      'connectionmap', 'collabgraph', 'areamap', 'graph.treemap', 'graph.sankey', 'pointmap', 'graph.range', 'graph.bump', 'graph.histogram', 'nested', 'pivot',
     ]);
     for (const s of STYLES) {
       expect(typeof s.requires).toBe('function');

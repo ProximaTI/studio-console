@@ -415,3 +415,136 @@ export function buildRangeOption({ rows, attrs, palette, dark }) {
     ],
   };
 }
+
+
+// ---------------------------------------------------------------------------
+// TREEMAP — composição: quanto cada parte representa do todo.
+//
+// Consome a MESMA tabela de contingência dos outros estilos: 1 dimensão (lista
+// plana) ou 2 (a 2ª aninha dentro da 1ª). Sem SQL novo.
+//
+// attrs: x (dimensão externa), inner (dimensão aninhada, opcional),
+//   y (métrica), yFmt, title.
+export function buildTreemapOption({ rows, attrs, palette, dark }) {
+  const a = attrs || {};
+  rows = rows || [];
+  const txt = axisLabelColor(dark);
+  const yFmt = a.yFmt ? String(a.yFmt) : '';
+  const fmtVal = (v) => (yFmt ? formatNumber(Number(v), yFmt) : Number(v).toLocaleString('pt-BR'));
+
+  // Valor negativo NÃO tem área: um retângulo não representa sinal, e desenhá-lo
+  // do mesmo tamanho de um positivo seria mentira gráfica. Some — e é por isso
+  // que o `breaks` manda usar barra quando a métrica pode ser negativa.
+  const val = (r) => Number(r[a.y]);
+  const positivos = rows.filter((r) => Number.isFinite(val(r)) && val(r) > 0);
+
+  let data;
+  if (a.inner) {
+    const grupos = new Map();
+    for (const r of positivos) {
+      const pai = String(r[a.x] ?? '');
+      if (!grupos.has(pai)) grupos.set(pai, []);
+      grupos.get(pai).push({ name: String(r[a.inner] ?? ''), value: val(r) });
+    }
+    data = [...grupos].map(([name, children]) => ({ name, children }));
+  } else {
+    data = positivos.map((r) => ({ name: String(r[a.x] ?? ''), value: val(r) }));
+  }
+
+  return {
+    color: palette,
+    backgroundColor: 'transparent',
+    title: a.title ? { text: a.title, textStyle: { fontSize: 14, fontWeight: 600, color: dark ? '#e5e7eb' : '#1d1d20' } } : undefined,
+    tooltip: { formatter: (p) => `${p.name}: ${fmtVal(p.value)}` },
+    series: [
+      {
+        type: 'treemap',
+        roam: false,
+        // O treemap do ECharts navega ao clique e mostra trilha no topo. Num
+        // relatório isso é estado escondido: quem lê o snapshot impresso não vê
+        // o mesmo que quem clicou.
+        breadcrumb: { show: false },
+        nodeClick: false,
+        label: { show: true, formatter: (p) => `${p.name}\n${fmtVal(p.value)}`, color: '#fff', fontSize: 11 },
+        upperLabel: a.inner ? { show: true, height: 20, color: txt, fontSize: 11 } : undefined,
+        levels: a.inner
+          ? [
+              { itemStyle: { borderColor: dark ? '#11151c' : '#fff', borderWidth: 3, gapWidth: 3 } },
+              { colorSaturation: [0.35, 0.6], itemStyle: { borderWidth: 1, gapWidth: 1, borderColorSaturation: 0.5 } },
+            ]
+          : [{ itemStyle: { borderColor: dark ? '#11151c' : '#fff', borderWidth: 2, gapWidth: 2 } }],
+        data,
+      },
+    ],
+  };
+}
+
+// ---------------------------------------------------------------------------
+// SANKEY — para onde vai, de onde vem.
+//
+// 2 dimensões + 1 métrica, e a ORDEM das dimensões é o papel delas: a primeira
+// é a origem, a segunda o destino. Mesma convenção de `graph.range` (mínimo ·
+// centro · máximo), e evita um mecanismo de papéis só para dizer o óbvio —
+// papéis validam contra COLUNAS CRUAS, que não existem no vocabulário do
+// catálogo, e prendem o estilo ao wizard manual.
+//
+// attrs: x (origem), inner (destino), y (métrica), yFmt, title.
+export const SANKEY_SEP = String.fromCharCode(0);
+
+export function buildSankeyOption({ rows, attrs, palette, dark }) {
+  const a = attrs || {};
+  rows = rows || [];
+  const txt = axisLabelColor(dark);
+  const yFmt = a.yFmt ? String(a.yFmt) : '';
+  const fmtVal = (v) => (yFmt ? formatNumber(Number(v), yFmt) : Number(v).toLocaleString('pt-BR'));
+
+  // O sankey do ECharts exige GRAFO ACÍCLICO. Se o mesmo valor aparece na
+  // origem e no destino ("Corte" como serviço de entrada e de saída), o nó
+  // fecharia ciclo e o gráfico inteiro quebra. Por isso a identidade do nó
+  // carrega o LADO; o rótulo mostra só o nome, e o leitor não vê a marca.
+  const idDe = (lado, nome) => lado + SANKEY_SEP + nome;
+  const nomeDe = (id) => {
+    const p = String(id).split(SANKEY_SEP);
+    return p.length > 1 ? p[1] : p[0];
+  };
+
+  const nos = new Map();
+  const links = [];
+  for (const r of rows) {
+    const o = String(r[a.x] ?? '').trim();
+    const d = String(r[a.inner] ?? '').trim();
+    const v = Number(r[a.y]);
+    // Fluxo sem valor positivo não é fluxo: uma fita de largura zero ocuparia
+    // nome nos dois lados sem transportar nada.
+    if (!o || !d || !Number.isFinite(v) || v <= 0) continue;
+    const io = idDe('0', o);
+    const iD = idDe('1', d);
+    nos.set(io, { name: io, depth: 0 });
+    nos.set(iD, { name: iD, depth: 1 });
+    links.push({ source: io, target: iD, value: v });
+  }
+
+  return {
+    color: palette,
+    backgroundColor: 'transparent',
+    title: a.title ? { text: a.title, textStyle: { fontSize: 14, fontWeight: 600, color: dark ? '#e5e7eb' : '#1d1d20' } } : undefined,
+    tooltip: {
+      trigger: 'item',
+      formatter: (p) =>
+        p.dataType === 'edge'
+          ? `${nomeDe(p.data.source)} → ${nomeDe(p.data.target)}: ${fmtVal(p.data.value)}`
+          : `${nomeDe(p.name)}: ${fmtVal(p.value)}`,
+    },
+    series: [
+      {
+        type: 'sankey',
+        emphasis: { focus: 'adjacency' },
+        nodeAlign: 'justify',
+        label: { formatter: (p) => nomeDe(p.name), color: txt, fontSize: 11 },
+        lineStyle: { color: 'gradient', opacity: 0.45, curveness: 0.5 },
+        data: [...nos.values()],
+        links,
+      },
+    ],
+  };
+}

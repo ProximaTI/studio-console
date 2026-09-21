@@ -15,7 +15,7 @@
 //   getInput(name)             valor atual de um input
 //   setInput(name, value)      async: re-executa/re-renderiza (papel do bootstrap)
 import { formatNumber, cmpCell } from './format.js';
-import { buildChartOption, buildRangeOption } from './chartOption.js';
+import { buildChartOption, buildRangeOption, buildTreemapOption, buildSankeyOption } from './chartOption.js';
 import { buildMapOption, buildAreaMapOption, buildPointMapOption } from './mapOption.js';
 import { chartPaletteOf } from './designTokens.js';
 import { partitionBy, sharedDomain, isPanelChart, PANEL_HEIGHT } from './smallMultiples.js';
@@ -325,6 +325,11 @@ export function createPublishRenderer(ctx) {
       return;
     }
 
+    if (name === 'Treemap' || name === 'SankeyDiagram') {
+      const build = name === 'Treemap' ? buildTreemapOption : buildSankeyOption;
+      chart(app, a.height ? Number(a.height) : 420).setOption(build({ rows, attrs: a, palette, dark }), true);
+      return;
+    }
     if (name === 'RangeChart') {
       chart(app).setOption(buildRangeOption({ rows, attrs: a, palette, dark: ctx.theme && ctx.theme.mode === 'dark' }), true);
       return;

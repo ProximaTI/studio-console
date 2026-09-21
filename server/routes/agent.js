@@ -168,7 +168,7 @@ export const REPORT_PLAN_SCHEMA = {
 //   connectionmap/collabgraph — mapeiam PAPÉIS para colunas cruas da fonte
 //                  (lat/lon, origem/destino, nós/arestas), que não existem no
 //                  vocabulário do catálogo. Seguem no wizard manual.
-export const PLANNABLE = ['tabular', 'graph.bar', 'graph.line', 'graph.bubble', 'graph.range', 'graph.histogram', 'graph.bump', 'group', 'freeform', 'areamap', 'pointmap', 'nested'];
+export const PLANNABLE = ['tabular', 'graph.bar', 'graph.line', 'graph.bubble', 'graph.range', 'graph.histogram', 'graph.bump', 'group', 'freeform', 'areamap', 'pointmap', 'graph.treemap', 'graph.sankey', 'nested'];
 
 /** Resumo do catálogo p/ o prompt (labels + grounding F4 + hierarquias). */
 export function catalogSummary(catalog) {

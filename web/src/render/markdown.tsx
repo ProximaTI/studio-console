@@ -16,6 +16,8 @@ import ConnectionMap from './components/ConnectionMap';
 import CollaborationGraph from './components/CollaborationGraph';
 import AreaMap from './components/AreaMap';
 import PointMap from './components/PointMap';
+import Treemap from './components/Treemap';
+import SankeyDiagram from './components/SankeyDiagram';
 import TextInput from './components/TextInput';
 import Slider from './components/Slider';
 import DateRange from './components/DateRange';
@@ -47,6 +49,8 @@ const COMPONENTS: Record<string, any> = {
   Value,
   AreaMap,
   PointMap,
+  Treemap,
+  SankeyDiagram,
   TextInput,
   Slider,
   DateRange,
