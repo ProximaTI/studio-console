@@ -107,7 +107,8 @@ export function looksPersonal(column) {
   const s = t.join('_');
   if (/(^|_)(e_mail|nome_pessoa|codigo_pessoa|cpf_cnpj)(_|$)/.test(s)) return true;
   const i = t.findIndex((w) => w === 'author' || w === 'authors');
-  return i >= 0 && (i === t.length - 1 || ['name', 'nome', 'id', 'email'].includes(t[i + 1]));
+  if (i < 0 || ['n', 'nr', 'num', 'qtd', 'count', 'total'].includes(t[i - 1])) return false; // n_authors é contagem
+  return i === t.length - 1 || ['name', 'nome', 'id', 'email'].includes(t[i + 1]);
 }
 
 /**

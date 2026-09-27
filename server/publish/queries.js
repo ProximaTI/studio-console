@@ -116,6 +116,21 @@ export function walkDropdowns(items, cb) {
   }
 }
 
+/** Todas as páginas .md do projeto, caminhos relativos a pages/ com '/'. */
+export function listPages(pagesDir) {
+  const out = [];
+  if (!pagesDir || !fs.existsSync(pagesDir)) return out;
+  const walk = (dir, rel) => {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const r = rel ? rel + '/' + e.name : e.name;
+      if (e.isDirectory()) walk(path.join(dir, e.name), r);
+      else if (/\.md$/i.test(e.name)) out.push(r);
+    }
+  };
+  walk(pagesDir, '');
+  return out.sort();
+}
+
 /** Páginas parametrizadas do projeto: { "unidade": "unidade", ... } */
 export function collectParamPages(pagesDir) {
   const map = {};

@@ -10,6 +10,7 @@
 //   maps                       { nome: geojson } embutidos
 //   paramPages                 { dir: paramName } (links /dir/valor/)
 //   hrefMode                   'app' (../x-app/app.html) | 'snapshot' (./x.html)
+//   pagePackages               { rota: pacote } (shared/pageRoutes.js) — nome de cada página publicada
 //   dataFor(name)              rows da query (ou { __error })
 //   renderInline(text)         interpolação {expr} com o estado atual
 //   getInput(name)             valor atual de um input
@@ -73,6 +74,10 @@ export function createPublishRenderer(ctx) {
     const m = h.match(/[?#].*$/);
     const suffix = m ? m[0] : '';
     const page = (p) => (ctx.hrefMode === 'snapshot' ? './' + p + '.html' : '../' + p + '-app/app.html');
+    // Tabela rota → pacote do publish (shared/pageRoutes.js): '/comparativo/'
+    // → comparativo, '/a/b/' → a-b, '/prof/' → prof-index quando existe [prof].md.
+    const tabela = ctx.pagePackages;
+    if (tabela && Object.prototype.hasOwnProperty.call(tabela, clean)) return page(tabela[clean]) + suffix;
     if (!clean) return page('index') + suffix;
     const segs = clean.split('/');
     if (segs.length === 1) return page(segs[0]) + suffix;

@@ -7,7 +7,8 @@ import path from 'node:path';
 import { getConnection, sqlPath, listSources } from '../db.js';
 import { parseBlocks } from '../../shared/parser.js';
 import { paramNameFromFile, collectInputNames } from '../../shared/templating.js';
-import { resolveQueries, detectSources, listSchemaViews, itemsFromBlocks, collectParamPages } from './queries.js';
+import { resolveQueries, detectSources, listSchemaViews, itemsFromBlocks, collectParamPages, listPages } from './queries.js';
+import { pagePackages } from '../../shared/pageRoutes.js';
 import { mountSourceUrls } from '../materialize.js';
 import { getRuntimeBundle, readVendors, collectMaps, copyDuckdbRuntime, escapeHtml, publishCss, inlineBrandAssets } from './assets.js';
 import { themeFor, readProjectConfig, validatePublish } from '../projectConfig.js';
@@ -199,6 +200,9 @@ export async function buildPublishedApp(
     // trocar não faria sentido, os dados dos outros não estão no pacote.
     fixedParam: scopeValue !== undefined && scopeValue !== null ? { name: paramName, value: String(scopeValue) } : null,
     paramPages: collectParamPages(pagesDir),
+    // Rota → pacote (shared/pageRoutes.js): links internos chegam ao pacote
+    // com o MESMO nome que o publish deu a cada página.
+    pagePackages: pagePackages(listPages(pagesDir)),
     maps: collectMaps(blocks),
     // Tema EFETIVO do projeto (project.yaml → settings global → default).
     theme: themeFor(projectName),
@@ -290,6 +294,7 @@ const R = StudioRuntime.createPublishRenderer({
   decimalSeparator: P.decimalSeparator,
   maps: P.maps,
   paramPages: P.paramPages,
+  pagePackages: P.pagePackages,
   hrefMode: 'app',
   dataFor: function(name){ return (name && dataMap[name]) || []; },
   renderInline: function(t){ return StudioRuntime.renderInline(t, dataMap, params, inputs); },

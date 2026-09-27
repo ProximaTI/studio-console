@@ -5,7 +5,8 @@ import { PROJECTS_DIR, ROOT, ensureProjectSkeleton, dropProjectSchema, registerP
 import { readSettings } from '../settings.js';
 import { buildPublishedHtml, buildPublishedApp } from '../publish.js';
 import { checkPublishPolicies } from '../semantic.js';
-import { resolveQueries, findLiveScan } from '../publish/queries.js';
+import { resolveQueries, findLiveScan, listPages } from '../publish/queries.js';
+import { packageNameFor } from '../../shared/pageRoutes.js';
 import { serveFile, securityHeaders } from '../publish/serve.js';
 import { parseBlocks } from '../../shared/parser.js';
 
@@ -385,10 +386,13 @@ router.post('/:project/publish', async (req, res) => {
 
     const settings = readSettings();
 
-    const html = await buildPublishedHtml(project, path.basename(rel), mdSource, settings, projectDirs(project).queriesDir);
+    const pagesDir = projectDirs(project).pagesDir;
+    const html = await buildPublishedHtml(project, path.basename(rel), mdSource, settings, projectDirs(project).queriesDir, pagesDir);
     const outDir = path.join(publishedDir(project), project);
     fs.mkdirSync(outDir, { recursive: true });
-    const outName = path.basename(rel).replace(/\.md$/, '') + '.html';
+    // Nome pela ROTA, não pelo basename (shared/pageRoutes.js): comparativo/index.md
+    // é comparativo.html — antes todo index.md em subpasta sobrescrevia index.html.
+    const outName = packageNameFor(rel, listPages(pagesDir)) + '.html';
     const outPath = path.join(outDir, outName);
     fs.writeFileSync(outPath, html, 'utf8');
 
@@ -428,12 +432,13 @@ router.post('/:project/publish-app', async (req, res) => {
 
     const settings = readSettings();
 
-    // Página parametrizada (dir/[param].md) publica com o nome do DIRETÓRIO:
-    // unidade/[unidade].md -> pacote "unidade-app" (links /unidade/VALOR/ mapeiam direto).
+    // Nome do pacote pela ROTA da página (shared/pageRoutes.js): comparativo/index.md
+    // → "comparativo-app"; parametrizada dir/[param].md → nome do DIRETÓRIO, como
+    // sempre (links /unidade/VALOR/ mapeiam direto). Antes era o basename, e todo
+    // index.md em subpasta caía em "index-app", um sobrescrevendo o outro.
     const base = path.basename(rel).replace(/\.md$/, '');
-    const segs = rel.replace(/\\/g, '/').split('/').filter(Boolean);
-    const page = base.startsWith('[') && segs.length > 1 ? segs[segs.length - 2] : base.replace(/[\[\]]/g, '');
     const dirs = projectDirs(project);
+    const page = packageNameFor(rel, listPages(dirs.pagesDir));
 
     // Recorte por valor (páginas parametrizadas): um PACOTE por valor, cada um
     // com o parquet filtrado. Sem isso o app de uma unidade/IES leva os dados

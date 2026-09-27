@@ -5,12 +5,13 @@
 import { runQuery } from '../db.js';
 import { parseBlocks } from '../../shared/parser.js';
 import { applyTemplates, collectInputNames } from '../../shared/templating.js';
-import { resolveQueries, itemsFromBlocks, walkDropdowns, cartesian, comboKey } from './queries.js';
+import { resolveQueries, itemsFromBlocks, walkDropdowns, cartesian, comboKey, listPages } from './queries.js';
+import { pagePackages } from '../../shared/pageRoutes.js';
 import { getRuntimeBundle, readVendors, collectMaps, escapeHtml, publishCss, inlineBrandAssets } from './assets.js';
 import { themeFor } from '../projectConfig.js';
 import { sourceFreshness } from '../materialize.js';
 
-export async function buildPublishedHtml(projectName, fileName, mdSource, settings, queriesDir) {
+export async function buildPublishedHtml(projectName, fileName, mdSource, settings, queriesDir, pagesDir) {
   mdSource = inlineBrandAssets(mdSource); // /brand/x.svg -> data URI (ver assets.js)
   const blocks = parseBlocks(mdSource);
   const queries = resolveQueries(blocks, queriesDir);
@@ -118,6 +119,8 @@ export async function buildPublishedHtml(projectName, fileName, mdSource, settin
     theme: themeFor(projectName),
     decimalSeparator: settings?.organization?.decimalSeparator || ',',
     generatedAt: new Date().toISOString(),
+    // Rota → nome do .html irmão (shared/pageRoutes.js), o mesmo que o publish grava.
+    pagePackages: pagePackages(listPages(pagesDir)),
     // Transparência de frescor (Fase Fontes §5): "dados de quando" no artefato.
     dataAsOf: (() => {
       try {
@@ -182,6 +185,7 @@ const R = StudioRuntime.createPublishRenderer({
   decimalSeparator: P.decimalSeparator,
   maps: P.maps,
   paramPages: {},
+  pagePackages: P.pagePackages,
   hrefMode: 'snapshot',
   staticInputs: true,
   dataFor: dataFor,

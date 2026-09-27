@@ -193,6 +193,9 @@ Ex.: `curl -H "x-studio-token: $(cat server/.runtime/token)" http://127.0.0.1:30
   O ☁ leva só as colunas que as queries usam; a resposta traz `escopo` (colunas/linhas
   por fonte) e `avisos`. Exclusões/recorte por fonte: `publish:` no `project.yaml`.
   Antes de mandar `published/` para o servidor: `npm run audit:published`.
+  Nome do pacote = ROTA da página (`shared/pageRoutes.js`): `comparativo/index.md` →
+  `comparativo-app` (📦 `comparativo.html`), `a/b/index.md` → `a-b-app`, `[param].md` →
+  nome do diretório; índice de pasta que também tem `[param].md` → `<pasta>-index-app`.
 
 ## Relatório completo planejado (F5 — o caminho PREFERIDO para multipágina)
 

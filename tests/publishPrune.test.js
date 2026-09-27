@@ -98,7 +98,7 @@ describe('planSource', () => {
   it('looksPersonal: por palavra, sem confundir agregado com pessoa', () => {
     for (const c of ['orcid', 'autor_correspondente', 'codigo_pessoa', 'e_mail', 'author_name', 'author', 'cpf_cnpj', 'telefone'])
       expect(looksPersonal(c), c).toBe(true);
-    for (const c of ['autorizado', 'massa_autoral', 'single_author_works', 'authors_per_doc_avg', 'tipo_pessoa', 'orgao', 'cargo'])
+    for (const c of ['autorizado', 'massa_autoral', 'single_author_works', 'authors_per_doc_avg', 'n_authors', 'qtd_authors', 'tipo_pessoa', 'orgao', 'cargo'])
       expect(looksPersonal(c), c).toBe(false);
   });
 
