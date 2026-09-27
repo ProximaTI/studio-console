@@ -112,6 +112,11 @@ export function buildMapOption({ rows, attrs, palette, dark }) {
 //   intermediários ficam sob controle da página), showLabels=true (imprime o
 //   valor formatado dentro de cada área — extensão da console, o Evidence só
 //   mostra no tooltip).
+//
+// `ramp` é o degradê do TEMA (sequentialPaletteOf) — o padrão do projeto, para
+// que o coroplético não dependa de cada página repetir colorPalette. A ordem de
+// precedência é a de sempre: o que a página declara vence o tema, e o tema
+// vence o degradê derivado da cor de marca.
 
 /** "['#a','#b']" | "#a,#b" | ['#a','#b'] -> ['#a','#b'] (strings limpas). */
 export function parseColorList(v) {
@@ -136,7 +141,7 @@ export function areaLabelLayout(p) {
   return { moveOverlap: 'shiftY' };
 }
 
-export function buildAreaMapOption({ rows, attrs, palette, dark, mapName }) {
+export function buildAreaMapOption({ rows, attrs, palette, ramp, dark, mapName }) {
   const a = attrs || {};
   // O `fmt` da métrica chega até aqui: sem ele uma taxa saía crua ("0,539")
   // no rótulo, na legenda e no tooltip, em vez de "53,9%".
@@ -151,7 +156,9 @@ export function buildAreaMapOption({ rows, attrs, palette, dark, mapName }) {
   let max = vals.length ? Math.max(...vals) : 1;
   if (min === max) { min = Math.min(0, min); max = max || 1; }
   const custom = parseColorList(a.colorPalette);
-  const colors = custom.length >= 2 ? custom : [dark ? '#1d2330' : '#eef2f7', chartPaletteOf({ chartPalette: palette })[0]];
+  const doTema = Array.isArray(ramp) && ramp.length >= 2 ? ramp : null;
+  const colors =
+    custom.length >= 2 ? custom : doTema || [dark ? '#1d2330' : '#eef2f7', chartPaletteOf({ chartPalette: palette })[0]];
   const showLabels = a.showLabels === 'true' || a.showLabels === '' || a.showLabels === true;
   const textColor = dark ? '#e5e7eb' : '#1d1d20';
 

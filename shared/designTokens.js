@@ -15,7 +15,19 @@
 //                styles.css e NÃO são sobrescrevíveis: são o que faz todo
 //                projeto parecer o mesmo produto.
 
-/** Chaves de MARCA — o conjunto FECHADO que um projeto pode sobrescrever. */
+/**
+ * Chaves de MARCA — o conjunto FECHADO que um projeto pode sobrescrever.
+ *
+ * TRÊS famílias de cor, porque são três trabalhos diferentes e uma lista não
+ * serve às outras duas:
+ *   chartPalette*      CATEGÓRICA — marcas que precisam ser distinguidas entre
+ *                      si (séries, fatias). Cores contrastantes, ordem livre.
+ *   sequentialPalette* DEGRADÊ — magnitude de uma métrica só (coroplético).
+ *                      Ordem É o significado: do valor baixo ao alto.
+ *   kpiPalette*        TINGIMENTO de superfície — fundo de cartão de indicador.
+ *                      Tons claros, feitos para carregar texto por cima; nunca
+ *                      para codificar valor (quem codifica é o rótulo).
+ */
 export const BRAND_KEYS = [
   'mode',
   'background',
@@ -26,10 +38,20 @@ export const BRAND_KEYS = [
   'primaryDark',
   'chartPalette',
   'chartPaletteDark',
+  'sequentialPalette',
+  'sequentialPaletteDark',
+  'kpiPalette',
+  'kpiPaletteDark',
 ];
+
+/** Chaves de marca que são LISTA de cores, não cor única. */
+const LIST_KEYS = BRAND_KEYS.filter((k) => k.includes('Palette'));
 
 /** Contraste mínimo entre `primary` e a superfície do cartão (WCAG, elemento de UI). */
 export const MIN_CONTRAST = 3;
+
+/** Contraste mínimo para TEXTO — é o que o tingimento de KPI precisa sustentar. */
+export const MIN_TEXT_CONTRAST = 4.5;
 
 // Superfícies e primário têm par claro/escuro: uma cor só não serve aos dois
 // modos. Antes, o `card` claro valia também no escuro — o modo escuro
@@ -62,24 +84,50 @@ export const DEFAULT_THEME = {
  * biblioteca Vue/GovBR da CAPES) e a escura são os passos claros das MESMAS
  * famílias de cor do core, porque a clara cai para 1,1:1 sobre superfície
  * escura — legibilidade por modo, igual aos pares background/card/primary.
+ *
+ * painel-apc — o gov.br COMO O PAINEL APC o renderiza. É o govbr inteiro (as
+ * duas leituras já concordavam nas duas cores institucionais: #071d41 é o fundo
+ * escuro do core E a tarja do rodapé do painel; #1351b4 é o --interactive-light
+ * do core E o azul dos ícones do cabeçalho) mais as duas famílias que o core
+ * não tem e o painel usa: o degradê do coroplético e o tingimento dos cartões.
+ *
+ * Esses valores NÃO são tokens do core, e por isso vivem num preset próprio em
+ * vez de entrar no govbr: vieram de medição do relatório publicado (estilos
+ * computados dos visuais e amostragem de pixel do fundo, 23/09/2026), o degradê
+ * é APROXIMADO (o mapa é WebGL, não se lê do DOM) e seu passo do meio é o
+ * acento padrão do Power BI, não uma cor de governo. Quem quer o gov.br puro
+ * usa `govbr`; quem quer parecer o Painel APC usa `painel-apc`.
  */
+const GOVBR = {
+  background: '#f8f8f8', //     --gray-2
+  backgroundDark: '#071d41', //  --background-dark = --blue-warm-vivid-90
+  card: '#ffffff', //            --background-light = --pure-0
+  cardDark: '#0c326f', //        --blue-warm-vivid-80 (um passo acima do fundo)
+  primary: '#1351b4', //         --interactive-light = --blue-warm-vivid-70
+  primaryDark: '#c5d4eb', //     --interactive-dark = --blue-warm-20
+  chartPalette: ['#AD5000', '#217B00', '#0069D0', '#003A79', '#630087', '#595959'], // @psc/ui
+  chartPaletteDark: [
+    '#ff8c00', //                --orange-vivid-30
+    '#21c834', //                --green-cool-vivid-30
+    '#58b4ff', //                --blue-vivid-30
+    '#adcdff', //                --blue-warm-vivid-20
+    '#c39deb', //                --violet-vivid-30
+    '#adadad', //                --gray-30
+  ],
+};
+
 export const PRESETS = {
-  govbr: {
-    background: '#f8f8f8', //     --gray-2
-    backgroundDark: '#071d41', //  --background-dark = --blue-warm-vivid-90
-    card: '#ffffff', //            --background-light = --pure-0
-    cardDark: '#0c326f', //        --blue-warm-vivid-80 (um passo acima do fundo)
-    primary: '#1351b4', //         --interactive-light = --blue-warm-vivid-70
-    primaryDark: '#c5d4eb', //     --interactive-dark = --blue-warm-20
-    chartPalette: ['#AD5000', '#217B00', '#0069D0', '#003A79', '#630087', '#595959'], // @psc/ui
-    chartPaletteDark: [
-      '#ff8c00', //                --orange-vivid-30
-      '#21c834', //                --green-cool-vivid-30
-      '#58b4ff', //                --blue-vivid-30
-      '#adcdff', //                --blue-warm-vivid-20
-      '#c39deb', //                --violet-vivid-30
-      '#adadad', //                --gray-30
-    ],
+  govbr: GOVBR,
+  'painel-apc': {
+    ...GOVBR,
+    // Degradê do coroplético por UF, claro -> escuro. Sem par escuro: a fonte
+    // só tem tema claro, e a ponta baixa (quase branca) sumiria sobre o mapa
+    // escuro. No modo escuro o degradê volta a derivar do primário.
+    sequentialPalette: ['#f0f8ff', '#d6eaf8', '#abd1f2', '#118dff', '#2176b8', '#0c3b63'],
+    // Tingimento dos cinco cartões de indicador, na ordem do painel: APC (o
+    // único meio-tom, é a métrica-líder), Autores, IES, Estado, Journals.
+    // A cor IDENTIFICA o cartão; quem carrega o significado é sempre o rótulo.
+    kpiPalette: ['#bad4de', '#efefef', '#e2f1ff', '#fde7ba', '#fbe8f4'],
   },
 };
 
@@ -122,6 +170,10 @@ export function themeVars(theme) {
   const dark = t.mode === 'dark';
   const brand = dark ? t.primaryDark || DEFAULT_THEME.primaryDark : t.primary || DEFAULT_THEME.primary;
   const { bg, card } = surfacesOf(t);
+  // --kpi-1..N só existem quando o tema declara tingimento: um tema sem ele
+  // não ganha variável vazia, e a página que usa var(--kpi-1) sem tema que o
+  // declare cai no fallback que ela mesma escrever.
+  const kpi = Object.fromEntries(kpiPaletteOf(t).map((c, i) => [`--kpi-${i + 1}`, c]));
   return {
     // superfícies
     '--bg': bg,
@@ -142,6 +194,8 @@ export function themeVars(theme) {
     '--data': brand,
     '--primary': brand,
     '--amberink': dark ? '#e2b45a' : '#a4670a',
+    // tingimento de cartão de indicador (vazio quando o tema não declara)
+    ...kpi,
   };
 }
 
@@ -170,6 +224,42 @@ export function chartPaletteOf(theme) {
   const list = (p) => (Array.isArray(p) && p.length ? p : null);
   if (t.mode === 'dark') return list(t.chartPaletteDark) || list(t.chartPalette) || DEFAULT_THEME.chartPalette;
   return list(t.chartPalette) || DEFAULT_THEME.chartPalette;
+}
+
+/**
+ * Degradê do MODO corrente — a escala de magnitude do coroplético.
+ *
+ * Ao contrário da categórica, NÃO cai de um modo para o outro: um degradê
+ * claro→escuro tem a ponta baixa quase branca, e ela desapareceria sobre o
+ * mapa escuro (o inverso do que o degradê deve dizer). Sem rampa declarada
+ * para o modo, o degradê DERIVA: da superfície do mapa até a cor de marca —
+ * que é o que o areamap sempre fez, e continua fazendo sem tema que o declare.
+ */
+export function sequentialPaletteOf(theme) {
+  const t = { ...DEFAULT_THEME, ...(theme || {}) };
+  const dark = t.mode === 'dark';
+  // 2 cores é o mínimo para existir degradê; uma cor só não é escala.
+  const list = (p) => (Array.isArray(p) && p.length >= 2 ? p : null);
+  const declared = dark ? list(t.sequentialPaletteDark) : list(t.sequentialPalette);
+  return declared || [dark ? '#1d2330' : '#eef2f7', chartPaletteOf(t)[0]];
+}
+
+/**
+ * Tingimento de cartão de indicador do MODO corrente, já degradado.
+ *
+ * No escuro usa `kpiPaletteDark` quando o tema declara uma. Quando não declara,
+ * o cartão fica LISO (cor de superfície): repetir o pastel claro daria cartão
+ * branco sobre fundo escuro, e escurecer o pastel por conta própria seria
+ * inventar marca. Prefere-se perder o tingimento a inventar um.
+ */
+export function kpiPaletteOf(theme) {
+  const t = { ...DEFAULT_THEME, ...(theme || {}) };
+  const list = (p) => (Array.isArray(p) && p.length ? p : null);
+  const light = list(t.kpiPalette);
+  if (t.mode !== 'dark') return light || [];
+  const dark = list(t.kpiPaletteDark);
+  if (dark) return dark;
+  return light ? light.map(() => surfacesOf(t).card) : [];
 }
 
 /**
@@ -252,10 +342,15 @@ export function validateTheme(theme, prefix = 'theme') {
       errors.push({ path: p(k), message: 'cor hex (ex.: #2c8a4a)' });
     }
   }
-  for (const key of ['chartPalette', 'chartPaletteDark']) {
+  for (const key of LIST_KEYS) {
     if (theme[key] === undefined) continue;
-    if (!Array.isArray(theme[key]) || !theme[key].length) {
-      errors.push({ path: p(key), message: 'lista não-vazia de cores hex' });
+    // Um degradê precisa de duas pontas; uma cor só não é escala de magnitude.
+    const min = key.startsWith('sequential') ? 2 : 1;
+    if (!Array.isArray(theme[key]) || theme[key].length < min) {
+      errors.push({
+        path: p(key),
+        message: min > 1 ? `degradê precisa de ao menos ${min} cores hex (do valor baixo ao alto)` : 'lista não-vazia de cores hex',
+      });
     } else {
       theme[key].forEach((c, i) => {
         if (!HEX.test(String(c))) errors.push({ path: `${p(key)}[${i}]`, message: 'cor hex (ex.: #2c8a4a)' });
@@ -285,6 +380,26 @@ export function validateTheme(theme, prefix = 'theme') {
           message: `contraste ${r.toFixed(2)}:1 entre ${resolved[k]} e a superfície ${surface} — mínimo ${MIN_CONTRAST}:1 para ser legível`,
         });
       }
+    }
+
+    // Tingimento de KPI é SUPERFÍCIE: existe para carregar o número e o rótulo
+    // por cima. Um tom que não sustenta o texto não é decoração ruim, é cartão
+    // ilegível — e a fonte do padrão já traz um par no limite (rótulo cinza
+    // sobre o pastel da métrica-líder), justamente o que esta guarda pega.
+    for (const [key, mode] of [['kpiPalette', 'light'], ['kpiPaletteDark', 'dark']]) {
+      const tints = resolved[key];
+      if (!Array.isArray(tints)) continue;
+      const text = themeVars({ ...resolved, mode })['--text'];
+      tints.forEach((c, i) => {
+        if (!HEX.test(String(c))) return;
+        const r = contrastRatio(text, c);
+        if (r < MIN_TEXT_CONTRAST) {
+          errors.push({
+            path: theme[key] !== undefined ? `${p(key)}[${i}]` : p('preset'),
+            message: `contraste ${r.toFixed(2)}:1 entre o texto ${text} e o tingimento ${c} — mínimo ${MIN_TEXT_CONTRAST}:1 para o cartão ser legível`,
+          });
+        }
+      });
     }
   }
   return errors;

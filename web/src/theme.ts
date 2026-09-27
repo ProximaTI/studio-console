@@ -8,6 +8,10 @@ export type Theme = {
   primaryDark?: string;
   chartPalette: string[];
   chartPaletteDark?: string[]; // paleta de séries do modo escuro (ver chartPaletteOf)
+  sequentialPalette?: string[]; // degradê do coroplético (ver sequentialPaletteOf)
+  sequentialPaletteDark?: string[];
+  kpiPalette?: string[]; // tingimento de cartão de indicador (ver kpiPaletteOf)
+  kpiPaletteDark?: string[];
 };
 
 // Aplica os tokens de cor sobre as CSS variables. Os VALORES não moram aqui:

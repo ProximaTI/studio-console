@@ -240,6 +240,39 @@ function chartBody(tag, vb, qname) {
   return `<${tag} data={${qname}} x=${x} y=${y}${yFmt}${labels}${swapAttr(vb)}${refAttr(vb)}/>`;
 }
 
+// recusas de princípio ------------------------------------------------------
+// Formatos que o ECharts e/ou o Evidence oferecem e que este registro NÃO
+// porta — por decisão, não por falta de tempo. A ausência sozinha é ambígua
+// (pode ser "ainda não" ou "nunca"); esta lista torna a segunda categoria
+// visível, com o motivo, e travada por teste: ninguém adiciona um destes ids a
+// STYLES sem remover a entrada correspondente primeiro — reverter a decisão
+// vira um ato consciente, não um esquecimento.
+//
+// Só entra aqui o que é MAL LIDO por construção — geometria de percepção que
+// nenhum dado novo resolve. Formato que falta por AUSÊNCIA DE CASO DE USO
+// (funil, candlestick) não entra: essa é uma lacuna comum, não uma recusa, e
+// não deveria custar o mesmo checkpoint para preencher.
+export const NAO_PORTADOS = [
+  {
+    id: 'pie',
+    motivo:
+      'comparação por ângulo é a leitura mais fraca da percepção humana — a fonte (data-to-viz) documenta isso com medição, não preferência. Fallback: graph.bar.',
+  },
+  {
+    id: 'donut',
+    motivo: 'mesmo problema do pie — o arco ajuda pouco. Fallback: graph.bar ou graph.treemap.',
+  },
+  {
+    id: 'radar',
+    motivo:
+      'a ÁREA cresce com a ORDEM ARBITRÁRIA dos eixos: o mesmo dado parece maior ou menor dependendo de qual atributo entra primeiro — enganoso por construção, não por má execução. Fallback: nested (pequenos múltiplos) para comparar perfis.',
+  },
+  {
+    id: 'polar',
+    motivo: 'herda o problema de percepção do radar, sem a vantagem de comparação de perfil que justificaria o custo. Fallback: graph.bar.',
+  },
+];
+
 // registro ------------------------------------------------------------------
 
 export const STYLES = [

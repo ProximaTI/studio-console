@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { STYLES, styleById, compileViewblock, isTemporalDim } from '../shared/viewStyles.js';
+import { STYLES, styleById, compileViewblock, isTemporalDim, NAO_PORTADOS } from '../shared/viewStyles.js';
 import { findViewblocks } from '../shared/viewblock.js';
 import { lintEvidenceCompat } from '../shared/evidenceLint.js';
 import { parseCells, serializeCells } from '../web/src/notebook/cells';
@@ -313,5 +313,34 @@ describe('graph.bubble: fmt e label das métricas chegam aos eixos e ao tamanho'
       metrics: [{ column: 'ie', agg: 'max', alias: 'ie' }, { column: 'pct', agg: 'max', alias: 'pct' }],
     });
     expect(compile(cru)).toContain('<BubbleChart data={vb_test01} x=ie y=pct label=unidade/>');
+  });
+});
+
+describe('NAO_PORTADOS: recusas de princípio', () => {
+  // Ausência sozinha é ambígua ("ainda não" vs "nunca"). Esta suíte trava a
+  // segunda categoria: quem quiser reverter uma recusa tem de tirá-la daqui
+  // primeiro, conscientemente — nunca por esquecimento.
+  it('nenhum id de NAO_PORTADOS está registrado em STYLES', () => {
+    const recusados = NAO_PORTADOS.map((r) => r.id);
+    const registrados = STYLES.map((s) => s.id);
+    for (const id of recusados) {
+      expect(registrados, `${id} está recusado mas foi registrado em STYLES — remova de NAO_PORTADOS antes`).not.toContain(id);
+    }
+  });
+
+  it('toda recusa tem motivo não-vazio', () => {
+    for (const r of NAO_PORTADOS) {
+      expect(typeof r.motivo).toBe('string');
+      expect(r.motivo.length).toBeGreaterThan(20);
+    }
+  });
+
+  it('só entra aqui o que é mal lido por construção — funil e candlestick ficam de fora', () => {
+    // Funil/candlestick faltam por AUSÊNCIA DE CASO DE USO, não por defeito da
+    // marca: não deveriam pagar o mesmo checkpoint de reversão consciente.
+    const ids = NAO_PORTADOS.map((r) => r.id);
+    expect(ids).not.toContain('funnel');
+    expect(ids).not.toContain('candlestick');
+    expect(ids.sort()).toEqual(['donut', 'pie', 'polar', 'radar']);
   });
 });

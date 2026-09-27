@@ -17,7 +17,7 @@
 import { formatNumber, cmpCell } from './format.js';
 import { buildChartOption, buildRangeOption, buildTreemapOption, buildSankeyOption } from './chartOption.js';
 import { buildMapOption, buildAreaMapOption, buildPointMapOption } from './mapOption.js';
-import { chartPaletteOf } from './designTokens.js';
+import { chartPaletteOf, sequentialPaletteOf } from './designTokens.js';
 import { partitionBy, sharedDomain, isPanelChart, PANEL_HEIGHT } from './smallMultiples.js';
 
 export function createPublishRenderer(ctx) {
@@ -28,6 +28,9 @@ export function createPublishRenderer(ctx) {
   // quando o tema declara uma. Ler ctx.theme.chartPalette cru fazia o publicado
   // divergir do editor exatamente no ponto que este módulo existe para unificar.
   const palette = chartPaletteOf(ctx.theme);
+  // Mesmo seletor por modo, para o degradê do coroplético: o publicado usa o
+  // degradê do tema sem que a página precise repetir colorPalette.
+  const ramp = sequentialPaletteOf(ctx.theme);
   let mapsRegistered = false;
 
   const fmt = (v, f) => formatNumber(v, f, settingsLike);
@@ -562,7 +565,7 @@ export function createPublishRenderer(ctx) {
       return;
     }
     chart(app, a.height ? Number(a.height) : 480).setOption(
-      buildAreaMapOption({ rows: rows || [], attrs: a, palette, dark, mapName: 'brazil' }),
+      buildAreaMapOption({ rows: rows || [], attrs: a, palette, ramp, dark, mapName: 'brazil' }),
       true
     );
   }

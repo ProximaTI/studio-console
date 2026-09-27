@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { buildAreaMapOption, parseColorList, areaLabelLayout } from '../shared/mapOption.js';
-import { DEFAULT_THEME } from '../shared/designTokens.js';
+import { DEFAULT_THEME, PRESETS, resolveTheme, sequentialPaletteOf } from '../shared/designTokens.js';
 
 const rows = [
   { uf: 'SP', qtd: 5891 },
@@ -48,6 +48,31 @@ describe('buildAreaMapOption', () => {
     // a asserção é a REGRA (cai na paleta dos tokens), não um literal — assim
     // trocar a marca não quebra o teste.
     expect(o.visualMap.inRange.color).toEqual(['#1d2330', DEFAULT_THEME.chartPalette[0]]);
+  });
+
+  it('o degradê do TEMA vence o derivado — a página não precisa repetir colorPalette', () => {
+    const ramp = sequentialPaletteOf(resolveTheme(null, { preset: 'painel-apc' }));
+    expect(ramp.length).toBeGreaterThanOrEqual(2); // o preset declara um
+    const o = buildAreaMapOption({ rows, attrs, palette: ['#123456'], ramp, dark: false });
+    expect(o.visualMap.inRange.color).toEqual(ramp);
+  });
+
+  it('mas a página ainda vence o tema: colorPalette declarada manda', () => {
+    const ramp = sequentialPaletteOf(resolveTheme(null, { preset: 'painel-apc' }));
+    const o = buildAreaMapOption({ rows, attrs: { ...attrs, colorPalette: '#aaa,#bbb' }, ramp, dark: false });
+    expect(o.visualMap.inRange.color).toEqual(['#aaa', '#bbb']);
+  });
+
+  it('ramp com menos de 2 cores não é escala: cai no derivado de sempre', () => {
+    const o = buildAreaMapOption({ rows, attrs, palette: ['#123456'], ramp: ['#000000'], dark: false });
+    expect(o.visualMap.inRange.color).toEqual(['#eef2f7', '#123456']);
+  });
+
+  it('no escuro o preset não impõe a rampa clara — a ponta quase branca sumiria', () => {
+    // painel-apc só tem tema claro; no escuro o degradê volta a derivar da marca.
+    const t = resolveTheme(null, { preset: 'painel-apc', mode: 'dark' });
+    const o = buildAreaMapOption({ rows, attrs, ramp: sequentialPaletteOf(t), dark: true });
+    expect(o.visualMap.inRange.color).toEqual(['#1d2330', PRESETS['painel-apc'].chartPaletteDark[0]]);
   });
 
   it('showLabels=true imprime a quantidade formatada pt-BR dentro da área', () => {

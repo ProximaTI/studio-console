@@ -16,8 +16,10 @@ import {
   PRESET_NAMES,
   STRUCTURAL_KEYS,
   chartPaletteOf,
+  kpiPaletteOf,
   parseRootTokens,
   resolveTheme,
+  sequentialPaletteOf,
   themeVars,
 } from '../shared/designTokens.js';
 
@@ -77,6 +79,11 @@ export function buildFiles(cssText, { generatedAt } = {}) {
     return {
       brand: preset ? PRESETS[preset] : DEFAULT_THEME,
       series: { light: chartPaletteOf(light), dark: chartPaletteOf(dark) },
+      // As outras duas famílias saem RESOLVIDAS, como a de séries: quem recebe
+      // o pacote lê o degradê que o tema realmente usa (derivado do primário
+      // quando o preset não declara um) e o tingimento já degradado no escuro.
+      sequential: { light: sequentialPaletteOf(light), dark: sequentialPaletteOf(dark) },
+      kpi: { light: kpiPaletteOf(light), dark: kpiPaletteOf(dark) },
       vars: { light: themeVars(light), dark: themeVars(dark) },
     };
   };
@@ -125,6 +132,14 @@ export function buildPreview(stamp) {
   th{background:var(--bg);font-weight:600} td code{font-family:var(--mono);color:var(--muted)}
   .sw{display:flex;gap:6px;flex-wrap:wrap}
   .sw i{width:52px;height:52px;border-radius:var(--radius-ctrl);border:1px solid var(--line)}
+  .ramp{display:flex;border-radius:var(--radius-ctrl);overflow:hidden;border:1px solid var(--line)}
+  .ramp i{flex:1;height:44px}
+  .ramp+.sub{margin:6px 0 0;font-size:12px;display:flex;justify-content:space-between}
+  .kpis{display:flex;gap:12px;flex-wrap:wrap}
+  .kpi{flex:1;min-width:150px;padding:12px 14px;border-radius:var(--radius-card);
+       border:1px solid var(--line);color:var(--text)}
+  .kpi b{display:block;font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
+  .kpi span{font-size:12px}
   .pill{display:inline-block;padding:4px 12px;border-radius:var(--radius-pill);
         background:var(--primary);color:var(--card);font-size:12px;font-weight:600}
 </style>
@@ -145,7 +160,19 @@ export function buildPreview(stamp) {
   </div>
 
   <h2>Séries de gráfico</h2>
+  <p class="sub">Categórica: distinguir marcas entre si. A ordem não significa nada.</p>
   <div class="sw" id="series"></div>
+
+  <h2>Degradê do mapa</h2>
+  <p class="sub">Magnitude de uma métrica só. Aqui a ordem É o significado.</p>
+  <div class="ramp" id="ramp"></div>
+  <p class="sub"><span>valor baixo</span><span>valor alto</span></p>
+
+  <div id="kpi-secao">
+    <h2>Tingimento de indicador</h2>
+    <p class="sub">Superfície de cartão. Identifica a métrica; quem diz o quê é o rótulo.</p>
+    <div class="kpis" id="kpis"></div>
+  </div>
 
   <h2>Tabela</h2>
   <table><thead><tr><th>Token</th><th>Papel</th></tr></thead><tbody>
@@ -179,6 +206,18 @@ fetch('tokens.json').then(r => r.json()).then(t => {
     const entry = p === '(padrão)' ? t.default : t.presets[p];
     document.getElementById('series').innerHTML =
       entry.series[m].map((c) => '<i style="background:' + c + '" title="' + c + '"></i>').join('');
+    document.getElementById('ramp').innerHTML =
+      entry.sequential[m].map((c) => '<i style="background:' + c + '" title="' + c + '"></i>').join('');
+    // Sem tingimento declarado a seção inteira some, em vez de mostrar cartão
+    // vazio: nem todo tema tinge, e o padrão é não tingir.
+    const rotulos = ['Qtd. APC', 'Qtd. Autores', 'Qtd. IES', 'Qtd. Estado', 'Qtd. Journals'];
+    const numeros = ['18.997', '11.204', '302', '27', '2.431'];
+    const kpis = entry.kpi[m] || [];
+    document.getElementById('kpi-secao').style.display = kpis.length ? '' : 'none';
+    document.getElementById('kpis').innerHTML = kpis
+      .map((c, i) => '<div class="kpi" style="background:' + c + '" title="' + c + '">' +
+        '<b>' + (numeros[i] || '—') + '</b><span>' + (rotulos[i] || 'Indicador') + '</span></div>')
+      .join('');
   };
   draw(document.getElementById('presets'), presets, null, setPreset);
   draw(document.getElementById('modes'), ['light', 'dark'], null, setMode);
@@ -204,12 +243,34 @@ arquivos: mude a fonte e exporte de novo.
 
 ## Duas famílias de token
 
-- **Marca** (${BRAND_KEYS.join(', ')}): muda por cliente/projeto.
+- **Marca** — muda por cliente/projeto, e é o conjunto **fechado** que um
+  \`theme:\` pode declarar: ${BRAND_KEYS.join(', ')}.
 - **Estrutural** (${STRUCTURAL_KEYS.join(', ')}): raios, sombra, espaçamento e
   fontes. **Não** são sobrescrevíveis — é o que faz todo relatório parecer o
   mesmo produto mesmo com marcas diferentes.
 
 Presets disponíveis: ${PRESET_NAMES.map((n) => `\`${n}\``).join(', ')}.
+
+### Três famílias de cor, três trabalhos
+
+Uma lista de cores não serve às outras duas, e trocá-las entre si é erro de
+leitura, não de gosto:
+
+| Família | Para quê | O que a ordem diz |
+| --- | --- | --- |
+| \`chartPalette\`, \`chartPaletteDark\` | séries e fatias: marcas que precisam ser distinguidas **entre si** | nada — é ordem de entrada |
+| \`sequentialPalette\`, \`sequentialPaletteDark\` | degradê do coroplético: magnitude de **uma** métrica | tudo — do valor baixo ao alto |
+| \`kpiPalette\`, \`kpiPaletteDark\` | tingimento da **superfície** do cartão de indicador | amarra cada tom a uma métrica; a cor não codifica valor |
+
+O degradê **não** cai de um modo para o outro, ao contrário da categórica: a
+ponta baixa é quase branca e desapareceria sobre o mapa escuro. Sem degradê
+declarado para o modo, ele deriva da cor de marca — o que o coroplético sempre
+fez. O tingimento sem par escuro deixa o cartão **liso** no escuro: perder o
+tom é melhor que inventar um.
+
+Cada tom de \`kpiPalette\` vira \`--kpi-1\`, \`--kpi-2\`… na ordem declarada.
+Tema que não tinge não gera essas variáveis. E o tingimento é superfície de
+**texto**: o validador recusa um tom que não sustente 4,5:1 com \`--text\`.
 
 ## Reusar em OUTRO relatório desta console
 
@@ -235,18 +296,18 @@ O modo claro/escuro **não** vem do preset — segue o global em Settings.
 
 ### Logotipos
 
-Os SVGs são marca, não código: não versionam. Com acesso à rede interna:
+Os SVGs são marca, não código: **não versionam, e não estão neste repositório**
+— nem eles nem o script que os baixa, que depende da rede interna de quem os
+licencia. Nada aqui precisa deles: os tokens e o \`tokens.css\` funcionam
+sozinhos.
 
-\`\`\`bash
-node scripts/fetch_brand_assets.mjs
-\`\`\`
-
-Na página, \`<img>\` (e não \`![](…)\`) é o que permite tamanho — vários logos,
-o da CAPES entre eles, só têm \`viewBox\` e sem largura esticariam a coluna
-inteira:
+Para usar logotipos próprios, ponha os SVGs em \`web/public/brand/\` da sua
+instalação e referencie-os pela raiz. Na página, use \`<img>\` e **não**
+\`![](…)\`: é o que permite definir largura, e um SVG que só declara \`viewBox\`
+(o caso de muitos logotipos institucionais) esticaria a coluna inteira sem ela.
 
 \`\`\`html
-<img src="/brand/capes.svg" alt="CAPES" width=190/>
+<img src="/brand/minha-marca.svg" alt="Minha Marca" width=190/>
 \`\`\`
 
 No publish a imagem é embutida como data URI, então o 📦 continua sendo um
@@ -261,9 +322,10 @@ arquivo só e o ☁ não depende de caminho.
 
 Depois é só consumir as variáveis: \`background: var(--bg)\`,
 \`color: var(--text)\`, \`border-color: var(--line)\`, \`color: var(--primary)\`.
-As cores de série de gráfico estão em \`tokens.json\`
-(\`presets.govbr.series.light\` e \`.dark\`) — há paleta por modo porque a clara
-do gov.br cai para ~1,1:1 sobre superfície escura.
+As três famílias de cor saem **resolvidas por modo** em \`tokens.json\`, em
+\`presets.<nome>.series\`, \`.sequential\` e \`.kpi\`, cada uma com \`light\` e
+\`dark\` — há paleta por modo porque a de séries do gov.br cai para ~1,1:1 sobre
+superfície escura.
 
 ## Procedência dos valores
 
@@ -272,6 +334,25 @@ token de origem está no comentário de cada linha em \`shared/designTokens.js\`
 A paleta de séries clara vem da \`@psc/ui\` (biblioteca Vue/GovBR da CAPES),
 porque o core do GovBR-DS não define paleta de séries; a escura são os passos
 claros das mesmas famílias de cor do core.
+
+O preset \`painel-apc\` é o \`govbr\` inteiro mais o degradê do mapa e o
+tingimento dos cartões, medidos do **relatório publicado** Painel APC (estilos
+computados dos visuais e amostragem de pixel do fundo, em 23/09/2026). As duas
+leituras já concordavam nas duas cores institucionais: o azul escuro da tarja
+do rodapé e o azul dos ícones do cabeçalho são, hex a hex, o
+\`--background-dark\` e o \`--interactive-light\` do core.
+
+Esses valores **não** são tokens do core, e é por isso que moram num preset
+próprio em vez de entrar no \`govbr\`: o degradê é aproximado (o mapa é WebGL,
+não se lê do DOM) e o passo do meio dele é o acento padrão do Power BI, não uma
+cor de governo. Quem quer o gov.br puro usa \`govbr\`; quem quer parecer o
+Painel APC usa \`painel-apc\`.
+
+O que **não** veio junto: a tipografia (Segoe UI e DIN), o raio de 7px e as
+sombras dos painéis são **estruturais**, e o estrutural desta console não muda
+por marca — herdá-los faria todo relatório parecer um relatório do Power BI. Os
+pictogramas dos cartões e as marcas institucionais estão rasterizados no fundo
+do relatório de origem e não foram exportados: use os kits oficiais.
 `;
 }
 

@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
 import { usePreview } from '../markdown';
 import { buildAreaMapOption } from '../../../../shared/mapOption.js';
-import { chartPaletteOf } from '../../../../shared/designTokens.js';
+import { chartPaletteOf, sequentialPaletteOf } from '../../../../shared/designTokens.js';
 
 // Mapa coroplético (Evidence <AreaMap/>). Suporte focado no caso Brasil-UF:
 // usa o GeoJSON local (/maps/brazil.geo.json) em vez de baixar o geoJsonUrl,
@@ -19,6 +19,9 @@ export default function AreaMap(props: any) {
   const err = errors[props.data];
   const dark = settings?.theme?.mode === 'dark';
   const palette: string[] = chartPaletteOf(settings?.theme);
+  // Degradê do TEMA: o mesmo que o publicado usa, para o mapa não depender de
+  // cada página repetir colorPalette (a página, se declarar, continua vencendo).
+  const ramp: string[] = sequentialPaletteOf(settings?.theme);
 
   useEffect(() => {
     if (!el.current || err || rows.length === 0) return;
@@ -34,7 +37,7 @@ export default function AreaMap(props: any) {
       }
       if (disposed || !el.current) return;
       const chart = echarts.init(el.current);
-      chart.setOption(buildAreaMapOption({ rows, attrs: props, palette, dark, mapName }));
+      chart.setOption(buildAreaMapOption({ rows, attrs: props, palette, ramp, dark, mapName }));
       (el.current as any).__chart = chart;
     })();
 

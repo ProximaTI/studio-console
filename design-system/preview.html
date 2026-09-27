@@ -24,6 +24,14 @@
   th{background:var(--bg);font-weight:600} td code{font-family:var(--mono);color:var(--muted)}
   .sw{display:flex;gap:6px;flex-wrap:wrap}
   .sw i{width:52px;height:52px;border-radius:var(--radius-ctrl);border:1px solid var(--line)}
+  .ramp{display:flex;border-radius:var(--radius-ctrl);overflow:hidden;border:1px solid var(--line)}
+  .ramp i{flex:1;height:44px}
+  .ramp+.sub{margin:6px 0 0;font-size:12px;display:flex;justify-content:space-between}
+  .kpis{display:flex;gap:12px;flex-wrap:wrap}
+  .kpi{flex:1;min-width:150px;padding:12px 14px;border-radius:var(--radius-card);
+       border:1px solid var(--line);color:var(--text)}
+  .kpi b{display:block;font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
+  .kpi span{font-size:12px}
   .pill{display:inline-block;padding:4px 12px;border-radius:var(--radius-pill);
         background:var(--primary);color:var(--card);font-size:12px;font-weight:600}
 </style>
@@ -31,7 +39,7 @@
 <body>
 <div class="wrap">
   <h1>Design system — amostras</h1>
-  <p class="sub">Pacote gerado em 2026-09-17. Tudo abaixo usa só <code>tokens.css</code>.</p>
+  <p class="sub">Pacote gerado em 2026-09-23. Tudo abaixo usa só <code>tokens.css</code>.</p>
 
   <div class="bar" id="presets"></div>
   <div class="bar" id="modes"></div>
@@ -44,7 +52,19 @@
   </div>
 
   <h2>Séries de gráfico</h2>
+  <p class="sub">Categórica: distinguir marcas entre si. A ordem não significa nada.</p>
   <div class="sw" id="series"></div>
+
+  <h2>Degradê do mapa</h2>
+  <p class="sub">Magnitude de uma métrica só. Aqui a ordem É o significado.</p>
+  <div class="ramp" id="ramp"></div>
+  <p class="sub"><span>valor baixo</span><span>valor alto</span></p>
+
+  <div id="kpi-secao">
+    <h2>Tingimento de indicador</h2>
+    <p class="sub">Superfície de cartão. Identifica a métrica; quem diz o quê é o rótulo.</p>
+    <div class="kpis" id="kpis"></div>
+  </div>
 
   <h2>Tabela</h2>
   <table><thead><tr><th>Token</th><th>Papel</th></tr></thead><tbody>
@@ -78,6 +98,18 @@ fetch('tokens.json').then(r => r.json()).then(t => {
     const entry = p === '(padrão)' ? t.default : t.presets[p];
     document.getElementById('series').innerHTML =
       entry.series[m].map((c) => '<i style="background:' + c + '" title="' + c + '"></i>').join('');
+    document.getElementById('ramp').innerHTML =
+      entry.sequential[m].map((c) => '<i style="background:' + c + '" title="' + c + '"></i>').join('');
+    // Sem tingimento declarado a seção inteira some, em vez de mostrar cartão
+    // vazio: nem todo tema tinge, e o padrão é não tingir.
+    const rotulos = ['Qtd. APC', 'Qtd. Autores', 'Qtd. IES', 'Qtd. Estado', 'Qtd. Journals'];
+    const numeros = ['18.997', '11.204', '302', '27', '2.431'];
+    const kpis = entry.kpi[m] || [];
+    document.getElementById('kpi-secao').style.display = kpis.length ? '' : 'none';
+    document.getElementById('kpis').innerHTML = kpis
+      .map((c, i) => '<div class="kpi" style="background:' + c + '" title="' + c + '">' +
+        '<b>' + (numeros[i] || '—') + '</b><span>' + (rotulos[i] || 'Indicador') + '</span></div>')
+      .join('');
   };
   draw(document.getElementById('presets'), presets, null, setPreset);
   draw(document.getElementById('modes'), ['light', 'dark'], null, setMode);

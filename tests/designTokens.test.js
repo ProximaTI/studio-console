@@ -3,11 +3,14 @@ import {
   BRAND_KEYS,
   DEFAULT_THEME,
   MIN_CONTRAST,
+  MIN_TEXT_CONTRAST,
   PRESETS,
   PRESET_NAMES,
   chartPaletteOf,
   contrastRatio,
+  kpiPaletteOf,
   resolveTheme,
+  sequentialPaletteOf,
   themeVars,
   validateTheme,
 } from '../shared/designTokens.js';
@@ -150,5 +153,101 @@ describe('chartPaletteOf — paleta do MODO corrente', () => {
     const { cardDark, chartPalette, chartPaletteDark } = PRESETS.govbr;
     for (const c of chartPaletteDark) expect(contrastRatio(c, cardDark)).toBeGreaterThanOrEqual(4.5);
     expect(Math.min(...chartPalette.map((c) => contrastRatio(c, cardDark)))).toBeLessThan(3);
+  });
+});
+
+describe('sequentialPaletteOf — degradê, não paleta categórica', () => {
+  it('sem degradê declarado, deriva: superfície do mapa -> cor de marca', () => {
+    // Comportamento de sempre do coroplético, agora com nome e um lugar só.
+    expect(sequentialPaletteOf({})).toEqual(['#eef2f7', DEFAULT_THEME.chartPalette[0]]);
+    expect(sequentialPaletteOf({ mode: 'dark' })).toEqual(['#1d2330', DEFAULT_THEME.chartPalette[0]]);
+  });
+
+  it('uma cor só não é escala — volta ao derivado', () => {
+    expect(sequentialPaletteOf({ sequentialPalette: ['#000000'] })).toEqual([
+      '#eef2f7',
+      DEFAULT_THEME.chartPalette[0],
+    ]);
+  });
+
+  it('NÃO cai da rampa clara para o modo escuro (a ponta baixa sumiria)', () => {
+    // Diferença deliberada em relação à categórica, que cai.
+    const t = { mode: 'dark', sequentialPalette: ['#f0f8ff', '#0c3b63'] };
+    expect(sequentialPaletteOf(t)).toEqual(['#1d2330', DEFAULT_THEME.chartPalette[0]]);
+    expect(sequentialPaletteOf({ ...t, sequentialPaletteDark: ['#111111', '#99ccff'] })).toEqual([
+      '#111111',
+      '#99ccff',
+    ]);
+  });
+});
+
+describe('kpiPaletteOf — tingimento de superfície', () => {
+  const tintas = ['#bad4de', '#efefef'];
+
+  it('tema que não tinge não ganha tingimento nenhum', () => {
+    expect(kpiPaletteOf({})).toEqual([]);
+    expect(themeVars({})['--kpi-1']).toBeUndefined();
+  });
+
+  it('cada tom vira --kpi-N, na ordem declarada', () => {
+    const v = themeVars({ kpiPalette: tintas });
+    expect(v['--kpi-1']).toBe(tintas[0]);
+    expect(v['--kpi-2']).toBe(tintas[1]);
+    expect(v['--kpi-3']).toBeUndefined();
+  });
+
+  it('sem par escuro o cartão fica LISO — não se inventa um tom escuro', () => {
+    const t = { mode: 'dark', kpiPalette: tintas, cardDark: '#22262e' };
+    expect(kpiPaletteOf(t)).toEqual(['#22262e', '#22262e']);
+    // e o pastel claro NÃO vaza para o escuro (seria cartão branco no escuro)
+    expect(kpiPaletteOf(t)).not.toContain(tintas[0]);
+    expect(kpiPaletteOf({ ...t, kpiPaletteDark: ['#1a3a4a', '#2e2e2e'] })).toEqual(['#1a3a4a', '#2e2e2e']);
+  });
+});
+
+describe('guardas das famílias novas', () => {
+  it('degradê com uma cor só é erro, com o mínimo na mensagem', () => {
+    const e = validateTheme({ sequentialPalette: ['#000000'] });
+    expect(e).toHaveLength(1);
+    expect(e[0].path).toBe('theme.sequentialPalette');
+    expect(e[0].message).toMatch(/ao menos 2 cores/);
+  });
+
+  it('tingimento que não sustenta o texto é recusado, apontando o tom', () => {
+    // O tingimento é superfície de TEXTO: um tom escuro sob --text claro some.
+    const e = validateTheme({ kpiPalette: ['#bad4de', '#4a4a4a'] });
+    expect(e).toHaveLength(1);
+    expect(e[0].path).toBe('theme.kpiPalette[1]');
+    expect(e[0].message).toMatch(/mínimo 4.5:1/);
+    expect(contrastRatio(themeVars({})['--text'], '#4a4a4a')).toBeLessThan(MIN_TEXT_CONTRAST);
+  });
+
+  it('as cinco tintas do painel-apc sustentam o texto', () => {
+    const texto = themeVars({})['--text'];
+    for (const c of PRESETS['painel-apc'].kpiPalette) {
+      expect(contrastRatio(texto, c), c).toBeGreaterThanOrEqual(MIN_TEXT_CONTRAST);
+    }
+  });
+});
+
+describe('painel-apc — o govbr medido no relatório publicado', () => {
+  it('é o govbr INTEIRO: não diverge em nenhuma chave que o govbr declara', () => {
+    // O ponto do merge: as duas leituras concordavam nas cores institucionais,
+    // então o painel-apc ACRESCENTA famílias em vez de redefinir a marca.
+    for (const [k, v] of Object.entries(PRESETS.govbr)) {
+      expect(PRESETS['painel-apc'][k], k).toEqual(v);
+    }
+  });
+
+  it('acrescenta exatamente o que o core do gov.br não tem: degradê e tingimento', () => {
+    const novas = Object.keys(PRESETS['painel-apc']).filter((k) => !(k in PRESETS.govbr));
+    expect(novas.sort()).toEqual(['kpiPalette', 'sequentialPalette']);
+  });
+
+  it('as duas cores institucionais são as MESMAS nas duas leituras', () => {
+    // #071d41 = tarja do rodapé do painel = --background-dark do core;
+    // #1351b4 = ícones do cabeçalho      = --interactive-light do core.
+    expect(PRESETS['painel-apc'].backgroundDark).toBe(PRESETS.govbr.backgroundDark);
+    expect(PRESETS['painel-apc'].primary).toBe(PRESETS.govbr.primary);
   });
 });

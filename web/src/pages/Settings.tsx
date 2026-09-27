@@ -95,6 +95,10 @@ export default function Settings({ onSaved }: { onSaved: (s: any) => void }) {
         {([
           ['chartPalette', 'Paleta de gráficos (modo claro)'],
           ['chartPaletteDark', 'Paleta de gráficos (modo escuro)'],
+          ['sequentialPalette', 'Degradê do mapa, do valor baixo ao alto (modo claro)'],
+          ['sequentialPaletteDark', 'Degradê do mapa, do valor baixo ao alto (modo escuro)'],
+          ['kpiPalette', 'Tingimento dos cartões de indicador (modo claro)'],
+          ['kpiPaletteDark', 'Tingimento dos cartões de indicador (modo escuro)'],
         ] as const).map(([key, label]) =>
           Array.isArray(t[key]) && t[key].length ? (
             <div key={key} style={{ marginTop: 12 }}>
