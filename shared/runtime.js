@@ -1,7 +1,7 @@
 // Entry do bundle "StudioRuntime": o esbuild empacota isto como IIFE
 // (globalName: StudioRuntime) e o publish injeta nos apps publicados.
 // Assim, os apps usam EXATAMENTE o mesmo código do editor.
-export { renderInline, applyTemplates, resolveAttr, resolveAttrs } from './templating.js';
+export { renderInline, applyTemplates, resolveAttr, resolveAttrs, initialDropdownValue } from './templating.js';
 export { buildMapOption, buildAreaMapOption, parseColorList } from './mapOption.js';
 export { buildChartOption } from './chartOption.js';
 export { formatNumber } from './format.js';

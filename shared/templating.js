@@ -120,6 +120,27 @@ export function resolveAttr(v, ctx) {
   return v;
 }
 
+/**
+ * Valor INICIAL de um Dropdown — a mesma regra no editor (Dropdown.tsx) e no
+ * app publicado (runtime ☁), para os dois não divergirem.
+ *   multiple → SEMPRE array: defaultValue (array, ou escalar vira [dv]) filtrado
+ *              às opções existentes; sem default, [1ª opção]. Escalar aqui virava
+ *              `in (I2049…)` sem aspas — applyTemplates só quota lista se for Array.
+ *   simples  → defaultValue se for uma das opções; senão a 1ª opção.
+ * `options`: [{value, label}] (estáticas + da query, nessa ordem).
+ */
+export function initialDropdownValue({ multiple, defaultValue } = {}, options = []) {
+  const has = (v) => options.some((o) => String(o.value) === String(v));
+  const multi = multiple === true || String(multiple) === 'true';
+  if (multi) {
+    const dv = defaultValue;
+    const arr = Array.isArray(dv) ? dv : dv !== undefined && dv !== null && dv !== '' ? [dv] : options.length ? [options[0].value] : [];
+    return arr.filter(has);
+  }
+  if (defaultValue !== undefined && defaultValue !== null && has(defaultValue)) return defaultValue;
+  return options.length ? options[0].value : undefined;
+}
+
 /** Aplica resolveAttr a todos os atributos de um componente. */
 export function resolveAttrs(attrs, ctx) {
   const out = {};

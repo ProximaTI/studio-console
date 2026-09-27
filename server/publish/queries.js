@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { getConnection } from '../db.js';
 import { stripHtmlComments } from '../../shared/parser.js';
+import { resolveAttr } from '../../shared/templating.js';
 
 /** Blocos ```sql em qualquer nível (inclusive dentro de containers). */
 export function collectSqlBlocks(blocks) {
@@ -89,6 +90,10 @@ export function itemsFromBlocks(blocks) {
             value: b.attrs.value,
             label: b.attrs.label || b.attrs.value,
             title: b.attrs.title || '',
+            // Mesma semântica do editor (initialDropdownValue): multiple guarda
+            // ARRAY; defaultValue '["a","b"]' chega aqui como texto e vira array.
+            multiple: String(b.attrs.multiple) === 'true',
+            ...(b.attrs.defaultValue !== undefined ? { defaultValue: resolveAttr(b.attrs.defaultValue, {}) } : {}),
             staticOptions: (b.children || [])
               .filter((c) => c.type === 'component' && c.name === 'DropdownOption')
               .map((c) => ({ value: c.attrs.value ?? '', label: c.attrs.valueLabel ?? c.attrs.value ?? '' })),

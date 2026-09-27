@@ -364,13 +364,19 @@ async function init(){
     params[P.paramName] = (urlVal!=null && (values.length===0 || values.indexOf(urlVal)>=0)) ? urlVal : (values[0]||'');
     buildParamBar(values);
   }
-  // Inicializa inputs com a 1ª opção de cada dropdown (opções estáticas — ex.
-  // "Todos" — têm precedência sobre a 1ª linha da query de dados).
+  // Valor inicial de cada dropdown pela MESMA regra do editor
+  // (StudioRuntime.initialDropdownValue): opções estáticas (ex. "Todos") antes
+  // das da query; defaultValue quando é uma das opções; multiple SEMPRE array —
+  // escalar virava \`in (I2049…)\` sem aspas no IN (\${inputs.x}).
   function eachDropdown(items, cb){ (items||[]).forEach(function(it){ if(it.type==='dropdown') cb(it); if(it.children) eachDropdown(it.children, cb); }); }
   var dds=[]; eachDropdown(P.items, function(it){ dds.push(it); });
   for(const it of dds){
-    if(it.staticOptions && it.staticOptions.length){ inputs[it.name]=it.staticOptions[0].value; continue; }
-    try{ var opts = await runSql(subst(P.queries[it.dataQuery]||'')); if(opts.length) inputs[it.name]=opts[0][it.value]; }catch(e){}
+    var opts = (it.staticOptions||[]).slice();
+    if(it.dataQuery && P.queries[it.dataQuery]){
+      try{ (await runSql(subst(P.queries[it.dataQuery]))).forEach(function(r){ opts.push({ value: r[it.value], label: r[it.label] }); }); }catch(e){}
+    }
+    var v0 = StudioRuntime.initialDropdownValue(it, opts);
+    if(v0 !== undefined) inputs[it.name] = v0;
   }
   // Inputs livres (TextInput/Slider/DateRange): semeia os defaults antes do 1º run.
   function eachComp(items, cb){ (items||[]).forEach(function(it){ if(it.type==='component'){ cb(it); if(it.children) eachComp(it.children, cb); } }); }

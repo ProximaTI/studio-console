@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { usePreview } from '../markdown';
+import { initialDropdownValue } from '../../../../shared/templating.js';
 
 // Input reativo: define inputs[name].value, usado em ${inputs.name} nas queries.
 // Opções vêm de data={query} (value=/label=) OU de filhos <DropdownOption/>.
@@ -22,16 +23,9 @@ export default function Dropdown(props: any) {
   const options = [...optChildren, ...dataOptions];
 
   useEffect(() => {
+    // Regra ÚNICA com o app publicado (shared/templating.js).
     if (current === undefined && options.length > 0) {
-      const dv = props.defaultValue;
-      if (multiple) {
-        const arr = Array.isArray(dv) ? dv : dv !== undefined && dv !== '' ? [dv] : [options[0].value];
-        setInput(name, arr.filter((v: any) => options.some((o: any) => String(o.value) === String(v))));
-      } else if (dv !== undefined && options.some((o: any) => String(o.value) === String(dv))) {
-        setInput(name, dv);
-      } else {
-        setInput(name, options[0].value);
-      }
+      setInput(name, initialDropdownValue({ multiple, defaultValue: props.defaultValue }, options));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [options.length, current]);

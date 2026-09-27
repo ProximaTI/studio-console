@@ -136,8 +136,18 @@ export function createPublishRenderer(ctx) {
           sel.appendChild(op);
         });
         const cur = ctx.getInput(it.name);
-        sel.value = cur != null ? cur : opts[0] && opts[0].value;
-        sel.onchange = () => ctx.setInput(it.name, sel.value);
+        if (it.multiple) {
+          // Seleção múltipla grava ARRAY, como o editor (Dropdown.tsx): é o que
+          // faz applyTemplates gerar a lista quotada do IN (${inputs.x}).
+          sel.multiple = true;
+          sel.size = Math.min(6, opts.length);
+          const marcados = new Set((Array.isArray(cur) ? cur : cur != null ? [cur] : []).map(String));
+          for (const op of sel.options) op.selected = marcados.has(op.value);
+          sel.onchange = () => ctx.setInput(it.name, Array.from(sel.selectedOptions).map((o) => o.value));
+        } else {
+          sel.value = cur != null ? cur : opts[0] && opts[0].value;
+          sel.onchange = () => ctx.setInput(it.name, sel.value);
+        }
         wrap.appendChild(sel);
         container.appendChild(wrap);
         return;
