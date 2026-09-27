@@ -392,7 +392,10 @@ order by 2 desc
     let r = await jpost('/projects/' + project + '/publish', { path: active });
     // Política F3 §6: dimensão internal recusada no público — oferece o interno.
     if (r.error && String(r.error).includes('PÚBLICO recusado')) {
-      const interno = await confirmDialog(r.error + '\n\nPublicar como INTERNO (painel com auth)?', {
+      const interno = await confirmDialog(
+        r.error +
+          '\n\nPublicar como INTERNO? O pacote NÃO tem autenticação: só pode ir para um lugar de acesso restrito (nunca para o servidor público).',
+        {
         title: '🔒 Política de publish',
         confirmLabel: 'Publicar interno',
       });
@@ -425,7 +428,7 @@ order by 2 desc
           type: 'select',
           options: [
             { value: 'public', label: 'Público (recusa dimensões internas/pii)' },
-            { value: 'internal', label: 'Interno (painel com auth — libera dimensões internas)' },
+            { value: 'internal', label: 'Interno (libera dimensões internas — o pacote NÃO tem auth; não hospedar em público)' },
           ],
         },
       ],
@@ -442,11 +445,24 @@ order by 2 desc
     }
     const onde = r.dataBase && r.dataBase.startsWith('http') ? `URL remota (${r.dataBase})` : 'pasta ./data local';
     const extra = r.paramName ? `\nPágina parametrizada por "${r.paramName}" — use ?${r.paramName}=valor na URL.` : '';
+    // O que o PACOTE leva (não o que a tela mostra) — publish/prune.js.
+    const pacote = (r.escopo || [])
+      .filter((e: any) => Array.isArray(e.colunas))
+      .map(
+        (e: any) =>
+          `• ${e.source}: ${e.colunas.length} coluna(s), ${Number(e.linhas || 0).toLocaleString('pt-BR')} linha(s)` +
+          (e.removidas?.length ? `, ${e.removidas.length} removida(s)` : '') +
+          (e.where ? ` — where ${e.where}` : ''),
+      )
+      .join('\n');
+    const avisos = [...(r.avisos || []), ...(r.aviso ? [r.aviso] : [])];
     const msg =
       `App com Universal SQL gerado.\n\n` +
       `Fontes (Parquet): ${(r.sources || []).join(', ') || '—'}\n` +
-      `Dados lidos de: ${onde}${extra}\n\n` +
-      `Atualização mensal: basta substituir o(s) .parquet.\n\nAbrir agora?`;
+      `Dados lidos de: ${onde}${extra}\n` +
+      (pacote ? `\nO pacote leva:\n${pacote}\n` : '') +
+      (avisos.length ? `\nAvisos:\n${avisos.map((a: string) => '⚠ ' + a).join('\n')}\n` : '') +
+      `\nAtualização mensal: basta substituir o(s) .parquet.\n\nAbrir agora?`;
     if (await confirmDialog(msg, { title: '☁ Publish app', confirmLabel: 'Abrir' })) window.open(r.previewUrl, '_blank');
   }
 

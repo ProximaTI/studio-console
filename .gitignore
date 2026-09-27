@@ -61,6 +61,7 @@ build/
 /settings.json
 /connections.yaml
 /server/external-projects.json
+/server/.runtime/
 
 # 6) Dados, bancos e artefatos publicados.
 /data/
@@ -73,6 +74,7 @@ build/
 !/scripts/
 /scripts/*
 !/scripts/export_design_system.mjs
+!/scripts/audit_published.mjs
 *.duckdb
 *.parquet
 *.zip

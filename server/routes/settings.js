@@ -1,14 +1,14 @@
 import { Router } from 'express';
-import { readSettings, writeSettings } from '../settings.js';
+import { readSettings, publicSettings, applySettingsUpdate } from '../settings.js';
 
 const router = Router();
 
 router.get('/', (_req, res) => {
-  res.json(readSettings());
+  res.json(publicSettings(readSettings()));
 });
 
 router.put('/', (req, res) => {
-  res.json(writeSettings(req.body));
+  res.json(publicSettings(applySettingsUpdate(req.body)));
 });
 
 export default router;

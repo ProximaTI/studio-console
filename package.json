@@ -14,6 +14,8 @@
     "start": "npm run start -w server",
     "test": "vitest run",
     "test:watch": "vitest",
+    "serve:published": "node server/static.js",
+    "audit:published": "node scripts/audit_published.mjs",
     "design:export": "node scripts/export_design_system.mjs"
   },
   "devDependencies": {

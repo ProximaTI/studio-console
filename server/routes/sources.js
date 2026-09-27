@@ -20,7 +20,19 @@ const storage = multer.diskStorage({
   destination: (req, _file, cb) => cb(null, sourcesDir(req.params.project)),
   filename: (_req, file, cb) => cb(null, file.originalname.replace(/[^a-zA-Z0-9._-]/g, '_')),
 });
-const upload = multer({ storage });
+// Só formatos de DADO. Um .sql em sources/ é EXECUTADO no boot (db.js), então
+// aceitar qualquer extensão transformava upload em execução de código.
+export const UPLOAD_EXTS = ['.csv', '.parquet', '.json'];
+const upload = multer({
+  storage,
+  fileFilter: (_req, file, cb) => {
+    const ext = path.extname(file.originalname || '').toLowerCase();
+    if (UPLOAD_EXTS.includes(ext)) return cb(null, true);
+    const err = new Error(`Formato não aceito no upload: ${ext || '(sem extensão)'} — use ${UPLOAD_EXTS.join(', ')}`);
+    err.code = 'UPLOAD_REJECTED';
+    cb(err);
+  },
+});
 
 router.get('/', async (req, res) => {
   try {

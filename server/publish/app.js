@@ -10,11 +10,12 @@ import { paramNameFromFile, collectInputNames } from '../../shared/templating.js
 import { resolveQueries, detectSources, listSchemaViews, itemsFromBlocks, collectParamPages } from './queries.js';
 import { mountSourceUrls } from '../materialize.js';
 import { getRuntimeBundle, readVendors, collectMaps, copyDuckdbRuntime, escapeHtml, publishCss, inlineBrandAssets } from './assets.js';
-import { themeFor } from '../projectConfig.js';
+import { themeFor, readProjectConfig, validatePublish } from '../projectConfig.js';
 import { findViewblocks } from '../../shared/viewblock.js';
 import { dimExprOf } from '../../shared/semanticCompile.js';
 import { escapeSqlValue } from '../../shared/templating.js';
 import { loadCatalogs } from '../semantic.js';
+import { sqlAst, analyzeAst, internalColumns, planSource, quoteIdent } from './prune.js';
 
 /**
  * Predicado que recorta o FATO para um valor do parâmetro da página.
@@ -52,53 +53,122 @@ export function scopePredicate(projectName, mdSource, paramName, valor) {
   return null;
 }
 
-export async function buildPublishedApp(projectName, fileName, mdSource, settings, baseUrl, outDir, queriesDir, pagesDir, scopeValue) {
+export async function buildPublishedApp(
+  projectName,
+  fileName,
+  mdSource,
+  settings,
+  baseUrl,
+  outDir,
+  queriesDir,
+  pagesDir,
+  scopeValue,
+  { visibility = 'public' } = {},
+) {
   mdSource = inlineBrandAssets(mdSource); // /brand/x.svg -> data URI (ver assets.js)
   const blocks = parseBlocks(mdSource);
   const queries = resolveQueries(blocks, queriesDir);
 
-  // 1. Descobre fontes usadas e 2. exporta cada uma como Parquet.
-  const allSources = (await listSources(projectName)).map((s) => s.name);
+  // 1. Descobre fontes usadas.
+  const sourceList = await listSources(projectName);
+  const allSources = sourceList.map((s) => s.name);
   const used = detectSources(queries, allSources);
-  const dataDir = path.join(outDir, 'data');
-  fs.mkdirSync(dataDir, { recursive: true });
   const conn = await getConnection(projectName);
-  const exported = [];
-  const escopo = [];
   const paramFile = paramNameFromFile(fileName);
   const recorte = scopePredicate(projectName, mdSource, paramFile, scopeValue);
-  // Fontes de MOUNT (Fase Fontes §2): ☁ lê DIRETO da URL — sem cópia; o
+  // Fontes de MOUNT REMOTO (Fase Fontes §2): ☁ lê DIRETO da URL — sem cópia; o
   // Airflow sobrescreve o objeto e o app reflete no reload, sem republicar.
+  // Mount de pasta local é exportado como fonte comum: antes era lido por
+  // ../../mountfs/, rota da API — que não existe num servidor estático.
   const mountUrls = mountSourceUrls(projectName);
+  const schemaViews = (await listSchemaViews(projectName)).filter((sv) => {
+    const re = new RegExp('\\b' + sv.schema + '\\s*\\.\\s*"?' + sv.table + '"?\\b', 'i');
+    return queries.some((q) => re.test(q.sql));
+  });
+
+  // 2. O que cada fonte LEVA (publish/prune.js): colunas citadas pelas queries,
+  //    menos internas/pii (público) e exclusões; linhas pelo `where` declarado.
+  //    Tudo planejado ANTES de gravar: um erro de política não deixa pacote pela metade.
+  const analyses = [];
+  for (const q of queries) {
+    const ast = await sqlAst(conn, q.sql);
+    analyses.push(ast ? { query: q.name, sql: q.sql, ...analyzeAst(ast, [...allSources, ...schemaViews.map((s) => s.table)]) } : { query: q.name, sql: q.sql, unparsed: true });
+  }
+  const cites = (a, re) => re.test(a.sql);
+  const publishCfg = readProjectConfig(projectName).publish || {};
+  const cfgErros = validatePublish(publishCfg);
+  if (cfgErros.length) {
+    const e = new Error('project.yaml: ' + cfgErros.map((x) => `${x.path}: ${x.message}`).join('; '));
+    e.code = 'PUBLISH_POLICY';
+    throw e;
+  }
+  const internas = internalColumns(loadCatalogs(projectName));
+  const planos = [];
+  for (const name of used) {
+    if (mountUrls[name]?.remote) continue;
+    const re = new RegExp('\\b' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i');
+    const columns = (sourceList.find((s) => s.name === name)?.columns || []).map((c) => c.name);
+    const plano = planSource({
+      name,
+      columns,
+      analyses: analyses.filter((a) => cites(a, re)),
+      cfg: publishCfg[name] || {},
+      internal: internas.get(name.toLowerCase()) || new Map(),
+      visibility,
+    });
+    planos.push({ kind: 'source', name, file: name, from: `"${name}"`, plano });
+  }
+  for (const sv of schemaViews) {
+    const re = new RegExp('\\b' + sv.schema + '\\s*\\.\\s*"?' + sv.table + '"?\\b', 'i');
+    const d = await conn.runAndReadAll(`describe select * from "${sv.schema}"."${sv.table}"`);
+    const columns = d.getRowObjects().map((r) => String(r.column_name));
+    const key = sv.schema + '.' + sv.table;
+    const plano = planSource({ name: sv.table, columns, analyses: analyses.filter((a) => cites(a, re)), cfg: publishCfg[key] || {}, visibility });
+    planos.push({ kind: 'schema', name: key, sv, file: sv.schema + '__' + sv.table, from: `"${sv.schema}"."${sv.table}"`, plano });
+  }
+  const erros = planos.flatMap((p) => p.plano.errors);
+  if (erros.length) {
+    const e = new Error(erros.join('\n'));
+    e.code = 'PUBLISH_POLICY';
+    throw e;
+  }
+
+  // 3. Exporta cada fonte como Parquet, já podada e recortada.
+  const dataDir = path.join(outDir, 'data');
+  fs.rmSync(dataDir, { recursive: true, force: true }); // parquet de publish anterior não fica para trás
+  fs.mkdirSync(dataDir, { recursive: true });
+  const exported = [];
+  const escopo = [];
+  const avisos = [];
   const sourceUrls = {};
   for (const name of used) {
     const mu = mountUrls[name];
-    if (mu) {
-      // remoto: URL como está; pasta local: servida pela rota mountfs do projeto
-      sourceUrls[name] = mu.remote ? mu.url : `../../mountfs/${mu.mount}/${mu.file}`;
-      exported.push(name);
-      escopo.push({ source: name, recortado: false, motivo: 'mount — o arquivo é servido de fora do pacote' });
-      continue;
-    }
-    const target = path.join(dataDir, name + '.parquet');
-    // Só o FATO é recortável pelo parâmetro; tabelas de apoio saem inteiras e
-    // isso é DECLARADO no resultado (ver `escopo` no retorno).
-    const where = recorte && recorte.fato === name ? ` where ${recorte.sql}` : '';
-    await conn.run(`COPY (SELECT * FROM "${name}"${where}) TO '${sqlPath(target)}' (FORMAT parquet)`);
+    if (!mu?.remote) continue;
+    sourceUrls[name] = mu.url;
     exported.push(name);
-    escopo.push({ source: name, recortado: !!where });
+    escopo.push({ source: name, recortado: false, motivo: 'mount remoto — o arquivo é servido de fora do pacote, sem poda de colunas' });
+    avisos.push(`${name}: mount remoto — o pacote aponta para o arquivo inteiro em ${new URL(mu.url).origin}`);
   }
-  // Fontes qualificadas por schema (ex.: vendas.base — views de data/views/*.sql):
-  // exporta o RESULTADO da view como parquet e recria schema+view no DuckDB-WASM.
   const schemaSources = [];
-  for (const sv of await listSchemaViews(projectName)) {
-    const re = new RegExp('\\b' + sv.schema + '\\s*\\.\\s*"?' + sv.table + '"?\\b', 'i');
-    if (!queries.some((q) => re.test(q.sql))) continue;
-    const file = sv.schema + '__' + sv.table;
-    const target = path.join(dataDir, file + '.parquet');
-    await conn.run(`COPY (SELECT * FROM "${sv.schema}"."${sv.table}") TO '${sqlPath(target)}' (FORMAT parquet)`);
-    schemaSources.push({ schema: sv.schema, table: sv.table, file });
-    escopo.push({ source: sv.schema + '.' + sv.table, recortado: false, motivo: 'view de schema — recorte não implementado' });
+  for (const p of planos) {
+    const { plano } = p;
+    // Só o FATO é recortável pelo parâmetro da página; o `where` declarado vale para qualquer fonte.
+    const conds = [plano.where ? `(${plano.where})` : '', recorte && recorte.fato === p.name ? `(${recorte.sql})` : ''].filter(Boolean);
+    const where = conds.length ? ` where ${conds.join(' and ')}` : '';
+    const target = path.join(dataDir, p.file + '.parquet');
+    await conn.run(`COPY (SELECT ${plano.select.map(quoteIdent).join(', ')} FROM ${p.from}${where}) TO '${sqlPath(target)}' (FORMAT parquet)`);
+    const n = await conn.runAndReadAll(`select count(*) from read_parquet('${sqlPath(target)}')`);
+    if (p.kind === 'schema') schemaSources.push({ schema: p.sv.schema, table: p.sv.table, file: p.file });
+    else exported.push(p.name);
+    avisos.push(...plano.warnings);
+    escopo.push({
+      source: p.name,
+      recortado: !!(recorte && recorte.fato === p.name),
+      where: plano.where || null,
+      linhas: Number(n.getRows()[0][0]),
+      colunas: plano.kept,
+      removidas: plano.dropped,
+    });
   }
 
   // 3. Runtime DuckDB-WASM: UMA cópia por projeto, ao lado dos apps — ver
@@ -147,19 +217,41 @@ export async function buildPublishedApp(projectName, fileName, mdSource, setting
     // O que o PACOTE contém, não o que a tela mostra. `recortado: false` numa
     // página parametrizada significa que o artefato leva todos os valores.
     escopo,
+    avisos,
     scopeValue: scopeValue ?? null,
     scopeDim: recorte ? recorte.dim : null,
   };
+}
+
+/**
+ * Origens que o app precisa alcançar além da própria: baseUrl remoto (object
+ * storage) e mounts remotos. Vira a connect-src da CSP em <meta> do app.html —
+ * o servidor manda uma CSP larga (https:) e esta a estreita para o pacote.
+ */
+export function appConnectOrigins(payload) {
+  const urls = [payload.remote ? payload.dataBase : null, ...Object.values(payload.sourceUrls || {})];
+  const out = new Set();
+  for (const u of urls) {
+    try {
+      const o = new URL(String(u)).origin;
+      if (o && o !== 'null') out.add(o);
+    } catch {
+      /* relativo: coberto por 'self' */
+    }
+  }
+  return [...out].sort();
 }
 
 // `duckBase`: caminho do runtime DuckDB-WASM visto pelo app.html. Ele é
 // compartilhado entre os apps do projeto, então nunca é './duckdb'.
 function renderAppHtml(payload, echartsSrc, markdownitSrc, runtimeSrc, duckBase) {
   const data = JSON.stringify(payload).replace(/<\//g, '<\\/');
+  const connect = ["'self'", 'blob:', ...appConnectOrigins(payload)].join(' ');
   return `<!doctype html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8"/>
+<meta http-equiv="Content-Security-Policy" content="connect-src ${escapeHtml(connect)}; object-src 'none'; base-uri 'none'"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>${escapeHtml(payload.title)} — Studio Console</title>
 <style>${publishCss(payload.theme)}</style>

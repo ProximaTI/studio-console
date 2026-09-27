@@ -6,6 +6,7 @@ import { readSettings } from '../settings.js';
 import { buildPublishedHtml, buildPublishedApp } from '../publish.js';
 import { checkPublishPolicies } from '../semantic.js';
 import { resolveQueries, findLiveScan } from '../publish/queries.js';
+import { serveFile, securityHeaders } from '../publish/serve.js';
 import { parseBlocks } from '../../shared/parser.js';
 
 // Scan ao vivo (ATTACH/postgres_scan…) em página = erro de compilação (Fontes §1).
@@ -402,7 +403,7 @@ router.get('/:project/published/:file', (req, res) => {
   try {
     const f = safeJoin(path.join(publishedDir(req.params.project), req.params.project), req.params.file);
     if (!fs.existsSync(f)) return res.status(404).send('Não publicado ainda');
-    res.type('html').send(fs.readFileSync(f, 'utf8'));
+    res.set(securityHeaders()).type('html').send(fs.readFileSync(f, 'utf8'));
   } catch (e) {
     res.status(400).send(e.message);
   }
@@ -419,7 +420,8 @@ router.post('/:project/publish-app', async (req, res) => {
     const mdSource = fs.readFileSync(file, 'utf8');
 
     // Políticas (F3 §6): dimensão internal não sai em publish público.
-    const pol = checkPublishPolicies(project, mdSource, (req.body || {}).visibility || 'public');
+    const visibility = (req.body || {}).visibility === 'internal' ? 'internal' : 'public';
+    const pol = checkPublishPolicies(project, mdSource, visibility);
     if (!pol.ok) return res.status(400).json({ error: pol.error });
     const live = liveScanError(mdSource, projectDirs(project).queriesDir);
     if (live) return res.status(400).json({ error: live });
@@ -444,7 +446,7 @@ router.post('/:project/publish-app', async (req, res) => {
         const slug = String(v).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '').toLowerCase();
         const out = path.join(publishedDir(project), project, `${page}-${slug}-app`);
         fs.mkdirSync(out, { recursive: true });
-        const r = await buildPublishedApp(project, path.basename(rel), mdSource, settings, baseUrl, out, dirs.queriesDir, dirs.pagesDir, v);
+        const r = await buildPublishedApp(project, path.basename(rel), mdSource, settings, baseUrl, out, dirs.queriesDir, dirs.pagesDir, v, { visibility });
         apps.push({ valor: v, page: `${page}-${slug}`, dir: out, previewUrl: `/api/projects/${project}/app/${page}-${slug}/app.html`, ...r });
       }
       const semRecorte = apps.flatMap((a) => (a.escopo || []).filter((e) => !e.recortado).map((e) => e.source));
@@ -457,7 +459,7 @@ router.post('/:project/publish-app', async (req, res) => {
 
     const outDir = path.join(publishedDir(project), project, page + '-app');
     fs.mkdirSync(outDir, { recursive: true });
-    const info = await buildPublishedApp(project, path.basename(rel), mdSource, settings, baseUrl, outDir, dirs.queriesDir, dirs.pagesDir);
+    const info = await buildPublishedApp(project, path.basename(rel), mdSource, settings, baseUrl, outDir, dirs.queriesDir, dirs.pagesDir, undefined, { visibility });
 
     // Guarda: página parametrizada publicada SEM recorte leva todos os valores.
     const aviso =
@@ -466,14 +468,19 @@ router.post('/:project/publish-app', async (req, res) => {
         : undefined;
     res.json({ ok: true, dir: outDir, page, previewUrl: `/api/projects/${project}/app/${page}/app.html`, ...info, ...(aviso ? { aviso } : {}) });
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    res.status(e.code === 'PUBLISH_POLICY' ? 400 : 500).json({ error: e.message });
   }
 });
 
 // Serve os arquivos do pacote publicado (app.html, duckdb/*, data/*).
+// Página publicada: letras, dígitos, _ - e os colchetes de [param].
+const PAGE_NAME = /^[\w\-[\]]+$/;
+
 router.get('/:project/app/:page/*', (req, res) => {
   try {
-    let baseDir = path.join(publishedDir(req.params.project), req.params.project, req.params.page + '-app');
+    if (!PAGE_NAME.test(req.params.page)) return res.status(400).send('Caminho inválido');
+    const pubRoot = publishedDir(req.params.project);
+    let baseDir = safeJoin(pubRoot, path.join(req.params.project, req.params.page + '-app'));
     // Links entre apps publicados usam '../<página>-app/...' (forma do disco);
     // aceita também esse formato quando chega pela rota de preview.
     if (!fs.existsSync(baseDir) && req.params.page.endsWith('-app')) {
@@ -486,17 +493,9 @@ router.get('/:project/app/:page/*', (req, res) => {
     }
     const rest = req.params[0] || 'app.html';
     const f = safeJoin(baseDir, rest);
-    if (!fs.existsSync(f)) return res.status(404).send('Não encontrado');
-    const ext = path.extname(f).toLowerCase();
-    const types = {
-      '.html': 'text/html',
-      '.mjs': 'text/javascript',
-      '.js': 'text/javascript',
-      '.wasm': 'application/wasm',
-      '.parquet': 'application/octet-stream',
-    };
-    if (types[ext]) res.type(types[ext]);
-    res.send(fs.readFileSync(f));
+    // Mesmo código e mesmos cabeçalhos do servidor estático (publish/serve.js):
+    // a prévia se comporta como produção, inclusive CSP e Range.
+    if (!serveFile(req, res, f, securityHeaders())) res.status(404).send('Não encontrado');
   } catch (e) {
     res.status(400).send(e.message);
   }

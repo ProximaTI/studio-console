@@ -160,9 +160,26 @@ export default function Settings({ onSaved }: { onSaved: (s: any) => void }) {
             type="password"
             style={{ width: 320 }}
             value={ai.apiKey || ''}
-            placeholder={localProvider ? 'em branco para local' : 'sk-ant-… ou via ANTHROPIC_API_KEY'}
-            onChange={(e) => setAi('apiKey', e.target.value)}
+            placeholder={
+              ai.hasApiKey && !ai.clearApiKey
+                ? 'configurada — em branco mantém a atual'
+                : localProvider
+                  ? 'em branco para local'
+                  : 'sk-ant-… ou via ANTHROPIC_API_KEY'
+            }
+            onChange={(e) => setS({ ...s, ai: { ...ai, apiKey: e.target.value, clearApiKey: false } })}
           />
+          {ai.hasApiKey && !ai.clearApiKey && (
+            <button
+              type="button"
+              className="danger"
+              style={{ marginLeft: 8 }}
+              title="A chave nunca volta do servidor; remover apaga a gravada ao salvar."
+              onClick={() => setS({ ...s, ai: { ...ai, apiKey: '', clearApiKey: true } })}
+            >
+              remover chave
+            </button>
+          )}
         </label>
         {localProvider && (
           <label title="Envia reasoning_effort=low e enable_thinking=false; servidores/modelos que não suportam ignoram.">

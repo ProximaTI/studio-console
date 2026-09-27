@@ -31,8 +31,8 @@ npm install
 npm run dev
 ```
 
-- API + DuckDB: http://localhost:3001 · Console: http://localhost:5173
-- Requisito: **Node.js 18+**. Testes: `npm test` (Vitest, 163 testes dos módulos puros).
+- Console: http://localhost:5173 · API + DuckDB: http://127.0.0.1:3001 (só loopback, com token — ver [Segurança](#segurança))
+- Requisito: **Node.js 18+**. Testes: `npm test` (Vitest).
 
 Primeiro contato: abra o **Rascunho** (projeto scratch — explore à vontade e depois
 **Promova** para um projeto nomeado), suba um CSV em **Dados › Fontes** e clique em
@@ -314,6 +314,51 @@ dimensões `internal` do catálogo só compilam no interno.
   trocar o parquet (ou deixar o Airflow trocar no mount/bucket — apps de mount nem levam
   cópia). Base URL opcional aponta para object storage (CORS GET liberado). Servir por
   HTTP (workers do WASM não abrem via `file://`).
+
+**O que o pacote ☁ leva.** O navegador lê tudo que está no Parquet — filtro visual não
+é controle de acesso. Por isso cada fonte sai **só com as colunas que alguma query da
+página usa** (lidas da AST do DuckDB), sem as colunas de dimensões `internal`/`pii` em
+publish público, e a resposta do publish lista por fonte colunas, linhas e avisos
+(`select *` direto na fonte, coluna com cara de dado pessoal, fonte sem recorte).
+Recorte e exclusões por fonte no `project.yaml`:
+
+```yaml
+publish:
+  apc_base: { exclude: [autor_correspondente, orcid] }   # nunca sai; query que usar FALHA
+  siop_execucao: { where: "year(data_exercicio) >= 2023" } # linhas que podem ir
+```
+
+`npm run audit:published` inventaria os pacotes (linhas, colunas, MB, colunas
+suspeitas) e sai com código 1 se houver coluna com cara de dado pessoal — rode antes
+de copiar `published/` para o servidor.
+
+**Servidor público.** `npm run serve:published` serve só `published/` (Node puro: sem
+Express, sem DuckDB, sem `/api`), só GET/HEAD, com Range (o DuckDB-WASM lê Parquet em
+pedaços), ETag e cabeçalhos de segurança (CSP, `nosniff`, `frame-ancestors`). Variáveis:
+`STATIC_DIR`, `STATIC_PORT` (4173), `STATIC_HOST` (127.0.0.1), `STATIC_PREFIX` (ex.
+`/paineis`), `STATIC_FRAME_ANCESTORS` (`'self'`). Atrás de um proxy (ex.: o servidor do
+Joomla com `mod_proxy`/`proxy_pass` em `/paineis/`, só GET/HEAD), o proxy precisa
+repassar `Content-Type` e `Range`/206 e não sobrescrever a CSP. O console **não** vai
+para o servidor: publica-se aqui e copia-se a pasta.
+
+## Segurança
+
+O console é **de um usuário, nesta máquina** (auditoria de 27/09/2026):
+
+- A API escuta só em `127.0.0.1` (`API_HOST` muda — e avisa) e exige o cabeçalho
+  `x-studio-token`. O token é gerado a cada início em `server/.runtime/token` (fora do
+  git); o proxy do Vite o injeta, o navegador nunca o vê. Agentes locais que chamem a
+  API direto leem o mesmo arquivo. Só `/api/health` é aberto.
+- Sem CORS; `Host` fora do loopback é recusado (DNS rebinding); erros saem como JSON
+  curto, sem stack nem caminho.
+- `GET /api/settings` não devolve a chave de IA (`hasApiKey`); em branco no Settings
+  mantém a atual.
+- Upload de fonte aceita só `.csv`, `.parquet`, `.json` (`.sql` em `sources/` executa
+  no boot).
+- O Vite serve por `/@fs` só `web/`, `shared/` e `node_modules/`.
+- Multiusuário (colegas editando no servidor) exige autenticação real no lugar do
+  token ([server/auth.js](server/auth.js) é o ponto único de troca) e isolamento de SQL
+  por projeto — fora do escopo atual.
 
 ## Agente (IA) — local ou Anthropic
 

@@ -27,6 +27,36 @@ const SECRET_PATTERNS = [
   { re: /\b(password|senha|secret|api_?key|access_?key|token)\s*[:=]\s*['"]?[^\s'"]{6,}/i, label: 'credencial inline (password/secret/key/token)' },
 ];
 
+/**
+ * `publish:` — o que cada fonte pode levar para o pacote ☁ (publish/prune.js):
+ *   publish:
+ *     siop_execucao: { where: "year(data_exercicio) between 2023 and 2025" }
+ *     apc_base: { exclude: [orcid], allow: [autor_correspondente] }
+ * `where` é um predicado sobre a própria fonte; `;` é recusado (uma expressão só).
+ * `allow` DECLARA que uma coluna com cara de dado pessoal pode ir a público (decisão
+ * registrada, não omissão): cala o aviso do publish e a acusação do audit:published.
+ */
+export function validatePublish(pub) {
+  const errors = [];
+  if (pub === undefined || pub === null) return errors;
+  if (typeof pub !== 'object' || Array.isArray(pub)) return [{ path: 'publish', message: 'deve ser objeto (fonte -> {where, exclude})' }];
+  for (const [src, c] of Object.entries(pub)) {
+    const p = `publish.${src}`;
+    if (!c || typeof c !== 'object' || Array.isArray(c)) {
+      errors.push({ path: p, message: 'deve ser objeto com where e/ou exclude' });
+      continue;
+    }
+    for (const k of Object.keys(c)) if (!['where', 'exclude', 'allow'].includes(k)) errors.push({ path: `${p}.${k}`, message: 'chave desconhecida (use where, exclude, allow)' });
+    if (c.where !== undefined && (typeof c.where !== 'string' || !c.where.trim() || c.where.includes(';')))
+      errors.push({ path: `${p}.where`, message: 'predicado SQL (texto, sem ;)' });
+    for (const k of ['exclude', 'allow']) {
+      if (c[k] !== undefined && (!Array.isArray(c[k]) || c[k].some((x) => typeof x !== 'string' || !x.trim())))
+        errors.push({ path: `${p}.${k}`, message: 'lista de nomes de coluna' });
+    }
+  }
+  return errors;
+}
+
 /** Valida o TEXTO do project.yaml: estrutura + ausência de segredos. */
 export function validateProjectConfig(yamlText) {
   const errors = [];
@@ -63,6 +93,7 @@ export function validateProjectConfig(yamlText) {
   for (const [name, mt] of Object.entries(cfg.mounts || {})) {
     if (!mt?.base_url) errors.push({ path: `mounts.${name}.base_url`, message: 'obrigatório (http(s)://, s3:// ou caminho de rede)' });
   }
+  errors.push(...validatePublish(cfg.publish));
   // Design system por projeto: conjunto FECHADO de tokens de marca (shared/designTokens.js).
   errors.push(...validateTheme(cfg.theme));
   return { errors, config: cfg };

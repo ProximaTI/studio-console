@@ -44,6 +44,35 @@ export function readSettings() {
   return mergeWithDefaults(saved);
 }
 
+/**
+ * Settings para a UI: a chave de API NUNCA sai do servidor. A UI recebe só
+ * `hasApiKey` e manda a chave de volta apenas quando o usuário digita outra.
+ */
+export function publicSettings(s) {
+  const ai = { ...(s.ai || {}) };
+  ai.hasApiKey = Boolean(ai.apiKey);
+  ai.apiKey = '';
+  return { ...s, ai };
+}
+
+/**
+ * Aplica o que a UI mandou sobre o que está gravado: apiKey vazia preserva a
+ * atual; `clearApiKey: true` a remove. Os campos de controle não são gravados.
+ */
+export function mergeSettingsUpdate(incoming, current) {
+  const inAi = { ...((incoming || {}).ai || {}) };
+  const clear = inAi.clearApiKey === true;
+  delete inAi.clearApiKey;
+  delete inAi.hasApiKey;
+  if (clear) inAi.apiKey = '';
+  else if (!inAi.apiKey) inAi.apiKey = current?.ai?.apiKey || '';
+  return { ...incoming, ai: inAi };
+}
+
+export function applySettingsUpdate(incoming) {
+  return writeSettings(mergeSettingsUpdate(incoming, readSettings()));
+}
+
 export function writeSettings(s) {
   const merged = mergeWithDefaults(s);
   fs.writeFileSync(SETTINGS_FILE, JSON.stringify(merged, null, 2));

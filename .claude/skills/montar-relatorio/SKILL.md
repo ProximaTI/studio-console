@@ -181,10 +181,18 @@ de casar, senão o índice oferece links que a página não encontra.
 
 ## APIs (server na porta 3001, `node --watch` — reinicia sozinho ao editar)
 
+**Acesso:** a API escuta só em `127.0.0.1` e exige o cabeçalho `x-studio-token` — o
+valor está em `server/.runtime/token` (muda a cada reinício do server; leia de novo se
+vier 401). Pelo `http://localhost:5173/api/...` o proxy do Vite injeta sozinho.
+Ex.: `curl -H "x-studio-token: $(cat server/.runtime/token)" http://127.0.0.1:3001/api/projects`.
+
 - `GET/PUT /api/projects/:p/file {path, content}` — ler/gravar página (path relativo a pages/)
 - `POST /api/query {sql, project}` — rodar SQL no schema do projeto
 - `GET /api/projects/:p/sources | /semantic | /models` — fontes/catálogos/models
-- `POST /api/projects/:p/publish` (📦 snapshot HTML) e `/publish-app` (☁ Parquet+WASM), body aceita `{visibility: 'public'|'internal'}`
+- `POST /api/projects/:p/publish` (📦 snapshot HTML) e `/publish-app` (☁ Parquet+WASM), body aceita `{visibility: 'public'|'internal'}`.
+  O ☁ leva só as colunas que as queries usam; a resposta traz `escopo` (colunas/linhas
+  por fonte) e `avisos`. Exclusões/recorte por fonte: `publish:` no `project.yaml`.
+  Antes de mandar `published/` para o servidor: `npm run audit:published`.
 
 ## Relatório completo planejado (F5 — o caminho PREFERIDO para multipágina)
 
