@@ -363,11 +363,15 @@ async function init(){
   // Página parametrizada: lê ?<param>=valor da URL; default = 1º valor da query-convenção.
   else if(P.paramName){
     var urlVal = new URLSearchParams(location.search).get(P.paramName);
-    var values = [];
-    var cq = P.queries[P.paramName];
-    if(cq){ try{ var rows = await runSql(subst(cq)); values = rows.map(function(r){ return String(r[P.paramName] != null ? r[P.paramName] : Object.values(r)[0]); }); }catch(e){} }
+    var values = await paramValues();
     params[P.paramName] = (urlVal!=null && (values.length===0 || values.indexOf(urlVal)>=0)) ? urlVal : (values[0]||'');
     buildParamBar(values);
+    // Sem valor na URL e sem lista de onde tirar um: rodar as queries com ''
+    // dava ⟨?⟩ e erro de conversão. Diz o que falta em vez disso.
+    if(!params[P.paramName]){
+      document.getElementById('status').innerHTML = '<div class="err">Esta página mostra um(a) <b>' + P.paramName + '</b> por vez — abra-a a partir de um link que traga <code>?' + P.paramName + '=…</code>.</div>';
+      return;
+    }
   }
   // Valor inicial de cada dropdown pela MESMA regra do editor
   // (StudioRuntime.initialDropdownValue): opções estáticas (ex. "Todos") antes
@@ -398,12 +402,31 @@ async function init(){
   render();
 }
 
+// Valores possíveis do parâmetro da página, pela MESMA convenção do editor
+// (ProjectEditor): a query com o nome do parâmetro, se houver; senão a 1ª query
+// da página que não depende do próprio parâmetro e tem uma coluna com esse nome.
+async function paramValues(){
+  var p = P.paramName;
+  var nomes = [p].concat(Object.keys(P.queries).filter(function(n){ return n !== p; }));
+  for(const n of nomes){
+    var q = P.queries[n];
+    if(!q || /\\$\\{\\s*(\\$page\\.)?params\\./.test(q)) continue;
+    try{
+      var rows = await runSql('select distinct "' + p + '" as v from (' + subst(q).replace(/;\\s*$/, '') + ') t where "' + p + '" is not null order by 1');
+      if(rows.length) return rows.map(function(r){ return String(r.v); });
+    }catch(e){}
+  }
+  return [];
+}
+
 function buildParamBar(values){
   var bar = document.getElementById('parambar');
   if(!P.paramName){ bar.innerHTML=''; return; }
   bar.className='pb';
   bar.innerHTML='';
   bar.appendChild(el('b',null,P.paramName+': '));
+  // Sem lista de valores (a página só sabe o que veio na URL): rótulo, não um seletor vazio.
+  if(!values.length){ bar.appendChild(el('span',null,null)).textContent = params[P.paramName] || ''; return; }
   var sel=document.createElement('select');
   values.forEach(function(v){ var op=document.createElement('option'); op.value=v; op.textContent=v; sel.appendChild(op); });
   sel.value = params[P.paramName];
