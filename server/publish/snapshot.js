@@ -4,8 +4,8 @@
 // O render dos componentes é o MESMO do app dinâmico (StudioRuntime.createPublishRenderer).
 import { runQuery } from '../db.js';
 import { parseBlocks } from '../../shared/parser.js';
-import { applyTemplates, collectInputNames } from '../../shared/templating.js';
-import { resolveQueries, itemsFromBlocks, walkDropdowns, cartesian, comboKey, listPages } from './queries.js';
+import { applyTemplates, collectInputNames, initialDropdownValue } from '../../shared/templating.js';
+import { resolveQueries, itemsFromBlocks, walkDropdowns, cartesian, comboKey, listPages, collectParamPages } from './queries.js';
 import { pagePackages } from '../../shared/pageRoutes.js';
 import { getRuntimeBundle, readVendors, collectMaps, escapeHtml, publishCss, inlineBrandAssets } from './assets.js';
 import { themeFor } from '../projectConfig.js';
@@ -23,7 +23,8 @@ export async function buildPublishedHtml(projectName, fileName, mdSource, settin
 
   // Opções de cada dropdown: estáticas (<DropdownOption/>, ex. "Todos") vêm
   // PRIMEIRO e definem o default; depois as linhas da query de dados.
-  const inputDefs = []; // { name, options:[{value,label}] }
+  const inputDefs = []; // { name, options:[{value,label}], d }
+  const frozenDropdowns = {}; // múltiplos: nome -> seleção inicial (array)
   for (const d of dropdowns) {
     const options = (d.staticOptions || []).map((o) => ({ value: String(o.value), label: String(o.label) }));
     const q = queries.find((x) => x.name === d.dataQuery);
@@ -35,7 +36,11 @@ export async function buildPublishedHtml(projectName, fileName, mdSource, settin
         /* dropdown fica só com as estáticas */
       }
     }
-    inputDefs.push({ name: d.name, options });
+    // Múltiplo: os subconjuntos não se pré-computam (2^n combinações) — congela
+    // na seleção inicial, como os inputs livres, e entra nas queries como LISTA
+    // (applyTemplates quota o IN). Tratá-lo como escolha única gerava `in (I…)`.
+    if (d.multiple) frozenDropdowns[d.name] = initialDropdownValue(d, options);
+    else inputDefs.push({ name: d.name, options, d });
   }
   const inputNames = inputDefs.map((d) => d.name);
 
@@ -55,6 +60,7 @@ export async function buildPublishedHtml(projectName, fileName, mdSource, settin
     }
   };
   walkFree(items);
+  Object.assign(freeDefaults, frozenDropdowns);
   const freeNames = Object.keys(freeDefaults);
 
   // Queries estáticas (sem inputs de combinação) rodam uma vez com os defaults
@@ -87,7 +93,8 @@ export async function buildPublishedHtml(projectName, fileName, mdSource, settin
 
   const dynamicData = {}; // comboKey -> { queryName: rows }
   const defaults = {};
-  inputDefs.forEach((d) => (defaults[d.name] = d.options[0]?.value ?? ''));
+  // Valor inicial pela MESMA regra do editor e do ☁ (defaultValue quando é opção).
+  inputDefs.forEach((x) => (defaults[x.name] = initialDropdownValue(x.d, x.options) ?? ''));
 
   for (const combo of combos) {
     const inputs = {};
@@ -121,6 +128,9 @@ export async function buildPublishedHtml(projectName, fileName, mdSource, settin
     generatedAt: new Date().toISOString(),
     // Rota → nome do .html irmão (shared/pageRoutes.js), o mesmo que o publish grava.
     pagePackages: pagePackages(listPages(pagesDir)),
+    // Pastas parametrizadas: o 📦 não as tem, e os links para elas se desligam
+    // (resolveInternalHref) em vez de apontar para um .html inexistente.
+    paramPages: collectParamPages(pagesDir),
     // Transparência de frescor (Fase Fontes §5): "dados de quando" no artefato.
     dataAsOf: (() => {
       try {
@@ -184,7 +194,7 @@ const R = StudioRuntime.createPublishRenderer({
   theme: P.theme,
   decimalSeparator: P.decimalSeparator,
   maps: P.maps,
-  paramPages: {},
+  paramPages: P.paramPages || {},
   pagePackages: P.pagePackages,
   hrefMode: 'snapshot',
   staticInputs: true,

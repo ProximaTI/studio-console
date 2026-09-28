@@ -21,6 +21,41 @@ import { buildMapOption, buildAreaMapOption, buildPointMapOption } from './mapOp
 import { chartPaletteOf, sequentialPaletteOf } from './designTokens.js';
 import { partitionBy, sharedDomain, isPanelChart, PANEL_HEIGHT } from './smallMultiples.js';
 
+/**
+ * Link interno ('/', '/listagem/', '/ies/USP/') → irmão publicado, ou null
+ * quando o artefato não tem destino (o chamador desliga o link em vez de
+ * apontar para 404).
+ *   ctx.hrefMode     'app' (../x-app/app.html) | 'snapshot' (./x.html)
+ *   ctx.pagePackages { rota: pacote } das páginas comuns (shared/pageRoutes.js)
+ *   ctx.paramPages   { pasta: param } das parametrizadas — o 📦 não as tem
+ */
+export function resolveInternalHref(h, ctx = {}) {
+  if (!h || h[0] !== '/' || h.slice(0, 2) === '//') return null;
+  const clean = h.replace(/[?#].*$/, '').replace(/^\/+|\/+$/g, '');
+  const m = h.match(/[?#].*$/);
+  const suffix = m ? m[0] : '';
+  const snapshot = ctx.hrefMode === 'snapshot';
+  const page = (p) => (snapshot ? './' + p + '.html' : '../' + p + '-app/app.html');
+  // Tabela rota → pacote do publish: '/comparativo/' → comparativo, '/a/b/' →
+  // a-b, '/prof/' → prof-index quando existe [prof].md na pasta.
+  const tabela = ctx.pagePackages;
+  if (tabela && Object.prototype.hasOwnProperty.call(tabela, clean)) return page(tabela[clean]) + suffix;
+  const params = ctx.paramPages || {};
+  // Pasta PARAMETRIZADA sem valor ('/instituicao/'): o ☁ abre no valor padrão;
+  // o 📦 não tem a página — sem destino, em vez de './instituicao.html' em 404.
+  if (clean && params[clean]) return snapshot ? null : '../' + clean.split('/').pop() + '-app/app.html' + suffix;
+  if (!clean) return page('index') + suffix;
+  const segs = clean.split('/');
+  if (segs.length === 1) return page(segs[0]) + suffix;
+  const dir = segs.slice(0, -1).join('/');
+  const value = segs[segs.length - 1];
+  const pname = params[dir];
+  if (pname && !snapshot) {
+    return '../' + dir.split('/').pop() + '-app/app.html?' + pname + '=' + encodeURIComponent(decodeURIComponent(value));
+  }
+  return null; // sem mapeamento: o chamador desliga o link
+}
+
 export function createPublishRenderer(ctx) {
   const charts = [];
   const settingsLike = { organization: { decimalSeparator: ctx.decimalSeparator || ',' } };
@@ -67,28 +102,7 @@ export function createPublishRenderer(ctx) {
     mapsRegistered = true;
   }
 
-  // Converte link interno ('/', '/listagem/', '/ies/USP/') para o irmão publicado.
-  function appHref(h) {
-    if (!h || h[0] !== '/' || h.slice(0, 2) === '//') return null;
-    const clean = h.replace(/[?#].*$/, '').replace(/^\/+|\/+$/g, '');
-    const m = h.match(/[?#].*$/);
-    const suffix = m ? m[0] : '';
-    const page = (p) => (ctx.hrefMode === 'snapshot' ? './' + p + '.html' : '../' + p + '-app/app.html');
-    // Tabela rota → pacote do publish (shared/pageRoutes.js): '/comparativo/'
-    // → comparativo, '/a/b/' → a-b, '/prof/' → prof-index quando existe [prof].md.
-    const tabela = ctx.pagePackages;
-    if (tabela && Object.prototype.hasOwnProperty.call(tabela, clean)) return page(tabela[clean]) + suffix;
-    if (!clean) return page('index') + suffix;
-    const segs = clean.split('/');
-    if (segs.length === 1) return page(segs[0]) + suffix;
-    const dir = segs.slice(0, -1).join('/');
-    const value = segs[segs.length - 1];
-    const pname = ctx.paramPages && ctx.paramPages[dir];
-    if (pname && ctx.hrefMode !== 'snapshot') {
-      return '../' + dir.split('/').pop() + '-app/app.html?' + pname + '=' + encodeURIComponent(decodeURIComponent(value));
-    }
-    return null; // sem mapeamento: deixa o href original
-  }
+  const appHref = (h) => resolveInternalHref(h, ctx);
 
   function rewriteLinks(scope) {
     scope.querySelectorAll('a').forEach((an) => {
@@ -148,6 +162,11 @@ export function createPublishRenderer(ctx) {
           sel.size = Math.min(6, opts.length);
           const marcados = new Set((Array.isArray(cur) ? cur : cur != null ? [cur] : []).map(String));
           for (const op of sel.options) op.selected = marcados.has(op.value);
+          if (ctx.staticInputs) {
+            // 📦: subconjuntos não se pré-computam — congela na seleção inicial.
+            sel.disabled = true;
+            sel.title = 'Snapshot 📦 congela esta seleção no valor padrão — use o ☁ Publish app para interação';
+          }
           sel.onchange = () => ctx.setInput(it.name, Array.from(sel.selectedOptions).map((o) => o.value));
         } else {
           sel.value = cur != null ? cur : opts[0] && opts[0].value;
@@ -313,9 +332,14 @@ export function createPublishRenderer(ctx) {
     if (name === 'LinkButton') {
       // F5.1 (M34): rota interna passa por appHref (antes: _blank incondicional
       // para o href cru — 404 garantido nos publishes).
-      const lb = el('a', 'linkbtn');
       const url = a.url || '#';
-      lb.href = appHref(url) || url;
+      const rh = appHref(url);
+      // Rota interna sem destino NESTE artefato (📦 → parametrizada): botão
+      // desligado, como os links do texto — nunca um href para 404.
+      const semDestino = !rh && url[0] === '/' && url.slice(0, 2) !== '//';
+      const lb = el(semDestino ? 'span' : 'a', semDestino ? 'linkbtn link-off' : 'linkbtn');
+      if (semDestino) lb.title = 'disponível no app ☁ (página parametrizada)';
+      else lb.href = rh || url;
       if (/^https?:\/\//i.test(url)) {
         lb.target = '_blank';
         lb.rel = 'noreferrer';
