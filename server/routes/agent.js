@@ -149,6 +149,20 @@ export function planSchema({ allowParameter = true, allowReference = true, catal
       return v;
     }),
   };
+
+  // Página por valor: duas variantes. `[nome].md` EXIGE parameter; nome comum não
+  // o tem. O bonsai-27b gerou `[regiao].md` sem parameter (29/09/2026). Que o
+  // nome entre colchetes case com parameter.name é relação entre campos — fica
+  // com o validador.
+  if (page.properties.parameter) {
+    const comParam = JSON.parse(JSON.stringify(page));
+    comParam.properties.path.pattern = '^\\[[a-z_][a-z0-9_]*\\]\\.md$';
+    comParam.required = [...new Set([...comParam.required, 'parameter'])];
+    const semParam = JSON.parse(JSON.stringify(page));
+    semParam.properties.path.pattern = '^[a-z0-9_]+\\.md$';
+    delete semParam.properties.parameter;
+    s.properties.pages.items = { anyOf: [comParam, semParam] };
+  }
   return s;
 }
 

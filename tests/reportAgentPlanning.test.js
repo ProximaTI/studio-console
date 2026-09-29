@@ -22,21 +22,34 @@ describe('wantsPagePerValue', () => {
   });
 });
 
+// Com página por valor, `pages.items` é anyOf [com parameter, sem parameter];
+// os blocos são os mesmos nas duas variantes.
+const paginas = (s) => s.properties.pages.items.anyOf || [s.properties.pages.items];
+const pagina = (s) => paginas(s)[0];
+
 describe('planSchema (gramática do agente)', () => {
   it('limita páginas e blocos, e fixa o formato do path', () => {
     const s = planSchema();
     expect(s.properties.pages.maxItems).toBe(AGENT_LIMITS.pages);
-    const page = s.properties.pages.items;
-    expect(page.properties.blocks.maxItems).toBe(AGENT_LIMITS.blocksPerPage);
-    const re = new RegExp(page.properties.path.pattern);
-    expect(re.test('[regiao].md')).toBe(true);
-    expect(re.test('visao_geral.md')).toBe(true);
-    expect(re.test('regioes/[regiao].md')).toBe(false);
+    expect(pagina(s).properties.blocks.maxItems).toBe(AGENT_LIMITS.blocksPerPage);
+    const aceita = (p) => paginas(s).some((v) => new RegExp(v.properties.path.pattern).test(p));
+    expect(aceita('[regiao].md')).toBe(true);
+    expect(aceita('visao_geral.md')).toBe(true);
+    expect(aceita('regioes/[regiao].md')).toBe(false);
+  });
+  it('página por valor: [nome].md EXIGE parameter; nome comum não o tem (o bonsai gerava [regiao].md sem parameter)', () => {
+    const [comParam, semParam] = paginas(planSchema());
+    expect(new RegExp(comParam.properties.path.pattern).test('[regiao].md')).toBe(true);
+    expect(new RegExp(comParam.properties.path.pattern).test('regiao.md')).toBe(false);
+    expect(comParam.required).toContain('parameter');
+    expect(new RegExp(semParam.properties.path.pattern).test('[regiao].md')).toBe(false);
+    expect(semParam.properties.parameter).toBeUndefined();
   });
   it('sem pedido de página por valor, parameter nem existe', () => {
-    const page = planSchema({ allowParameter: false }).properties.pages.items;
-    expect(page.properties.parameter).toBeUndefined();
-    expect(new RegExp(page.properties.path.pattern).test('[regiao].md')).toBe(false);
+    const s = planSchema({ allowParameter: false });
+    expect(paginas(s)).toHaveLength(1);
+    expect(pagina(s).properties.parameter).toBeUndefined();
+    expect(new RegExp(pagina(s).properties.path.pattern).test('[regiao].md')).toBe(false);
   });
   it('não muta o schema do contrato', () => {
     planSchema({ allowParameter: false });
@@ -47,7 +60,7 @@ describe('planSchema (gramática do agente)', () => {
 
 describe('planSchema com catálogo: nomes como lista fechada', () => {
   const s = planSchema({ catalog: CAT, visibility: 'public' });
-  const variantes = s.properties.pages.items.properties.blocks.items.anyOf;
+  const variantes = pagina(s).properties.blocks.items.anyOf;
   const bloco = variantes[0];
   const refDe = (v) => v.anyOf || [v];
 
@@ -79,12 +92,12 @@ describe('planSchema com catálogo: nomes como lista fechada', () => {
   });
 
   it('relatório público: dimensão interna/pii nem aparece; interno: aparece', () => {
-    const nomes = (sc) => refDe(sc.properties.pages.items.properties.blocks.items.anyOf[0].properties.dims.items).flatMap((v) => v.properties.dim.enum || [v.properties.dim.const]);
+    const nomes = (sc) => refDe(pagina(sc).properties.blocks.items.anyOf[0].properties.dims.items).flatMap((v) => v.properties.dim.enum || [v.properties.dim.const]);
     expect(nomes(s)).not.toContain('cliente');
     expect(nomes(planSchema({ catalog: CAT, visibility: 'internal' }))).toContain('cliente');
   });
 
-  const varDe = (sc, estilo) => sc.properties.pages.items.properties.blocks.items.anyOf.find((v) => v.properties.style.enum.includes(estilo));
+  const varDe = (sc, estilo) => pagina(sc).properties.blocks.items.anyOf.find((v) => v.properties.style.enum.includes(estilo));
 
   it('cada estilo só com as opções dele (o 30b punha table e reference num mapa)', () => {
     const mapa = varDe(s, 'areamap');
