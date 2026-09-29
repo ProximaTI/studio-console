@@ -117,7 +117,14 @@ export function validateReportPlan(plan, { catalog, factColumns } = {}) {
     if (pg.parameter !== undefined) {
       if (!pg.parameter || !IDENT.test(String(pg.parameter.name || ''))) err(pp + '.parameter.name', 'identificador obrigatório');
       checkDimRef(pp + '.parameter', { dim: pg.parameter?.dimension, level: pg.parameter?.level }, 'parameter.level', true);
-      if (!mParam) err(pp + '.path', 'página parametrizada deve chamar [nome].md');
+      // A mensagem volta ao agente na 2ª tentativa: diz as DUAS saídas, porque o
+      // erro mais comum não é o nome do arquivo, é ter posto parameter num
+      // agrupamento ("citações por região" não é uma página por região).
+      if (!mParam)
+        err(
+          pp + '.path',
+          `página parametrizada deve chamar [${pg.parameter?.name || 'nome'}].md — ou, se o pedido não é UMA PÁGINA POR VALOR, remova parameter e ponha a dimensão em dims do bloco`,
+        );
       else if (pg.parameter?.name && mParam[1] !== pg.parameter.name)
         err(pp + '.path', `o arquivo [${mParam[1]}].md deve casar com parameter.name "${pg.parameter.name}" — o runtime lê params.${mParam[1]}`);
     }
@@ -293,7 +300,12 @@ export function validateReportPlan(plan, { catalog, factColumns } = {}) {
       };
       try {
         const r = style.requires(vbDraft, source);
-        if (!r.ok) err(bp + '.style', `seleção não atende "${style.label}": ${r.reason || 'contrato não atendido'}`);
+        if (!r.ok)
+          err(
+            bp + '.style',
+            `seleção não atende "${style.label}": ${r.reason || 'contrato não atendido'}` +
+              (style.fallback ? ` — com esta seleção, use "${style.fallback}"` : ''),
+          );
       } catch (e) {
         err(bp + '.style', `estilo "${b.style}": ${e.message}`);
       }

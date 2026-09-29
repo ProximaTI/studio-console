@@ -33,6 +33,17 @@ export function isTemporalDim(dim, source) {
 const need = (ok, reason) => (ok ? { ok: true } : { ok: false, reason });
 
 /**
+ * A coluna serve de chave para os mapas por UF (areamap/pointmap)? Critério
+ * ÚNICO: o validador do estilo e o resumo de catálogo do agente (mapa_uf) usam
+ * o mesmo — antes o agente não tinha como saber, e mandava `regiao` para o mapa.
+ */
+export function isUfColumn(column) {
+  return /(^|_)(uf|sigla)$/i.test(String(column || ''));
+}
+// Contrato dos mapas por UF — é também o texto que o agente lê no menu de estilos.
+const GEO_REASON = 'precisa de 1 dimensão com coluna de UF (uf/sigla — marcada mapa_uf no catálogo; região, município ou país NÃO servem) e ≥1 métrica';
+
+/**
  * Predicado SQL de um argumento declarado, por tipo (Passo 3 — o tipo determina
  * o input E o predicado). Sintaxe canônica Evidence por componente:
  *   enum → Dropdown  ${inputs.x.value} · text → TextInput  ${inputs.x}
@@ -483,8 +494,7 @@ export const STYLES = [
     queryCount: 1,
     requires: (vb) => {
       const d = (vb.dims || [])[0];
-      const geo = d && /(^|_)(uf|sigla)$/i.test(d.column);
-      return need((vb.dims || []).length === 1 && (vb.metrics || []).length >= 1 && !!geo, 'precisa de 1 dimensão geográfica (uf/sigla) e ≥1 métrica');
+      return need((vb.dims || []).length === 1 && (vb.metrics || []).length >= 1 && !!d && isUfColumn(d.column), GEO_REASON);
     },
     compile: (ctx) =>
       oneQuery(ctx, (vb, qn) => {
@@ -559,12 +569,11 @@ export const STYLES = [
     ],
     fallback: 'graph.bar',
     queryCount: 1,
-    // Mesmo contrato geográfico do areamap: a regex da coluna é a mesma, para
-    // que trocar de um para o outro seja só trocar o `style`.
+    // Mesmo contrato geográfico do areamap (isUfColumn), para que trocar de um
+    // para o outro seja só trocar o `style`.
     requires: (vb) => {
       const d = (vb.dims || [])[0];
-      const geo = d && /(^|_)(uf|sigla)$/i.test(d.column);
-      return need((vb.dims || []).length === 1 && (vb.metrics || []).length >= 1 && !!geo, 'precisa de 1 dimensão geográfica (uf/sigla) e ≥1 métrica');
+      return need((vb.dims || []).length === 1 && (vb.metrics || []).length >= 1 && !!d && isUfColumn(d.column), GEO_REASON);
     },
     compile: (ctx) =>
       oneQuery(ctx, (vb, qn) => {
