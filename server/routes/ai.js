@@ -31,9 +31,15 @@ function aiConfig() {
 // Cada servidor/modelo respeita um: reasoning_effort (LM Studio/OpenAI-like),
 // enable_thinking=false via chat_template_kwargs (vLLM + Qwen3). Quem não
 // suporta simplesmente ignora campos desconhecidos.
-function noThinkParams(cfg) {
+//
+// 'none', não 'low': o LM Studio mapeia o effort para o que o modelo aceita, e
+// o qwen3 só aceita on/off — 'low' não existe para ele e o servidor CAI EM 'on'
+// ("Reasoning setting 'low' is not supported… Falling back to 'on'"), o oposto
+// do pedido. Medido em 28/09/2026 no qwen3-14b: 'low' → 256 tokens pensando;
+// 'none' → 0. ('off' é recusado pela validação da API: não é valor OpenAI.)
+export function noThinkParams(cfg) {
   if (!cfg.noThink) return {};
-  return { reasoning_effort: 'low', chat_template_kwargs: { enable_thinking: false } };
+  return { reasoning_effort: 'none', chat_template_kwargs: { enable_thinking: false } };
 }
 
 // Local (OpenAI-compatível) só precisa de baseUrl; Anthropic precisa de chave.

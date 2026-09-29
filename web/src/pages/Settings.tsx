@@ -182,7 +182,8 @@ export default function Settings({ onSaved }: { onSaved: (s: any) => void }) {
           )}
         </label>
         {localProvider && (
-          <label title="Envia reasoning_effort=low e enable_thinking=false; servidores/modelos que não suportam ignoram.">
+          <label title="Envia reasoning_effort=none e enable_thinking=false; servidores/modelos que não suportam ignoram.">
+            {/* 'none', não 'low': no LM Studio o qwen3 só aceita on/off e 'low' caía em 'on' (server/routes/ai.js). */}
             <input
               type="checkbox"
               checked={Boolean(ai.noThink)}
